@@ -2,54 +2,113 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import * as SliderPrimitive from "@radix-ui/react-slider";
+
 
 export default function TidyZenApp() {
-  const [stage, setStage] = useState<"moment" | "reward">("moment");
+  const [stage, setStage] = useState<"ui1" | "ui2">("ui1");
+  const [ensoDuration, setEnsoDuration] = useState(4.2);
   const [reward, setReward] = useState<string | null>(null);
-  const rewards = ["10 $TIDY", "Bronze TidyZen", "Silver TidyZen", "Gold TidyZen", "Zen Quote 🌿"];
+
+  const rewards = [
+    "10 $TIDY",
+    "Bronze TidyZen",
+    "Silver TidyZen",
+    "Gold TidyZen",
+    "Zen Quote 🌿",
+  ];
 
   const revealReward = () => {
     let i = 0;
     const interval = setInterval(() => {
       setReward(rewards[i % rewards.length]);
       i++;
-      if (i > rewards.length * 4) {
+      if (i > rewards.length * 5) {
         clearInterval(interval);
         const finalReward = rewards[Math.floor(Math.random() * rewards.length)];
         setReward(finalReward);
       }
-    }, 200 - i * 10); // faster each cycle
+    }, Math.max(100 - i * 5, 40)); // speeds up animation
   };
-
+let defaultValue = [50], max = 100, step = 1;
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-green-100 to-white p-4">
-      {stage === "moment" && (
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-green-100 to-white p-6">
+      {/* -------- UI 1: Initiating Zen Moment -------- */}
+      {stage === "ui1" && (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
+          className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 text-center space-y-6"
         >
-          <h1 className="text-3xl font-bold mb-4">🪷 TidyZen Moment</h1>
-          <p className="mb-4">Breathe in... breathe out... relax 🌿</p>
-          <button
-            onClick={() => setStage("reward")}
-            className="bg-green-600 text-white px-6 py-2 rounded-2xl shadow-md hover:bg-green-700"
+          {/* Logo + Branding */}
+          <div className="flex justify-center">
+            <img src="/tidycoin-logo.png" alt="TidyCoin Logo" className="h-14" />
+          </div>
+          <h1 className="text-2xl font-bold">🪷 TidyZen Moment</h1>
+          <p className="text-gray-600">Recharge, breathe, and earn rewards.</p>
+
+          {/* Partner tickers (premium add-on) */}
+          <div className="flex justify-center gap-4 mt-4">
+            <span className="px-2 py-1 bg-gray-200 rounded text-sm">Partner1</span>
+            <span className="px-2 py-1 bg-gray-200 rounded text-sm">Partner2</span>
+          </div>
+
+          {/* Spend Jungl XP */}
+          <div className="space-y-3 mt-4">
+            <button className="w-full bg-gray-100 py-2 rounded-lg hover:bg-gray-200">
+              Spend 169 XP → Silver Enso
+            </button>
+            <button className="w-full bg-gray-100 py-2 rounded-lg hover:bg-gray-200">
+              Spend 420 XP → Gold Enso
+            </button>
+          </div>
+
+          {/* Stake $TIDY */}
+          <a
+            href="/staking"
+            className="block text-blue-600 underline hover:text-blue-800"
           >
-            Complete Session
+            Stake $TIDY for XP rewards
+          </a>
+
+          {/* Enso Duration Slider */}
+          <div className="mt-4">
+            <p className="mb-2">⏳ Duration: {ensoDuration.toFixed(1)} sec</p>
+            <SliderPrimitive.Root
+              className="relative flex w-full touch-none select-none items-center"
+              defaultValue={defaultValue}
+              max={max}
+              step={step}
+            >
+              <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-gray-200">
+                <SliderPrimitive.Range className="absolute h-full bg-blue-500" />
+              </SliderPrimitive.Track>
+              <SliderPrimitive.Thumb className="block h-5 w-5 rounded-full bg-white shadow" />
+            </SliderPrimitive.Root>
+          </div>
+
+          {/* Start button */}
+          <button
+            onClick={() => setStage("ui2")}
+            className="mt-6 bg-green-600 text-white px-6 py-3 rounded-2xl shadow-md hover:bg-green-700 w-full"
+          >
+            Begin TidyZen Moment
           </button>
         </motion.div>
       )}
 
-      {stage === "reward" && (
+      {/* -------- UI 2: Rewards -------- */}
+      {stage === "ui2" && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center"
+          className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 text-center space-y-6"
         >
-          <h2 className="text-2xl font-semibold mb-4">🎁 Reveal Your Reward</h2>
+          <h2 className="text-2xl font-semibold">🎁 Reveal Your Reward</h2>
+
           <button
             onClick={revealReward}
-            className="bg-purple-600 text-white px-6 py-2 rounded-2xl shadow-md hover:bg-purple-700 mb-6"
+            className="bg-purple-600 text-white px-6 py-2 rounded-2xl shadow-md hover:bg-purple-700"
           >
             Reveal Reward
           </button>
@@ -57,15 +116,16 @@ export default function TidyZenApp() {
           {reward && (
             <motion.div
               key={reward}
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1.2 }}
               transition={{ duration: 0.4 }}
-              className="text-xl font-bold text-green-800"
+              className="text-xl font-bold text-green-800 mt-6"
             >
               {reward}
             </motion.div>
           )}
 
+          {/* Claiming options */}
           {reward && (
             <div className="mt-6 space-y-3">
               {reward.includes("$TIDY") && (
@@ -92,7 +152,8 @@ export default function TidyZenApp() {
 
           {reward && (
             <p className="mt-6 text-sm text-gray-500">
-              Thank you for taking a TidyZen moment — powered by <b>$TIDY</b> and frens
+              🌿 Thank you for taking a TidyZen moment — powered by{" "}
+              <b>$TIDY</b> and frens
             </p>
           )}
         </motion.div>
