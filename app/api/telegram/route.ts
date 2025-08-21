@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       const reply =
         message.text.toLowerCase() === "hello"
           ? "Hey there! 👋 How are you?"
-          : "👋 Welcome! Send 'hello' to test me.";
+          :message.text.toLowerCase() === "welcome"?"Welcome to tidyZen": "👋 Welcome! Send 'hello' to test me.";
 
       // Send response back to Telegram
       await fetch(
