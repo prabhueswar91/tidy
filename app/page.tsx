@@ -1,62 +1,102 @@
 "use client";
-import { useState,useEffect } from "react";
 
-export default function Home() {
-  const [ensoDuration, setEnsoDuration] = useState(4.2);
+import { useState } from "react";
+import { motion } from "framer-motion";
 
- useEffect(() => {
-    // @ts-ignore → ignore only if typings not yet added
-    if (window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
+export default function TidyZenApp() {
+  const [stage, setStage] = useState<"moment" | "reward">("moment");
+  const [reward, setReward] = useState<string | null>(null);
+  const rewards = ["10 $TIDY", "Bronze TidyZen", "Silver TidyZen", "Gold TidyZen", "Zen Quote 🌿"];
 
-      tg.ready();  // tell Telegram UI your app is ready
-      tg.expand(); // expand to full height
-
-      // Example: send info back to bot (you can trigger this on button click instead)
-      window.Telegram.WebApp.sendData(JSON.stringify({ action: "startedEnso" }));
-
-
-      console.log("✅ Telegram WebApp connected:", tg);
-    }
-  }, [ensoDuration]);
+  const revealReward = () => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setReward(rewards[i % rewards.length]);
+      i++;
+      if (i > rewards.length * 4) {
+        clearInterval(interval);
+        const finalReward = rewards[Math.floor(Math.random() * rewards.length)];
+        setReward(finalReward);
+      }
+    }, 200 - i * 10); // faster each cycle
+  };
 
   return (
-    <main className="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-4">✨ TidyZen</h1>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-green-100 to-white p-4">
+      {stage === "moment" && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <h1 className="text-3xl font-bold mb-4">🪷 TidyZen Moment</h1>
+          <p className="mb-4">Breathe in... breathe out... relax 🌿</p>
+          <button
+            onClick={() => setStage("reward")}
+            className="bg-green-600 text-white px-6 py-2 rounded-2xl shadow-md hover:bg-green-700"
+          >
+            Complete Session
+          </button>
+        </motion.div>
+      )}
 
-      {/* Jungl XP options */}
-      <div className="mb-4">
-        <h2 className="text-xl">Spend Jungl XP</h2>
-        <button className="m-2 p-2 bg-gray-200 rounded">169 XP – Silver</button>
-        <button className="m-2 p-2 bg-yellow-300 rounded">420 XP – Gold</button>
-      </div>
+      {stage === "reward" && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <h2 className="text-2xl font-semibold mb-4">🎁 Reveal Your Reward</h2>
+          <button
+            onClick={revealReward}
+            className="bg-purple-600 text-white px-6 py-2 rounded-2xl shadow-md hover:bg-purple-700 mb-6"
+          >
+            Reveal Reward
+          </button>
 
-      {/* Stake TIDY */}
-      <a
-        href="https://your-staking-page.com"
-        target="_blank"
-        className="p-2 bg-green-500 text-white rounded mb-4"
-      >
-        Stake $TIDY for XP
-      </a>
+          {reward && (
+            <motion.div
+              key={reward}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1.2 }}
+              transition={{ duration: 0.4 }}
+              className="text-xl font-bold text-green-800"
+            >
+              {reward}
+            </motion.div>
+          )}
 
-      {/* Slider for Enso duration */}
-      <div className="mb-4">
-        <label className="block">Enso Duration: {ensoDuration}s</label>
-        <input
-          type="range"
-          min="4.2"
-          max="42"
-          step="0.1"
-          value={ensoDuration}
-          onChange={(e) => setEnsoDuration(Number(e.target.value))}
-        />
-      </div>
+          {reward && (
+            <div className="mt-6 space-y-3">
+              {reward.includes("$TIDY") && (
+                <input
+                  type="text"
+                  placeholder="Enter wallet address"
+                  className="border p-2 rounded w-full"
+                />
+              )}
+              {(reward.includes("Bronze") ||
+                reward.includes("Silver") ||
+                reward.includes("Gold")) && (
+                <button className="bg-yellow-500 text-white px-4 py-2 rounded">
+                  Claim Another Moment
+                </button>
+              )}
+              {reward.includes("Zen Quote") && (
+                <p className="italic text-gray-600">
+                  "Peace comes from within. Do not seek it without."
+                </p>
+              )}
+            </div>
+          )}
 
-      {/* Begin Button */}
-      <button className="p-3 bg-blue-500 text-white rounded">
-        Begin TidyZen Moment
-      </button>
-    </main>
+          {reward && (
+            <p className="mt-6 text-sm text-gray-500">
+              Thank you for taking a TidyZen moment — powered by <b>$TIDY</b> and frens
+            </p>
+          )}
+        </motion.div>
+      )}
+    </div>
   );
 }
