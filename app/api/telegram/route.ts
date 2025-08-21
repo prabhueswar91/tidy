@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,9 +8,10 @@ export async function POST(req: NextRequest) {
     const message = body?.message;
     if (message?.text) {
       const chatId = message.chat.id;
-      const reply = message.text.toLowerCase() === "hello"
-        ? "Hey there! 👋 How are you?"
-        : "👋 Welcome! Send 'hello' to test me.";
+      const reply =
+        message.text.toLowerCase() === "hello"
+          ? "Hey there! 👋 How are you?"
+          : "👋 Welcome! Send 'hello' to test me.";
 
       // Send response back to Telegram
       await fetch(
@@ -26,6 +27,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("Telegram error:", err);
-    return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: String(err) },
+      { status: 500 }
+    );
   }
 }
