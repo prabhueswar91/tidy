@@ -3,17 +3,71 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
-    // Extract Telegram update
     const message = body?.message;
-    if (message?.text) {
-      const chatId = message.chat.id;
+
+    if (!message) {
+      return NextResponse.json({ ok: true }); // nothing to handle
+    }
+
+    const chatId = message.chat.id;
+
+    // ✅ 1. Handle WebApp Data coming from your React UI
+    if (message.web_app_data) {
+      try {
+        const data = JSON.parse(message.web_app_data.data);
+
+        await fetch(
+          `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: `✅ Received Enso Moment!\nAction: ${data.action}\nDuration: ${data.duration} sec`,
+            }),
+          }
+        );
+      } catch (e) {
+        console.error("Invalid WebApp data:", e);
+      }
+    }
+
+    // ✅ 2. Handle /start (send button with WebApp)
+    else if (message.text === "/start") {
+      await fetch(
+        `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: "🚀 Welcome to TidyZen!\nTap below to start your Zen moment.",
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "🌀 Open TidyZen",
+                    web_app: {
+                      url: "https://tidy-mocha.vercel.app", // 👈 replace with your deployed Vercel app
+                    },
+                  },
+                ],
+              ],
+            },
+          }),
+        }
+      );
+    }
+
+    // ✅ 3. Handle normal text messages
+    else if (message.text) {
       const reply =
         message.text.toLowerCase() === "hello"
           ? "Hey there! 👋 How are you?"
-          :message.text.toLowerCase() === "welcome"?"Welcome to tidyZen": "👋 Welcome! Send 'hello' to test me.";
+          : message.text.toLowerCase() === "welcome"
+          ? "Welcome to TidyZen"
+          : "👋 Send 'hello' to test me or use /start to open TidyZen UI.";
 
-      // Send response back to Telegram
       await fetch(
         `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
         {

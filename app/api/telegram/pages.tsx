@@ -1,24 +1,8 @@
 "use client";
-import { useState,useEffect } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const [ensoDuration, setEnsoDuration] = useState(4.2);
-
- useEffect(() => {
-    // @ts-ignore → ignore only if typings not yet added
-    if (window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
-
-      tg.ready();  // tell Telegram UI your app is ready
-      tg.expand(); // expand to full height
-
-      // Example: send info back to bot (you can trigger this on button click instead)
-      window.Telegram.WebApp.sendData(JSON.stringify({ action: "startedEnso" }));
-
-
-      console.log("✅ Telegram WebApp connected:", tg);
-    }
-  }, [ensoDuration]);
 
   return (
     <main className="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
