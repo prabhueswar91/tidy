@@ -3,12 +3,37 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import * as SliderPrimitive from "@radix-ui/react-slider";
+import { useAppKitWallet } from "@reown/appkit-wallet-button/react";
+import { useDisconnect } from "@reown/appkit/react";
+import { useWalletInfo } from '@reown/appkit/react'
+import { useAppKitAccount } from "@reown/appkit/react";
 
 
 export default function TidyZenApp() {
+  const { walletInfo } = useWalletInfo();
+   const { address, caipAddress, isConnected } = useAppKitAccount();
   const [stage, setStage] = useState<"ui1" | "ui2">("ui1");
   const [ensoDuration, setEnsoDuration] = useState(4.2);
   const [reward, setReward] = useState<string | null>(null);
+
+  const { isReady, isPending, connect } = useAppKitWallet({
+    namespace: 'eip155', // Optional: specify chain namespace
+    onSuccess(parsedCaipAddress) {
+      console.log(parsedCaipAddress,'parsedCaipAddress')
+      // Access the parsed CAIP address object
+      // See: https://github.com/reown-com/appkit/blob/main/packages/common/src/utils/ParseUtil.ts#L3-L7
+      // ...
+    },
+    onError(error) {
+      // ...
+      console.log(error,'errorerror')
+    }
+  })
+
+  const { connect: connectEVM } = useAppKitWallet({
+  namespace: 'eip155',
+  onSuccess: (address) => console.log('Connected to EVM:', address)
+})
 
   const rewards = [
     "10 $TIDY",
@@ -46,6 +71,20 @@ let defaultValue = [50], max = 100, step = 1;
           </div>
           <h1 className="text-2xl font-bold">🪷 TidyZen Moment</h1>
           <p className="text-gray-600">Recharge, breathe, and earn rewards.</p>
+
+            <button className="m-2 p-2 bg-yellow-300 rounded" onClick={() => connectEVM("metamask")}>Connect MetaMask (EVM)</button>
+
+              <div className="wallet-info">
+              {walletInfo?.name && (
+                <>
+                  <img src={walletInfo.icon} alt={walletInfo.name} />
+                  <span>{walletInfo.name}</span>
+                </>
+              )}
+              </div>
+              {address}
+                <appkit-connect-button label="Connect Wallet" />
+                <appkit-wallet-button wallet="metamask" namespace="eip155" />
 
           {/* Partner tickers (premium add-on) */}
           <div className="flex justify-center gap-4 mt-4">
