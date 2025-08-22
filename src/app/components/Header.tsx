@@ -91,13 +91,13 @@ export default function Header() {
             Trust Wallet
             </button>
 
-            {/* <button
+            <button
             className="m-2 px-4 py-2 bg-green-300 rounded w-56 font-semibold"
             onClick={() => connect("coinbase")}
             disabled={!isReady}
             >
             Connect Coinbase Wallet
-            </button> */}
+            </button>
         </div>
         </Modal>
     </div>
