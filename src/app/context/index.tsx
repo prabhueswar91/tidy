@@ -1,9 +1,9 @@
 'use client'
 
-import { wagmiAdapter, projectId,networks } from '@/config'
+import { wagmiAdapter, projectId,networks } from '../config/wagmiConfig'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { mainnet, arbitrum,base } from '@reown/appkit/networks'
+import { base } from '@reown/appkit/networks'
 import React, { type ReactNode } from 'react'
 import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
 
@@ -19,7 +19,7 @@ const metadata = {
   url: 'https://tidy-mocha.vercel.app/',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
-console.log(base,'wagmiAdapter122121',networks)
+
 createAppKit({
   adapters: [wagmiAdapter],
   projectId,
