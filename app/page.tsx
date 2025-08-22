@@ -8,32 +8,21 @@ import { useDisconnect } from "@reown/appkit/react";
 import { useWalletInfo } from '@reown/appkit/react'
 import { useAppKitAccount } from "@reown/appkit/react";
 
-
 export default function TidyZenApp() {
   const { walletInfo } = useWalletInfo();
+  const { disconnect } = useDisconnect();
    const { address, caipAddress, isConnected } = useAppKitAccount();
   const [stage, setStage] = useState<"ui1" | "ui2">("ui1");
   const [ensoDuration, setEnsoDuration] = useState(4.2);
   const [reward, setReward] = useState<string | null>(null);
 
-  const { isReady, isPending, connect } = useAppKitWallet({
-    namespace: 'eip155', // Optional: specify chain namespace
-    onSuccess(parsedCaipAddress) {
-      console.log(parsedCaipAddress,'parsedCaipAddress')
-      // Access the parsed CAIP address object
-      // See: https://github.com/reown-com/appkit/blob/main/packages/common/src/utils/ParseUtil.ts#L3-L7
-      // ...
-    },
-    onError(error) {
-      // ...
-      console.log(error,'errorerror')
-    }
-  })
+  
 
-  const { connect: connectEVM } = useAppKitWallet({
-  namespace: 'eip155',
-  onSuccess: (address) => console.log('Connected to EVM:', address)
-})
+  const { connect, isReady } = useAppKitWallet({
+    namespace: "eip155", // ✅ EVM namespace
+    onSuccess: (address) => console.log("Connected:", address),
+    onError: (err) => console.error("Connection error:", err),
+  });
 
   const rewards = [
     "10 $TIDY",
@@ -56,6 +45,12 @@ export default function TidyZenApp() {
     }, Math.max(100 - i * 5, 40)); // speeds up animation
   };
 let defaultValue = [50], max = 100, step = 1;
+
+async function disconnectWallet(){
+disconnect()
+}
+
+console.log(isReady,'isReadyisReadyisReady')
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-green-100 to-white p-6">
       {/* -------- UI 1: Initiating Zen Moment -------- */}
@@ -72,7 +67,7 @@ let defaultValue = [50], max = 100, step = 1;
           <h1 className="text-2xl font-bold">🪷 TidyZen Moment</h1>
           <p className="text-gray-600">Recharge, breathe, and earn rewards.</p>
 
-            <button className="m-2 p-2 bg-yellow-300 rounded" onClick={() => connectEVM("metamask")}>Connect MetaMask (EVM)</button>
+            <button className="m-2 p-2 bg-yellow-300 rounded" onClick={() => connect("metamask")}>Connect MetaMask (EVM)</button>
 
               <div className="wallet-info">
               {walletInfo?.name && (
@@ -84,7 +79,42 @@ let defaultValue = [50], max = 100, step = 1;
               </div>
               {address}
                 <appkit-connect-button label="Connect Wallet" />
-                <appkit-wallet-button wallet="metamask" namespace="eip155" />
+                {/* <appkit-wallet-button wallet="metamask"  /> */}
+
+                 <button className="m-2 p-2 bg-yellow-300 rounded" onClick={() => disconnectWallet()}>Disconnect</button>
+
+                 <div className="">
+                  <button
+                    className="m-2 p-2 bg-yellow-300 rounded"
+                    onClick={() => connect("metamask")}
+                  // disabled={!isReady}
+                  >
+                    Connect MetaMask
+                  </button>
+
+                  <button
+                    className="m-2 p-2 bg-yellow-300 rounded"
+                    onClick={() => connect("phantom")}
+                  // disabled={!isReady}
+                  >
+                    Phantom
+                  </button>
+
+                  <button
+                    className="m-2 p-2 bg-blue-300 rounded"
+                    onClick={() => connect("walletConnect")}
+                    disabled={!isReady}
+                  >
+                    Open WalletConnect QR
+                  </button>
+                    <button
+                   className="m-2 p-2 bg-yellow-300 rounded"
+                    onClick={() => connect("coinbase")} 
+                    disabled={!isReady}
+                  >
+                    Connect Coinbase Wallet
+                  </button>
+                </div>
 
           {/* Partner tickers (premium add-on) */}
           <div className="flex justify-center gap-4 mt-4">
