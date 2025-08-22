@@ -67,21 +67,21 @@ console.log(isReady,'isReadyisReadyisReady')
           <h1 className="text-2xl font-bold">🪷 TidyZen Moment</h1>
           <p className="text-gray-600">Recharge, breathe, and earn rewards.</p>
 
-            <button className="m-2 p-2 bg-yellow-300 rounded" onClick={() => connect("metamask")}>Connect MetaMask (EVM)</button>
+            {/* <button className="m-2 p-2 bg-yellow-300 rounded" onClick={() => connect("metamask")}>Connect MetaMask (EVM)</button> */}
 
-              <div className="wallet-info">
+              {/* <div className="wallet-info">
               {walletInfo?.name && (
                 <>
                   <img src={walletInfo.icon} alt={walletInfo.name} />
                   <span>{walletInfo.name}</span>
                 </>
               )}
-              </div>
+              </div> */}
               {address}
-                <appkit-connect-button label="Connect Wallet" />
+                {/* <appkit-connect-button label="Connect Wallet" /> */}
                 {/* <appkit-wallet-button wallet="metamask"  /> */}
 
-                 <button className="m-2 p-2 bg-yellow-300 rounded" onClick={() => disconnectWallet()}>Disconnect</button>
+                 {address &&<button className="m-2 p-2 bg-yellow-300 rounded" onClick={() => disconnectWallet()}>Disconnect</button>}
 
                  <div className="">
                   <button
