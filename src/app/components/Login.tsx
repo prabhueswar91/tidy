@@ -31,6 +31,12 @@ export default function Login() {
         <p className="mt-1 text-xl font-normal text-[#FFFEEF]">
           TidyZen Moments
         </p>
+        <button
+             onClick={() => inviteTelegram()}
+            className="w-full flex items-center font-dm justify-between rounded px-5 py-3 bg-[#AC8B8B4D] text-[#AC8B8B] font-semibold hover:opacity-90 transition border border-[#AC8B8B]"
+          >
+            Invite
+          </button>
 
         <p className="mt-6 text-gray-300">Choose Today’s Zen Level</p>
         <div className="mb-10 mt-1 border-b-2 border-[#FFFEEF]/10"></div>
