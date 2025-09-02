@@ -14,10 +14,27 @@ export default function Login() {
     price: string;
   } | null>(null);
 
+  const [url, setUrl] = useState('https://t.me/Tidycoin_bot');
+  const [text, setText] = useState('Check out this amazing article!');
+  const [isCopied, setIsCopied] = useState(false);
+
+
   const openModal = (tier: { name: string; price: string }) => {
     setSelectedTier(tier);
     setIsModalOpen(true);
   };
+
+   const generateTelegramUrl = () => {
+    const shareText = encodeURIComponent(text);
+    const shareUrl = encodeURIComponent(url);
+    return `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
+  };
+
+  async function inviteTelegram(){
+
+   window.open(generateTelegramUrl(), '_blank', 'width=600,height=400');
+
+  }
 
   return (
     <div className="flex min-h-screen items-center font-dm justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] px-6">
