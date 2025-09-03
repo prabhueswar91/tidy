@@ -4,17 +4,21 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const message = body?.message;
-console.log("888888888888888888888888888888888",message)
+console.log("888888888888888888888888888888888A",message)
     if (!message) {
+      console.log("888888888888888888888888888888888B")
       return NextResponse.json({ ok: true }); // nothing to handle
     }
+    let textmsg = message;
     try{
-    const parts = message.text.split(" "); 
-    const ref = parts[1] || null;
-    console.log(ref,'refrefrefrefref')
+      const parts = message.text.split(" "); 
+      const ref = parts[1] || null;
+      textmsg = parts[0];
+      console.log(ref,'888888888888888888888888888888888C')
     }catch(err){
 
     }
+
     
 
     const chatId = message.chat.id;
