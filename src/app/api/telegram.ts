@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const token = process.env.TELEGRAM_BOT_TOKEN as string;
-const TELEGRAM_URL = `https://api.telegram.org/bot${token}`;
+const TELEGRAM_URL = `https://api.telegram.org/bot8461678708:AAGhiwbHmRBPbs4RG9P7-2hSESwTk4iWdaI`;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
