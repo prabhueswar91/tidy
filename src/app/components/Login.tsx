@@ -13,7 +13,7 @@ export default function Login() {
     name: string;
     price: string;
   } | null>(null);
-    const [url, setUrl] = useState('https://t.me/Tidycoin_bot?start=0x209D0beeE1c4b795097924d22d4BAca427B393B0');
+    const [url, setUrl] = useState('http://t.me/Totokentybot?start=0x209D0beeE1c4b795097924d22d4BAca427B393B0');
   const [text, setText] = useState('Check out this amazing article!');
   const [isCopied, setIsCopied] = useState(false);
 
