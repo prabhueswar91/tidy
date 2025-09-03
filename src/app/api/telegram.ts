@@ -5,7 +5,7 @@ const TELEGRAM_URL = `https://api.telegram.org/bot${token}`;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    console.log("iiiiiiiiiiiiiiiiiiiii")
+    console.log("iiiiiiiiiiiiiiiiiiiiissss")
     const body = req.body;
 
     // Telegram message object
