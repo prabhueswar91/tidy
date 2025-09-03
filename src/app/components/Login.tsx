@@ -14,27 +14,10 @@ export default function Login() {
     price: string;
   } | null>(null);
 
-  const [url, setUrl] = useState('https://t.me/Tidycoin_bot');
-  const [text, setText] = useState('Check out this amazing article!');
-  const [isCopied, setIsCopied] = useState(false);
-
-
   const openModal = (tier: { name: string; price: string }) => {
     setSelectedTier(tier);
     setIsModalOpen(true);
   };
-
-   const generateTelegramUrl = () => {
-    const shareText = encodeURIComponent(text);
-    const shareUrl = encodeURIComponent(url);
-    return `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
-  };
-
-  async function inviteTelegram(){
-
-   window.open(generateTelegramUrl(), '_blank', 'width=600,height=400');
-
-  }
 
   return (
     <div className="flex min-h-screen items-center font-dm justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] px-6">
@@ -48,12 +31,6 @@ export default function Login() {
         <p className="mt-1 text-xl font-normal text-[#FFFEEF]">
           TidyZen Moments
         </p>
-        <button
-             onClick={() => inviteTelegram()}
-            className="w-full flex items-center font-dm justify-between rounded px-5 py-3 bg-[#AC8B8B4D] text-[#AC8B8B] font-semibold hover:opacity-90 transition border border-[#AC8B8B]"
-          >
-            Invite
-          </button>
 
         <p className="mt-6 text-gray-300">Choose Today’s Zen Level</p>
         <div className="mb-10 mt-1 border-b-2 border-[#FFFEEF]/10"></div>
