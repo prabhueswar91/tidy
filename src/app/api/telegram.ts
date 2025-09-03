@@ -4,7 +4,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const message = body?.message;
-console.log("888888888888888888888888888888888")
+console.log("888888888888888888888888888888888",message)
     if (!message) {
       return NextResponse.json({ ok: true }); // nothing to handle
     }

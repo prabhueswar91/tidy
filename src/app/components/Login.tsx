@@ -13,10 +13,25 @@ export default function Login() {
     name: string;
     price: string;
   } | null>(null);
+    const [url, setUrl] = useState('https://t.me/Tidycoin_bot?start=0x209D0beeE1c4b795097924d22d4BAca427B393B0');
+  const [text, setText] = useState('Check out this amazing article!');
+  const [isCopied, setIsCopied] = useState(false);
 
   const openModal = (tier: { name: string; price: string }) => {
     setSelectedTier(tier);
     setIsModalOpen(true);
+  };
+
+
+   const generateTelegramUrl = () => {
+    const shareText = encodeURIComponent(text);
+    const shareUrl = encodeURIComponent(url);
+    return `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
+  };
+
+  // Function to handle the share action
+  const handleShare = () => {
+    window.open(generateTelegramUrl(), '_blank', 'width=600,height=400');
   };
 
   return (
@@ -31,6 +46,12 @@ export default function Login() {
         <p className="mt-1 text-xl font-normal text-[#FFFEEF]">
           TidyZen Moments
         </p>
+
+         <button
+            onClick={() => handleShare()}
+            className="w-full flex items-center font-dm justify-between rounded px-5 py-3 bg-[#EBB4574D] border border-[#EBB457] text-[#EBB457] font-semibold hover:opacity-90 transition"
+          >Invite
+          </button>
 
         <p className="mt-6 text-gray-300">Choose Today’s Zen Level</p>
         <div className="mb-10 mt-1 border-b-2 border-[#FFFEEF]/10"></div>
