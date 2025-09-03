@@ -9,7 +9,7 @@ console.log("888888888888888888888888888888888A",message)
       console.log("888888888888888888888888888888888B")
       return NextResponse.json({ ok: true }); // nothing to handle
     }
-    let textmsg = message;
+    let textmsg = message.text;
     try{
       const parts = message.text.split(" "); 
       const ref = parts[1] || null;
@@ -43,7 +43,7 @@ console.log("888888888888888888888888888888888A",message)
     }
 
     // ✅ 2. Handle /start (send button with WebApp)
-    else if (message.text === "/start") {
+    else if (textmsg === "/start") {
       await fetch(
         `https://api.telegram.org/bot8461678708:AAGhiwbHmRBPbs4RG9P7-2hSESwTk4iWdaI/sendMessage`,
         {
