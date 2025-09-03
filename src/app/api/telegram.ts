@@ -8,6 +8,14 @@ console.log("888888888888888888888888888888888",message)
     if (!message) {
       return NextResponse.json({ ok: true }); // nothing to handle
     }
+    try{
+    const parts = message.text.split(" "); 
+    const ref = parts[1] || null;
+    console.log(ref,'refrefrefrefref')
+    }catch(err){
+
+    }
+    
 
     const chatId = message.chat.id;
 
