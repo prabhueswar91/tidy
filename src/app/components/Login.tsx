@@ -45,6 +45,13 @@ export default function Login() {
     }
   }, []);
 
+  useEffect(() => {
+  if (typeof window !== "undefined") {
+    console.log("Window object:", window);
+    console.log("Telegram object:", (window as any).Telegram);
+  }
+}, []);
+
 
 
    const generateTelegramUrl = () => {
