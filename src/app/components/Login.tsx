@@ -29,6 +29,7 @@ export default function Login() {
   const [text, setText] = useState('Check out this amazing article!');
   const [isCopied, setIsCopied] = useState(false);
   const [user, setUser] = useState<TelegramUser | null>(null);
+  const [userData, setUserData] = useState(null);
 
   const openModal = (tier: { name: string; price: string }) => {
     setSelectedTier(tier);
@@ -36,7 +37,7 @@ export default function Login() {
   };
 
     useEffect(() => {
-      console.log(window.Telegram?.WebApp,'***************************')
+      console.log(window,'***************************')
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
       tg.ready(); // notify Telegram WebApp is ready
@@ -45,12 +46,15 @@ export default function Login() {
     }
   }, []);
 
-  useEffect(() => {
-  if (typeof window !== "undefined") {
-    console.log("Window object:", window);
-    console.log("Telegram object:", (window as any).Telegram);
-  }
-}, []);
+  
+useEffect(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tgUserId = urlParams.get('tg_user_id');
+
+      console.log(urlParams,'urlParamsurlParamsurlParams',tgUserId)
+      
+      
+  }, []);
 
 
 

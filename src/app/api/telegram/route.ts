@@ -44,6 +44,13 @@ console.log("888888888888888888888888888888888A",message)
 
     // ✅ 2. Handle /start (send button with WebApp)
     else if (textmsg === "/start") {
+      const chatId = message.chat.id;
+      const userId = message.from.id;
+      const firstName = message.from.first_name || '';
+      const lastName = message.from.last_name || '';
+      const username = message.from.username || '';
+       const webAppUrl = `https://tidy-mocha.vercel.app?tg_user_id=${userId}&first_name=${encodeURIComponent(firstName)}&last_name=${encodeURIComponent(lastName)}&username=${username}`;
+
       await fetch(
         `https://api.telegram.org/bot8461678708:AAGhiwbHmRBPbs4RG9P7-2hSESwTk4iWdaI/sendMessage`,
         {
