@@ -37,7 +37,7 @@ export default function Login() {
   };
 
     useEffect(() => {
-      console.log(window,'***************************')
+      console.log(window.Telegram,'***************************321')
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
       tg.ready(); // notify Telegram WebApp is ready
