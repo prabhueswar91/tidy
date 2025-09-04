@@ -51,7 +51,7 @@ useEffect(() => {
       const urlParams = new URLSearchParams(window.location.search);
       const tgUserId = urlParams.get('tg_user_id');
 
-      console.log(urlParams,'urlParamsurlParamsurlParams',tgUserId)
+      console.log(urlParams,'urlParamsurlParamsurlParams',tgUserId,urlParams.get('first_name'),urlParams.get('username'))
       
       
   }, []);
