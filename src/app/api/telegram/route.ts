@@ -65,7 +65,7 @@ console.log("888888888888888888888888888888888A",message)
                   {
                     text: "🌀 Open TidyZen",
                     web_app: {
-                      url: "https://tidy-mocha.vercel.app", // 👈 replace with your deployed Vercel app
+                      url: webAppUrl, // 👈 replace with your deployed Vercel app
                     },
                   },
                 ],
