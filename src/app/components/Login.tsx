@@ -35,9 +35,9 @@ export default function Login() {
     setIsModalOpen(true);
   };
 
-   useEffect(() => {
-    if (typeof window !== "undefined" && (window as any).Telegram?.WebApp) {
-      const tg = (window as any).Telegram.WebApp;
+    useEffect(() => {
+    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
       tg.ready(); // notify Telegram WebApp is ready
       console.log("User info:", tg.initDataUnsafe?.user);
       setUser(tg.initDataUnsafe?.user || null);
