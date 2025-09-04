@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Card from "./ui/Card";
 import Button from "./ui/Button";
 import Modal from "./ui/Modal";
@@ -13,14 +13,26 @@ export default function Login() {
     name: string;
     price: string;
   } | null>(null);
-    const [url, setUrl] = useState('http://t.me/Totokentybot?start=0x209D0beeE1c4b795097924d22d4BAca427B393B0');
+  
+  const [url, setUrl] = useState('http://t.me/Tidycoin_bot?start=0x209D0beeE1c4b795097924d22d4BAca427B393B0');
   const [text, setText] = useState('Check out this amazing article!');
   const [isCopied, setIsCopied] = useState(false);
+   const [user, setUser] = useState<any>(null);
 
   const openModal = (tier: { name: string; price: string }) => {
     setSelectedTier(tier);
     setIsModalOpen(true);
   };
+
+   useEffect(() => {
+    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+      tg.ready(); // notify Telegram WebApp is ready
+      console.log(tg.initDataUnsafe?.user,'7777777777777777777777777777')
+      setUser(tg.initDataUnsafe?.user); // ✅ contains Telegram user info
+    }
+  }, []);
+
 
 
    const generateTelegramUrl = () => {
@@ -52,6 +64,14 @@ export default function Login() {
             className="w-full flex items-center font-dm justify-between rounded px-5 py-3 bg-[#EBB4574D] border border-[#EBB457] text-[#EBB457] font-semibold hover:opacity-90 transition"
           >Invite
           </button>
+
+          {user ? (
+        <p>
+          Hello {user.first_name} {user.last_name} (@{user.username})
+        </p>
+      ) : (
+        <p>Loading user info...</p>
+      )}
 
         <p className="mt-6 text-gray-300">Choose Today’s Zen Level</p>
         <div className="mb-10 mt-1 border-b-2 border-[#FFFEEF]/10"></div>
