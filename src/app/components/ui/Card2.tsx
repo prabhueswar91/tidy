@@ -4,7 +4,7 @@ import React from "react";
 
 export default function Card2({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-black/90 p-6">
+    <div className="min-h-screen w-full flex items-center justify-center bg-black/90 md:p-6">
       <div
         className="relative w-full max-w-sm overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.6)] ring-1 ring-white/10 flex flex-col items-center justify-start p-6 py-20"
         style={{

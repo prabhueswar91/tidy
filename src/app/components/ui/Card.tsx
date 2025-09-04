@@ -17,17 +17,15 @@ export default function Card({
   disableOverlay = false,
   variant = 'default',
 }: CardProps) {
-  // Default background for original card design
   const defaultBg = 'bg-gradient-to-b from-[#0B1925] to-[#141318]';
   
-  // Conic gradient background matching your Figma design
   const conicBg = 'bg-[conic-gradient(at_top_center,#141318,#8EFFC780,#8EFFC780_50%,#BFF36D3B_75%,#BFF36D80_100%)]';
   
   const backgroundClass = bgClass || (variant === 'conic' ? conicBg : defaultBg);
 
   return (
     <div
-      className={`relative w-full max-w-sm ${paddingY} overflow-hidden shadow-2xl text-center ${backgroundClass} ${className}`}
+      className={`relative w-full md:max-w-sm ${paddingY} overflow-hidden shadow-2xl text-center ${backgroundClass} ${className}`}
     >
       {!disableOverlay && variant === 'default' && (
         <div

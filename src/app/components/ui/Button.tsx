@@ -4,15 +4,16 @@ import { ReactNode } from "react";
 
 interface ButtonProps {
   children: ReactNode;
-  icon?: ReactNode; // For React icons (Lucide, Heroicons, etc.)
-  image?: ReactNode; // For static images (SVG/PNG/JPG path)
+  icon?: ReactNode;
+  image?: ReactNode; 
   borderColor?: string;
   fromColor?: string;
   toColor?: string;
   onClick?: () => void;
   className?: string;
   marginTop?: string; 
-  shadowClass?: string; // ✅ new prop for shadow
+  shadowClass?: string; 
+  disabled?: boolean;
 }
 
 export default function Button({
