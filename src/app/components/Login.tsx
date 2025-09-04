@@ -78,15 +78,6 @@ export default function Login() {
     setIsModalOpen(true);
   };
 
-  //   useEffect(() => {
-  //     console.log(window.Telegram,'***************************321')
-  //   if (typeof window !== "undefined" && window.Telegram?.WebApp) {
-  //     const tg = window.Telegram.WebApp;
-  //     tg.ready(); // notify Telegram WebApp is ready
-  //     console.log("User info:", tg.initDataUnsafe?.user);
-  //     setUser(tg.initDataUnsafe?.user || null);
-  //   }
-  // }, []);
 
   useEffect(() => {
     const getTelegramData = async (): Promise<void> => {
@@ -161,7 +152,7 @@ useEffect(() => {
          <button
             onClick={() => handleShare()}
             className="w-full flex items-center font-dm justify-between rounded px-5 py-3 bg-[#EBB4574D] border border-[#EBB457] text-[#EBB457] font-semibold hover:opacity-90 transition"
-          >Invite
+          >Invite{userData?.firstName}
           </button>
 
           {user ? (
