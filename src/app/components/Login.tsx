@@ -5,7 +5,18 @@ import Card from "./ui/Card";
 import Button from "./ui/Button";
 import Modal from "./ui/Modal";
 
-import Header from "./Header"
+import Header from "./Header";
+
+interface TelegramUser {
+  id: number;
+  is_bot: boolean;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+  language_code?: string;
+  allows_write_to_pm?: boolean;
+}
+
 
 export default function Login() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,7 +28,7 @@ export default function Login() {
   const [url, setUrl] = useState('http://t.me/Tidycoin_bot?start=0x209D0beeE1c4b795097924d22d4BAca427B393B0');
   const [text, setText] = useState('Check out this amazing article!');
   const [isCopied, setIsCopied] = useState(false);
-   const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<TelegramUser | null>(null);
 
   const openModal = (tier: { name: string; price: string }) => {
     setSelectedTier(tier);
@@ -25,11 +36,11 @@ export default function Login() {
   };
 
    useEffect(() => {
-    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
+    if (typeof window !== "undefined" && (window as any).Telegram?.WebApp) {
+      const tg = (window as any).Telegram.WebApp;
       tg.ready(); // notify Telegram WebApp is ready
-      console.log(tg.initDataUnsafe?.user,'7777777777777777777777777777')
-      setUser(tg.initDataUnsafe?.user); // ✅ contains Telegram user info
+      console.log("User info:", tg.initDataUnsafe?.user);
+      setUser(tg.initDataUnsafe?.user || null);
     }
   }, []);
 
