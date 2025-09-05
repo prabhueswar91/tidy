@@ -31,14 +31,6 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-         <Script
-          src="https://telegram.org/js/telegram-web-app.js"
-          strategy="beforeInteractive"
-        />
-         <Script src="https://cdn.jsdelivr.net/npm/eruda" strategy="afterInteractive" />
-      <Script id="eruda-init" strategy="afterInteractive">
-        {`eruda.init();`}
-      </Script>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
