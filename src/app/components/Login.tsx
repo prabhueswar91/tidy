@@ -55,7 +55,7 @@ const handleTierSelect = (tier: string) => {
 
 
    const generateTelegramUrl = () => {
-    const url=`http://t.me/${process.env.NEXT_PUBLIC_CHANNEL_NAME}?start=${walletAddress}`
+    const url=`http://t.me/${process.env.NEXT_PUBLIC_CHANNEL_NAME}?start=${userData?.id}`
     const shareUrl = encodeURIComponent(url);
     return `https://t.me/share/url?url=${shareUrl}`;
   };
