@@ -31,7 +31,7 @@ const initTelegramWebApp = (): Promise<TelegramWebApp | null> => {
         } else {
           resolve(null);
         }
-      }, 200);
+      }, 100);
     };
     script.onerror = () => {
       resolve(null);

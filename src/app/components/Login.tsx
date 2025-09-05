@@ -73,7 +73,7 @@ const handleTierSelect = (tier: string) => {
          <button
             onClick={() => handleShare()}
             className="w-full flex items-center font-dm justify-between rounded px-5 py-3 bg-[#EBB4574D] border border-[#EBB457] text-[#EBB457] font-semibold hover:opacity-90 transition"
-          >Invitesa
+          >Inviteuu
           </button>
 
         <p className="mt-6">Choose Today’s Zen Level</p>
