@@ -14,12 +14,21 @@ declare global {
             is_premium?: boolean;
           };
         };
+        platform?: string;
+        colorScheme?: "light" | "dark";
+        themeParams?: Record<string, string>;
         initData?: string;
         ready?: () => void;
         close?: () => void;
         expand?: () => void;
         version?: string;
       };
+    };
+  }
+
+    interface Window {
+    Telegram?: {
+      WebApp?: TelegramWebApp;
     };
   }
 }

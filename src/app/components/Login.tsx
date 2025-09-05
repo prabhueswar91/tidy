@@ -7,19 +7,17 @@ import Modal from "./ui/Modal";
 import { useRouter } from "next/navigation";
 import Header from "./Header";
 import { useAppStore } from "../store/useAppStore";
-
-
 import { useTelegramUser } from '../hooks/useTelegramUser';
-import { TelegramUserData } from '../../types/telegram1';
 
 export default function Login() {
-   const { userData, isFromTelegram, isLoading } = useTelegramUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
   const { selectedTier, setSelectedTier, walletAddress } = useAppStore();
-  console.log(userData,'userDatamjuiiiiiiiiiiiii')
-
+  const { userData, isFromTelegram, isLoading } = useTelegramUser();
+  console.log("userData", userData)
+console.log("isFromTelegram", isFromTelegram)
+console.log("isLoading", isLoading)
 
 const handleTierSelect = (tier: string) => {
   if (tier === "Silver") {
@@ -55,7 +53,7 @@ const handleTierSelect = (tier: string) => {
 
 
    const generateTelegramUrl = () => {
-    const url=`http://t.me/${process.env.NEXT_PUBLIC_CHANNEL_NAME}?start=${walletAddress}`
+    const url=`http://t.me/${process.env.NEXT_PUBLIC_CHANNEL_NAME}?start=${userData?.id}`
     const shareUrl = encodeURIComponent(url);
     return `https://t.me/share/url?url=${shareUrl}`;
   };
@@ -73,7 +71,7 @@ const handleTierSelect = (tier: string) => {
          <button
             onClick={() => handleShare()}
             className="w-full flex items-center font-dm justify-between rounded px-5 py-3 bg-[#EBB4574D] border border-[#EBB457] text-[#EBB457] font-semibold hover:opacity-90 transition"
-          >Inviteuu
+          >Invite
           </button>
 
         <p className="mt-6">Choose Today’s Zen Level</p>

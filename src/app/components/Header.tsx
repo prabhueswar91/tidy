@@ -6,7 +6,6 @@ import Modal from "./ui/Modal";
 import { useWallet } from "../hooks/useWallet";
 import { useAppStore } from "../store/useAppStore";
 import axios from "axios";
-import MobileConsole from "./MobileConsole";
 
 export default function Header() {
   const {
@@ -24,33 +23,42 @@ export default function Header() {
   const { setWalletAddress, selectedTier, amount } = useAppStore();
   const [telegramId, setTelegramId] = useState<number | null>(null);
 
- useEffect(() => {
-    const getTelegramUser = () => {
-      if (
-        typeof window !== "undefined" &&
-        window.Telegram &&
-        window.Telegram.WebApp
-      ) {
-        const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
-        if (tgUser) {
-          setTelegramId(tgUser.id);
-          console.log("✅ Telegram User:", tgUser);
-        } else {
-          console.warn("⚠️ Telegram WebApp exists, but user not ready yet");
-        }
-      } else {
-        console.warn("⚠️ Telegram WebApp not found");
-      }
-    };
-
-    getTelegramUser();
-
-    const timer = setTimeout(getTelegramUser, 500);
-
-    return () => clearTimeout(timer);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tgId = params.get("tgId");
+    if (tgId) {
+      setTelegramId(Number(tgId));
+      console.log("✅ Telegram ID from URL:", tgId);
+    }
   }, []);
-  console.log("telegramId data", telegramId)
 
+  // useEffect(() => {
+  //   const getTelegramUser = () => {
+  //     if (
+  //       typeof window !== "undefined" &&
+  //       window.Telegram &&
+  //       window.Telegram.WebApp
+  //     ) {
+  //       const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+  //       if (tgUser) {
+  //         setTelegramId(tgUser.id);
+  //         console.log("✅ Telegram User:", tgUser);
+  //       } else {
+  //         console.warn("⚠️ Telegram WebApp exists, but user not ready yet");
+  //       }
+  //     } else {
+  //       console.warn("⚠️ Telegram WebApp not found");
+  //     }
+  //   };
+
+  //   getTelegramUser();
+
+  //   const timer = setTimeout(getTelegramUser, 500);
+
+  //   return () => clearTimeout(timer);
+  // }, []);
+
+  console.log("telegramId data", telegramId);
 
   const handleSignIn = useCallback(
     async (walletAddress: string) => {
@@ -73,11 +81,11 @@ export default function Header() {
           `http://localhost:5000/api/auth/verify`,
           {
             address: walletAddress,
-            signature, 
+            signature,
             tier: selectedTier,
             amount,
-            telegram: 6195798875,
-            // telegram: telegramId,
+            // telegram: 6195798875,
+            telegram: telegramId,
           }
         );
 
@@ -103,7 +111,6 @@ export default function Header() {
 
   return (
     <div>
-      <MobileConsole />
       {isConnected ? (
         <div>
           <span>{formatAddress(address || "")}</span>

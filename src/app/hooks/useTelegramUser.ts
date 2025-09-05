@@ -36,7 +36,6 @@ const initTelegramWebApp = (): Promise<TelegramWebApp | null> => {
     script.onerror = () => {
       resolve(null);
     };
-    console.log("appendedddd")
     document.head.appendChild(script);
   });
 };
@@ -54,7 +53,7 @@ export const useTelegramUser = (): UseTelegramUserResult => {
         if (tg) {
           setIsFromTelegram(true);
           tg.expand();
-          console.log(tg.initDataUnsafe,'****************************8')
+          
           const userInfo: TelegramUserData = {
             id: tg.initDataUnsafe.user?.id || null,
             firstName: tg.initDataUnsafe.user?.first_name || null,
