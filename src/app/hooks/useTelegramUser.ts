@@ -52,6 +52,7 @@ export const useTelegramUser = (): UseTelegramUserResult => {
         
         if (tg) {
           setIsFromTelegram(true);
+          tg.ready();
           tg.expand();
           
           const userInfo: TelegramUserData = {
@@ -66,7 +67,7 @@ export const useTelegramUser = (): UseTelegramUserResult => {
             themeParams: tg.themeParams ? { ...tg.themeParams } : null,
             version: tg.version || null,
           };
-          
+          console.log(tg.initDataUnsafe,'tg.initDataUnsafe>>>>>>>>>>>>>>>')
           setUserData(userInfo);
         }
       } catch (error) {
