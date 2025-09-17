@@ -11,7 +11,6 @@ import Done from "../assets/tik.svg";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { ethers } from "ethers";
-import ShuffleCard from "./ui/SuffleLoader";
 import Price from "../assets/price.svg";
 import GoodLuck from "../assets/goodluck.svg";
 import { useAppStore } from "../store/useAppStore";
