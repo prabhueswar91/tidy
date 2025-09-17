@@ -18,6 +18,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { motion } from "framer-motion";
 import { useTelegram } from "../context/TelegramContext";
 import TidyLoader from "../components/TidyLoader";
+import { useRouter } from "next/navigation";
 
 export type Reward = {
   id: number;
@@ -32,6 +33,7 @@ export type Reward = {
 };
 
 export default function PrizeReveal({ duration }: { duration: number }) {
+  const router = useRouter();
   const [timeLeft, setTimeLeft] = useState(duration);
   const [rangeValue, setRangeValue] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -182,6 +184,9 @@ export default function PrizeReveal({ duration }: { duration: number }) {
       setisClaim(false);
     }
   }
+   const navigatehome = () => {
+    router.push("/");
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] font-dm text-[#FFFEEF] md:px-4">
@@ -376,12 +381,12 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                 : "CLAIM YOUR PRIZE"}
             </button>
 
-            {/* <div className="flex flex-col items-center gap-1 text-xs text-gray-400">
+           <div className="flex flex-col items-center gap-1 text-xs text-gray-400" onClick={()=>navigatehome()}>
               <p>or</p>
               <p className="underline cursor-pointer hover:text-white">
                 DO IT LATER
               </p>
-            </div> */}
+            </div>
           </div>
         )}
         <Invite />
