@@ -65,3 +65,32 @@ body {
 .animate-fade-in {
   animation: fade-in 1.2s ease-in-out infinite alternate;
 }
+
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
+@keyframes bounce-delay1 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+@keyframes bounce-delay2 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+@keyframes bounce-delay3 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+@keyframes bounce-delay4 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+.animate-bounce-delay1 { animation: bounce-delay1 1s ease-in-out infinite; animation-delay: 0s; }
+.animate-bounce-delay2 { animation: bounce-delay2 1s ease-in-out infinite; animation-delay: 0.2s; }
+.animate-bounce-delay3 { animation: bounce-delay3 1s ease-in-out infinite; animation-delay: 0.4s; }
+.animate-bounce-delay4 { animation: bounce-delay4 1s ease-in-out infinite; animation-delay: 0.6s; }

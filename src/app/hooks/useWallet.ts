@@ -21,10 +21,10 @@ export function useWallet() {
     namespace: "eip155",
     onSuccess: (addr) => {
       console.log(addr)
-      alert("sucesss"),
+      //alert("sucesss"),
       setIsWalletOpen(false);
     },
-    onError: (err) => alert(err),
+    onError: (err) => console.log(err),
   });
 
   const logout = () => disconnect();

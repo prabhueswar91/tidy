@@ -2,11 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { headers } from "next/headers";
-import ContextProvider from "./context";
 import Script from "next/script";
-import ErudaInit from "./components/ErudaInit";
-import { Toaster } from "react-hot-toast";
-import { TelegramProvider } from "./context/TelegramContext";
+import ClientLayout from "./ClientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,11 +22,11 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   const headersObj = await headers();
-  const cookies = headersObj.get("cookie");
+  const cookies = headersObj.get("cookie") || "";
 
   return (
     <html
@@ -44,13 +41,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased" suppressHydrationWarning>
-        <ContextProvider cookies={cookies}>
-           <TelegramProvider>
-          {children}
-           <Toaster position="top-right" reverseOrder={false} />
-           </TelegramProvider>
-          </ContextProvider>
-        <ErudaInit />
+        <ClientLayout cookies={cookies}>{children}</ClientLayout>
       </body>
     </html>
   );

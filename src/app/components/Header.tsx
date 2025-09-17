@@ -8,6 +8,8 @@ import { useWallet } from "../hooks/useWallet";
 import { useAppStore } from "../store/useAppStore";
 import axiosInstance from "../utils/axiosInstance";
 import { useTelegram } from "../context/TelegramContext";
+import { useAppKit } from '@reown/appkit/react';
+
 
 interface ApiError {
   response?: {
@@ -30,9 +32,12 @@ export default function Header() {
     provider,
   } = useWallet();
 
+  const isTelegramWebView = /Telegram/i.test(navigator.userAgent);
+
   const { setWalletAddress, selectedTier, amount, setTelegramId } = useAppStore();
   //const [telegramId, setLocalTelegramId] = useState<unknown>(null);
   const { telegramId } = useTelegram();
+  const { open } = useAppKit();
 
   // useEffect(() => {
   //   const getTelegramUser = () => {
@@ -159,6 +164,14 @@ function isApiError(err: unknown): err is ApiError {
     }
   }, [isConnected, address, setWalletAddress, handleSignIn]);
 
+  function connectWallet(){
+    logout();
+    setTimeout(function(){
+        open();
+    },200)
+    
+  }
+
   return (
     <div>
       {isConnected ? (
@@ -171,7 +184,15 @@ function isApiError(err: unknown): err is ApiError {
           borderColor="#EBB457"
           fromColor="#efefef"
           toColor="#797979"
-          onClick={() => setIsWalletOpen(true)}
+          // onClick={() => {
+          //  // if (isTelegramWebView) {
+          //     //alert("Please open in a browser to connect your wallet.");
+          //    // window.open("https://test.bloxio.co/", "_blank");
+          //   //} else {
+          //     open(); // AppKit modal
+          //  // }
+          // }}
+         onClick={() => connectWallet()}
         >
           Connect Wallet
         </Button>

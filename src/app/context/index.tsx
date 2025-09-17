@@ -16,20 +16,19 @@ if (!projectId) {
 const metadata = {
   name: 'TIDYCOIN',
   description: 'TIDYCOIN',
-  url: 'https://tidy-mocha.vercel.app/',
+  url: 'https://test.bloxio.co/',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
 console.log(projectId,'projectIdprojectIdprojectId')
 createAppKit({
   adapters: [wagmiAdapter],
-  projectId:"b01f86bb575d8820ed3e4337491b9685",
+  projectId,
   networks: [networks[0]],
   defaultNetwork: base,
   metadata: metadata,
   features: {
     analytics: true
   },
-  enableCoinbase: true,
 })
 
 function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
