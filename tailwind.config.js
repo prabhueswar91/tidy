@@ -14,13 +14,6 @@ module.exports = {
         playfair: ["'Playfair Display'", "serif"],
         open: ["'Open Sans'", "sans-serif"],        
       },
-      animation: {
-        "ping-slow": "ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite",
-      },
-      animationDelay: {
-        200: "0.2s",
-        400: "0.4s",
-      },
     },
   },
   plugins: [],

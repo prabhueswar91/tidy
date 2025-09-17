@@ -9,7 +9,6 @@ export default function ErudaInit() {
     script.async = true;
     script.onload = () => {
       window.eruda?.init();
-    //   window.eruda?.show();
     };
     document.body.appendChild(script);
   }, []);

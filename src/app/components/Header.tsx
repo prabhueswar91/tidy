@@ -73,7 +73,6 @@ export default function Header() {
         const isPay = data.isPay;
         console.log(isPay,'isPayisPay',data)
         if (!provider) {
-          //alert("provider")
           throw new Error("No provider found");
         }
 

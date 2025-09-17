@@ -27,7 +27,7 @@ export default function Invite() {
           fontFamily: "DM Sans",
           fontSize: "16px",
           lineHeight: "170%",
-          letterSpacing: "-0.03em", // -3%
+          letterSpacing: "-0.03em",
         }}
       >
        INVITE A FRIEND

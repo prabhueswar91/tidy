@@ -11,19 +11,20 @@ import Image from "next/image";
 import PrizeReveal from "../components/PrizeReveal";
 import { useAppStore } from "../store/useAppStore";
 import { useTelegram } from "../context/TelegramContext";
+import { useRouter } from "next/navigation";
 
 export default function TierPage() {
-  //const telegramId = useAppStore((state) => state.telegramId);
   const [duration, setDuration] = useState(20);
   const [showPrizeReveal, setShowPrizeReveal] = useState(false);
    const [loading, setloading] = useState(false);
    const { telegramId } = useTelegram();
   const { selectedTier } = useAppStore();
+  const router = useRouter();
   
 
 const handleStart = async () => {
 
-  // if(!telegramId) return
+  if(!telegramId) return
       try{
         setloading(true)
         const res = await axios.post(
@@ -76,6 +77,7 @@ const handleStart = async () => {
               toColor="#FFFEEF"
               className="text-[#43411D]"
               marginTop="mt-10"
+              onClick={() => router.push("/")} 
             >
               UPGRADE TIER
             </Button>
