@@ -19,24 +19,22 @@ export default function Invite() {
   };
 
   return (
-    <>
     <div className="mt-6 text-center">
       <button
         onClick={() => handleShare()}
-        className="w-full text-white-600 font-semibold text-base  px-8 rounded-lg transition-all duration-200 transform hover:scale-[1.02] text-center"
+        className="w-full text-white font-semibold text-base  px-8 rounded-lg transition-all duration-200 transform hover:scale-[1.02] text-center"
         style={{
           fontFamily: "DM Sans",
           fontSize: "16px",
           lineHeight: "170%",
-          letterSpacing: "-0.03em",
+          letterSpacing: "-0.03em", // -3%
         }}
       >
        INVITE A FRIEND
       </button>
-      <p className=" text-xs text-white-600">
+      <p className=" text-xs text-gray-950">
         And Win Extra Zen Moments
       </p>
     </div>
-    </>
   );
 }

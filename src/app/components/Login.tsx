@@ -8,7 +8,9 @@ import Modal from "./ui/Modal";
 import { useRouter } from "next/navigation";
 import Header from "./Header";
 import { useAppStore } from "../store/useAppStore";
+import { useTelegramUser } from "../hooks/useTelegramUser";
 import axiosInstance from "../utils/axiosInstance";
+// import NeonLoader from "./NeonLoader";
 import TidyLoader from "./TidyLoader";
 import Invite from "../components/Invite";
 
@@ -40,9 +42,10 @@ export default function Login() {
       } catch (err) {
         console.error("❌ Error fetching tiers:", err);
       } finally {
-        setTimeout(function () {
-          setLoading(false);
-        }, 600);
+        setTimeout(function(){
+            setLoading(false);
+        },600);
+       
       }
     };
     fetchTiers();
@@ -63,11 +66,11 @@ export default function Login() {
 
   const handleContinue = () => {
     if (!selectedTier) {
-      toast.error("Please select a tier first!", {
-        id: "123",
-        duration: 3000,
-      });
-      return;
+        toast.error("Please select a tier first!", {
+            id: "123",
+            duration: 3000
+        })
+        return;
     }
 
     if (
@@ -75,26 +78,25 @@ export default function Login() {
         selectedTier.toUpperCase() === "GOLD") &&
       !walletAddress
     ) {
-      toast.error(
-        "Please connect your wallet to continue with Silver or Gold.",
-        {
-          id: "123",
-          duration: 3000,
-        }
-      );
-      return;
+        toast.error("Please connect your wallet to continue with Silver or Gold.", {
+            id: "123",
+            duration: 3000
+        })
+        return;
     }
 
     router.push("/Tier");
   };
 
   if (loading) {
-    return <TidyLoader />;
-  }
+  return <TidyLoader />;
+}
 
   return (
     <div className="flex min-h-screen items-center font-dm justify-center text-[#FFFEEF] bg-gradient-to-b from-[#0a0a0a] to-[#1e293b]">
-      <Card paddingY="py-16 md:py-20">
+    
+
+<Card paddingY="py-16 md:py-20">
         <h1 className="text-white text-xl font-bold tracking-widest">
           TIDYCOIN
         </h1>
@@ -132,7 +134,7 @@ export default function Login() {
         <p className="mt-3 text-xs text-gray-400">
           Your moments are a click away
         </p>
-        <Invite />
+         <Invite />
       </Card>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>

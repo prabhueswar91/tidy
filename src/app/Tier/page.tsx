@@ -11,15 +11,13 @@ import Image from "next/image";
 import PrizeReveal from "../components/PrizeReveal";
 import { useAppStore } from "../store/useAppStore";
 import { useTelegram } from "../context/TelegramContext";
-import { useRouter } from "next/navigation";
 
 export default function TierPage() {
+  //const telegramId = useAppStore((state) => state.telegramId);
   const [duration, setDuration] = useState(20);
   const [showPrizeReveal, setShowPrizeReveal] = useState(false);
    const [loading, setloading] = useState(false);
    const { telegramId } = useTelegram();
-  const { selectedTier } = useAppStore();
-  const router = useRouter();
   
 
 const handleStart = async () => {
@@ -53,8 +51,6 @@ const handleStart = async () => {
     return <PrizeReveal duration={duration} />; 
   }
 
-  // console.log("selectedTier", selectedTier)
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] font-dm text-[#FFFEEF]">
       <Card2>
@@ -62,7 +58,7 @@ const handleStart = async () => {
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#AC8B8B4D] border border-[#AC8B8B] px-4 py-1 rounded text-xs font-thin shadow-md">
             CURRENT TIER{" "}
             <span className="ml-1 text-lg font-semibold text-[#AC8B8B]">
-               {selectedTier ? selectedTier.toUpperCase() : "None"}
+              BRONZE
             </span>
           </div>
 
@@ -77,7 +73,6 @@ const handleStart = async () => {
               toColor="#FFFEEF"
               className="text-[#43411D]"
               marginTop="mt-10"
-              onClick={() => router.push("/")} 
             >
               UPGRADE TIER
             </Button>

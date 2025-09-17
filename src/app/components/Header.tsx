@@ -8,8 +8,6 @@ import { useWallet } from "../hooks/useWallet";
 import { useAppStore } from "../store/useAppStore";
 import axiosInstance from "../utils/axiosInstance";
 import { useTelegram } from "../context/TelegramContext";
-import { useAppKit } from '@reown/appkit/react';
-
 
 interface ApiError {
   response?: {
@@ -32,12 +30,9 @@ export default function Header() {
     provider,
   } = useWallet();
 
-  const isTelegramWebView = /Telegram/i.test(navigator.userAgent);
-
   const { setWalletAddress, selectedTier, amount, setTelegramId } = useAppStore();
   //const [telegramId, setLocalTelegramId] = useState<unknown>(null);
   const { telegramId } = useTelegram();
-  const { open } = useAppKit();
 
   // useEffect(() => {
   //   const getTelegramUser = () => {
@@ -78,6 +73,7 @@ export default function Header() {
         const isPay = data.isPay;
         console.log(isPay,'isPayisPay',data)
         if (!provider) {
+          //alert("provider")
           throw new Error("No provider found");
         }
 
@@ -176,15 +172,7 @@ function isApiError(err: unknown): err is ApiError {
           borderColor="#EBB457"
           fromColor="#efefef"
           toColor="#797979"
-          onClick={() => {
-           // if (isTelegramWebView) {
-              //alert("Please open in a browser to connect your wallet.");
-             // window.open("https://test.bloxio.co/", "_blank");
-            //} else {
-              open(); // AppKit modal
-           // }
-          }}
-         // onClick={() => setIsWalletOpen(true)}
+          onClick={() => setIsWalletOpen(true)}
         >
           Connect Wallet
         </Button>
@@ -201,7 +189,7 @@ function isApiError(err: unknown): err is ApiError {
           >
             Connect MetaMask
           </Button>
-          {/* <Button
+          <Button
             borderColor="#797979"
             fromColor="#EBB457"
             toColor="#efefef"
@@ -217,7 +205,6 @@ function isApiError(err: unknown): err is ApiError {
           >
             Phantom
           </Button>
-          <appkit-button /> */}
           
         </div>
       </Modal>
