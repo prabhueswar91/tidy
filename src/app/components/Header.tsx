@@ -204,6 +204,7 @@ function isApiError(err: unknown): err is ApiError {
           >
             Phantom
           </Button>
+          <appkit-button />
           
         </div>
       </Modal>
