@@ -188,7 +188,7 @@ function isApiError(err: unknown): err is ApiError {
           >
             Connect MetaMask
           </Button>
-          <Button
+          {/* <Button
             borderColor="#797979"
             fromColor="#EBB457"
             toColor="#efefef"
@@ -204,7 +204,7 @@ function isApiError(err: unknown): err is ApiError {
           >
             Phantom
           </Button>
-          <appkit-button />
+          <appkit-button /> */}
           
         </div>
       </Modal>
