@@ -3,9 +3,21 @@
 import { useEffect, useState, useCallback } from "react";
 import Button from "./ui/Button";
 import Modal from "./ui/Modal";
+import toast from "react-hot-toast";
 import { useWallet } from "../hooks/useWallet";
 import { useAppStore } from "../store/useAppStore";
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance";
+import { useTelegram } from "../context/TelegramContext";
+import { useAppKit } from '@reown/appkit/react';
+
+
+interface ApiError {
+  response?: {
+    data?: {
+      error?: string;
+    };
+  };
+}
 
 export default function Header() {
   const {
@@ -20,17 +32,12 @@ export default function Header() {
     provider,
   } = useWallet();
 
-  const { setWalletAddress, selectedTier, amount } = useAppStore();
-  const [telegramId, setTelegramId] = useState<number | null>(null);
+  const isTelegramWebView = /Telegram/i.test(navigator.userAgent);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const tgId = params.get("tgId");
-    if (tgId) {
-      setTelegramId(Number(tgId));
-      console.log("✅ Telegram ID from URL:", tgId);
-    }
-  }, []);
+  const { setWalletAddress, selectedTier, amount, setTelegramId } = useAppStore();
+  //const [telegramId, setLocalTelegramId] = useState<unknown>(null);
+  const { telegramId } = useTelegram();
+  const { open } = useAppKit();
 
   // useEffect(() => {
   //   const getTelegramUser = () => {
@@ -41,8 +48,8 @@ export default function Header() {
   //     ) {
   //       const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
   //       if (tgUser) {
-  //         setTelegramId(tgUser.id);
-  //         console.log("✅ Telegram User:", tgUser);
+  //         setLocalTelegramId(tgUser.id);  
+  //       setTelegramId(tgUser.id.toString());
   //       } else {
   //         console.warn("⚠️ Telegram WebApp exists, but user not ready yet");
   //       }
@@ -52,53 +59,101 @@ export default function Header() {
   //   };
 
   //   getTelegramUser();
-
   //   const timer = setTimeout(getTelegramUser, 500);
 
   //   return () => clearTimeout(timer);
   // }, []);
 
-  console.log("telegramId data", telegramId);
-
   const handleSignIn = useCallback(
     async (walletAddress: string) => {
       try {
         console.log("telegramId", telegramId);
-        const { data } = await axios.post(
-          `http://localhost:5000/api/auth/nonce`,
-          { address: walletAddress }
-        );
-        const nonce = data.nonce;
 
-        if (!provider) throw new Error("No provider found");
+        const { data } = await axiosInstance.post("/auth/nonce", {
+          address: walletAddress,
+          telegram: telegramId,
+          tier: selectedTier
+        });
+        const nonce = data.nonce;
+        const isPay = data.isPay;
+        console.log(isPay,'isPayisPay',data)
+        if (!provider) {
+          throw new Error("No provider found");
+        }
 
         const signer = await provider.getSigner();
-        const signature = await signer.signMessage(
-          `Sign this message to log in: ${nonce}`
-        );
+        let signmessage = `Sign this message to log in: ${nonce}.`
+        if(isPay){
+           console.log('isPayisPay11')
+          signmessage = `Sign this message to log in: ${nonce}. I confirm the deduction of ${amount} XP from my account to proceed with this purchase.`
+          
+        }
 
-        const verifyRes = await axios.post(
-          `http://localhost:5000/api/auth/verify`,
-          {
-            address: walletAddress,
-            signature,
-            tier: selectedTier,
-            amount,
-            // telegram: 6195798875,
-            telegram: telegramId,
+        const signature = await signer.signMessage(signmessage);
+        
+        const verifyRes = await axiosInstance.post("/auth/verify", {
+          address: walletAddress,
+          signature,
+          tier: selectedTier,
+          amount,
+          telegram: telegramId,
+          //telegram: 6195798879,
+        });
+
+        const { token,message } = verifyRes.data;
+        if (token) {
+          localStorage.setItem("token", token);
+          console.log("✅ Signed in successfully:", { selectedTier, amount });
+          if(message=="Verified, XP deducted, and tier updated"){
+            toast.success(`Successfully purchased the ${selectedTier?.toUpperCase()} package.`, {
+                id: "123",
+                duration: 3000,
+                icon: '✅'
+            });
           }
-        );
+        }else{
+          logout()
+          toast.error("Insufficient XP balance.", {
+              id: "123",
+              duration: 5000,
+              icon: '❌'
+          })
+        }
+      }catch (error: unknown) {
+          console.error("❌ Error caught:", error);
 
-        const { token } = verifyRes.data;
-        localStorage.setItem("auth_token", token);
+          let message = "Please try again later.";
 
-        console.log("✅ Signed in successfully:", { selectedTier, amount });
-      } catch (error) {
-        console.error("❌ Wallet sign-in failed", error);
+          if (error instanceof Error) {
+            const errMsg = error.message.toLowerCase();
+
+            if (errMsg.includes("user rejected") || errMsg.includes("connection rejected")) {
+              message = "Connection rejected";
+            } else if (errMsg.includes("xp deduct") || errMsg.includes("xp balance")) {
+              message = "Insufficient XP balance.";
+            }
+          }
+
+          if (isApiError(error) && error.response?.data?.error === "XP deduct failed") {
+            message = "Insufficient XP balance.";
+          }
+
+          toast.error(message, {
+            id: "123",
+            duration: 5000,
+            icon: "❌",
+          });
+
+          logout();
       }
     },
     [telegramId, provider, selectedTier, amount]
   );
+
+  // ---- Type guard to check ApiError ----
+function isApiError(err: unknown): err is ApiError {
+  return typeof err === "object" && err !== null && "response" in err;
+}
 
   useEffect(() => {
     if (isConnected && address) {
@@ -121,7 +176,15 @@ export default function Header() {
           borderColor="#EBB457"
           fromColor="#efefef"
           toColor="#797979"
-          onClick={() => setIsWalletOpen(true)}
+          onClick={() => {
+           // if (isTelegramWebView) {
+              //alert("Please open in a browser to connect your wallet.");
+             // window.open("https://test.bloxio.co/", "_blank");
+            //} else {
+              open(); // AppKit modal
+           // }
+          }}
+         // onClick={() => setIsWalletOpen(true)}
         >
           Connect Wallet
         </Button>
@@ -138,17 +201,24 @@ export default function Header() {
           >
             Connect MetaMask
           </Button>
-
+          {/* <Button
+            borderColor="#797979"
+            fromColor="#EBB457"
+            toColor="#efefef"
+            onClick={() => connect("coinbase")}
+          >
+           Coin Base
+          </Button>
           <Button
             borderColor="#797979"
             fromColor="#EBB457"
             toColor="#efefef"
-            marginTop="mt-6"
-            onClick={() => connect("walletConnect")}
-            disabled={!isReady}
+            onClick={() => connect("phantom")}
           >
-            Trust Wallet
+            Phantom
           </Button>
+          <appkit-button /> */}
+          
         </div>
       </Modal>
     </div>

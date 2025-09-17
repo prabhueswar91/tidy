@@ -2,15 +2,22 @@
 
 import { useEffect, useState } from "react";
 import Card3 from "../components/ui/Card3";
+import Invite from "../components/Invite";
 import Image from "next/image";
 import CircleImg from "../assets/circle.svg";
 import Button from "./ui/Button";
 import Gift from "../assets/gift-icon.svg";
 import Done from "../assets/tik.svg";
 import axios from "axios";
-import ShuffleCard from "./ui/SuffleLoader";
+import toast from "react-hot-toast";
+import { ethers } from "ethers";
 import Price from "../assets/price.svg";
 import GoodLuck from "../assets/goodluck.svg";
+import { useAppStore } from "../store/useAppStore";
+import axiosInstance from "../utils/axiosInstance";
+import { motion } from "framer-motion";
+import { useTelegram } from "../context/TelegramContext";
+import TidyLoader from "../components/TidyLoader";
 
 export type Reward = {
   id: number;
@@ -30,6 +37,31 @@ export default function PrizeReveal({ duration }: { duration: number }) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [reward, setReward] = useState<Reward | null>(null);
   const [loading, setLoading] = useState(false);
+  // const telegramId = useAppStore((state) => state.telegramId);
+  const selectedTier = useAppStore((state) => state.selectedTier);
+  const [userId, setUserId] = useState<number | null>(1);
+  const [isClaim, setisClaim] = useState<boolean>(false);
+  const [claimed, setclaimed] = useState<boolean>(false);
+  const [walletAddress, setwalletAddress] = useState<string>("");
+  const { telegramId } = useTelegram();
+
+  useEffect(() => {
+    if (!telegramId) return;
+
+    const fetchUserId = async () => {
+      try {
+        const res = await axiosInstance.post("/auth/getUserIdByTelegram", {
+          telegramId,
+        });
+        setUserId(res.data.userId);
+        console.log("✅ User ID:", res.data.userId);
+      } catch (err) {
+        console.error("❌ Failed to fetch user ID:", err);
+      }
+    };
+
+    fetchUserId();
+  }, [telegramId]);
 
   useEffect(() => {
     setTimeLeft(duration);
@@ -59,15 +91,31 @@ export default function PrizeReveal({ duration }: { duration: number }) {
   }, [duration]);
 
   const handleReveal = async () => {
+    if (!userId) {
+      console.log("userId", userId);
+      return;
+    }
+
     try {
       setLoading(true);
+      console.log("reward", reward);
+      let newtier = null;
+
+      if (reward && reward.value === "Higher Tier Access") {
+        console.log("123");
+        if (selectedTier === "BRONZE") {
+          newtier = "SILVER";
+        } else if (selectedTier === "SILVER") {
+          newtier = "GOLD";
+        }
+      }
       setReward(null);
 
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/reward/play`,
         {
-          userId: 1,
-          tier: "BRONZE",
+          userId,
+           tier: newtier !== null ? newtier : selectedTier,
           durationSeconds: duration,
         }
       );
@@ -82,21 +130,83 @@ export default function PrizeReveal({ duration }: { duration: number }) {
     }
   };
 
+  async function claimToken() {
+    if (!userId) return;
+
+    if (!ethers.isAddress(walletAddress)) {
+      toast.error("Enter valid wallet address.", {
+        id: "123",
+        duration: 3000,
+        icon: "❌",
+      });
+      return;
+    }
+
+    try {
+      setisClaim(true);
+
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/reward/claim-reward`,
+        {
+          userId,
+          id: reward?.id || 0,
+          walletAddress,
+        }
+      );
+
+      if (res && res.data && res.data.status) {
+        toast.success("Successfully claimed TIDY tokens.", {
+          id: "123",
+          duration: 3000,
+          icon: "✅",
+        });
+        setTimeout(() => {
+          setclaimed(true);
+          setisClaim(false);
+        }, 1500);
+      } else {
+        toast.error("Failed to claim.", {
+          id: "123",
+          duration: 3000,
+          icon: "❌",
+        });
+        setisClaim(false);
+      }
+    } catch (err) {
+      console.error("❌ API Error:", err);
+      toast.error("Failed to claim.", {
+        id: "123",
+        duration: 3000,
+        icon: "❌",
+      });
+      setisClaim(false);
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] font-dm text-[#FFFEEF] md:px-4">
       <Card3>
         <div className="w-full flex flex-col items-center gap-6 sm:gap-8">
-          {/* Timer / Completed Message */}
           {!isCompleted ? (
             <div className="w-full max-w-sm bg-[#14131899] border border-[#333333] rounded-xl px-2 sm:px-6 py-8 text-center">
               <div className="mx-auto max-w-[180px] h-40 md:h-60 relative">
-                <div className="w-full h-full animate-spin-slow">
-                  <Image
-                    src={CircleImg}
-                    alt="Circle"
-                    fill
-                    style={{ objectFit: "contain" }}
-                  />
+                <div className="w-full h-full">
+                  <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{
+                      repeat: Infinity,
+                      ease: "linear",
+                      duration: 10,
+                    }}
+                    className="w-full h-full"
+                  >
+                    <Image
+                      src={CircleImg}
+                      alt="Circle"
+                      fill
+                      style={{ objectFit: "contain" }}
+                    />
+                  </motion.div>
                 </div>
               </div>
               <h1 className="mt-2 md:mt-6 text-xl sm:text-3xl font-bold">
@@ -129,7 +239,6 @@ export default function PrizeReveal({ duration }: { duration: number }) {
             )
           )}
 
-          {/* Reveal Button */}
           {!loading && !reward && (
             <Button
               image={<Image src={Gift} alt="Gift" width={18} height={18} />}
@@ -145,7 +254,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
             </Button>
           )}
 
-          {loading && <ShuffleCard />}
+          {loading && <TidyLoader />}
 
           {reward && !loading && (
             <div className="w-full max-w-sm bg-[#14131899] border border-[#333333] rounded px-6 py-8 text-center shadow-[0_4px_30px_rgba(0,0,0,0.9)]">
@@ -191,6 +300,8 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                   <input
                     type="text"
                     placeholder="ENTER RECEIVING WALLET..."
+                    value={walletAddress}
+                    onChange={(e) => setwalletAddress(e.target.value)}
                     className="w-full mt-8 px-4 py-3 bg-[#9292924D] border border-[#929292] rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-yellow-400 placeholder-[#CFCFCF] placeholder:text-xs"
                   />
                   <p className="mt-2 text-[11px]">
@@ -202,19 +313,37 @@ export default function PrizeReveal({ duration }: { duration: number }) {
           )}
         </div>
 
-        {reward && reward.type === "TIDY_ZEN_MOMENT" && (
-          <>
-            <Button
-              className="w-full mt-6"
-              borderColor="#D2A100"
-              fromColor="#110E05"
-              toColor="#362A02"
-              onClick={handleReveal}
-            >
-              Reveal Again
-            </Button>
-          </>
-        )}
+        {reward &&
+          reward.type === "TIDY_ZEN_MOMENT" &&
+          reward.value !== "Higher Tier Access" && (
+            <>
+              <Button
+                className="w-full mt-6"
+                borderColor="#D2A100"
+                fromColor="#110E05"
+                toColor="#362A02"
+                onClick={handleReveal}
+              >
+                Reveal Again
+              </Button>
+            </>
+          )}
+
+        {reward &&
+          reward.type === "TIDY_ZEN_MOMENT" &&
+          reward.value === "Higher Tier Access" && (
+            <>
+              <Button
+                className="w-full mt-6"
+                borderColor="#D2A100"
+                fromColor="#110E05"
+                toColor="#362A02"
+                onClick={handleReveal}
+              >
+                Higher Tier Unlocked
+              </Button>
+            </>
+          )}
 
         {reward && reward.type === "QUOTE" && (
           <div className="flex flex-col mt-16 items-center gap-3 w-full max-w-sm">
@@ -234,19 +363,28 @@ export default function PrizeReveal({ duration }: { duration: number }) {
 
         {reward && reward.type === "TOKEN" && (
           <div className="flex flex-col mt-20 items-center gap-3 w-full max-w-sm">
-            <button className="w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#110E05] to-[#362A02] border border-[#D2A100] py-3 font-semibold text-yellow-400 shadow-[0_0_15px_rgba(210,161,0,0.4)] hover:from-[#362A02] hover:to-[#110E05] hover:text-yellow-300 transition">
+            <button
+              disabled={isClaim || claimed}
+              onClick={() => claimToken()}
+              className="w-full flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#110E05] to-[#362A02] border border-[#D2A100] py-3 font-semibold text-yellow-400 shadow-[0_0_15px_rgba(210,161,0,0.4)] hover:from-[#362A02] hover:to-[#110E05] hover:text-yellow-300 transition"
+            >
               <Image src={Gift} alt="Gift" width={18} height={18} />
-              CLAIM YOUR PRIZE
+              {isClaim
+                ? "Processing"
+                : claimed
+                ? "CLAIMED"
+                : "CLAIM YOUR PRIZE"}
             </button>
 
-            <div className="flex flex-col items-center gap-1 text-xs text-gray-400">
+            {/* <div className="flex flex-col items-center gap-1 text-xs text-gray-400">
               <p>or</p>
               <p className="underline cursor-pointer hover:text-white">
                 DO IT LATER
               </p>
-            </div>
+            </div> */}
           </div>
         )}
+        <Invite />
       </Card3>
 
       <style jsx>{`

@@ -7,6 +7,9 @@ interface AppState {
 
   walletAddress: string | null;
   setWalletAddress: (addr: string | null) => void;
+
+  telegramId: string | null;
+  setTelegramId: (id: string | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -16,4 +19,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   walletAddress: null,
   setWalletAddress: (addr) => set({ walletAddress: addr }),
+
+  telegramId: null,
+  setTelegramId: (id) => set({ telegramId: id }),
 }));

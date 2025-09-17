@@ -26,3 +26,42 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Coin container */
+.coin {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8),
+              inset 0 0 15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: black;
+  animation: coin-spin 2s infinite linear;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.coin-face {
+  transform: translateZ(5px);
+}
+
+/* 3D spinning animation */
+@keyframes coin-spin {
+  0%   { transform: rotateY(0deg); }
+  50%  { transform: rotateY(180deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+/* Text fade in */
+@keyframes fade-in {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 1.2s ease-in-out infinite alternate;
+}

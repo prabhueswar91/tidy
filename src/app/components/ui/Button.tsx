@@ -27,10 +27,12 @@ export default function Button({
   className = "",
   marginTop = "mt-20",
   shadowClass = "shadow-lg shadow-black/40", // ✅ default shadow
+  disabled = false,
 }: ButtonProps) {
   return (
     <button
       onClick={onClick}
+       disabled={disabled}
       className={`
         ${marginTop} w-full rounded-full 
         border py-3 font-semibold 
