@@ -167,6 +167,7 @@ function isApiError(err: unknown): err is ApiError {
   function connectWallet(){
     logout();
     setTimeout(function(){
+      console.log("open")
         open();
     },200)
     
