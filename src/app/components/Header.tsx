@@ -1,105 +1,156 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Button from "./ui/Button";
 import Modal from "./ui/Modal";
-
-import { useAppKitWallet } from "@reown/appkit-wallet-button/react";
-import { useDisconnect } from "@reown/appkit/react";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useWallet } from "../hooks/useWallet";
+import { useAppStore } from "../store/useAppStore";
+import axios from "axios";
 
 export default function Header() {
+  const {
+    address,
+    isConnected,
+    connect,
+    logout,
+    isWalletOpen,
+    setIsWalletOpen,
+    formatAddress,
+    isReady,
+    provider,
+  } = useWallet();
 
-    const { disconnect } = useDisconnect();
-    const { address, isConnected } = useAppKitAccount();
+  const { setWalletAddress, selectedTier, amount } = useAppStore();
+  const [telegramId, setTelegramId] = useState<number | null>(null);
 
-    const [isWalletOpen, setIsWalletOpen] = useState(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tgId = params.get("tgId");
+    if (tgId) {
+      setTelegramId(Number(tgId));
+      console.log("✅ Telegram ID from URL:", tgId);
+    }
+  }, []);
 
-    const { connect, isReady } = useAppKitWallet({
-        namespace: "eip155",
-        onSuccess: (address) =>{
-            console.log(address,'address>>>>>>>')
-            setIsWalletOpen(false);
-        },
-        onError: (err) => console.error("Connection error:", err),
-    });
+  // useEffect(() => {
+  //   const getTelegramUser = () => {
+  //     if (
+  //       typeof window !== "undefined" &&
+  //       window.Telegram &&
+  //       window.Telegram.WebApp
+  //     ) {
+  //       const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+  //       if (tgUser) {
+  //         setTelegramId(tgUser.id);
+  //         console.log("✅ Telegram User:", tgUser);
+  //       } else {
+  //         console.warn("⚠️ Telegram WebApp exists, but user not ready yet");
+  //       }
+  //     } else {
+  //       console.warn("⚠️ Telegram WebApp not found");
+  //     }
+  //   };
 
-    const openModal = () => setIsWalletOpen(true);
-    const logout = () => disconnect();
-    const copyToClipboard = () => {
-        if (address) {
-            navigator.clipboard.writeText(address);
-        }
-    };
+  //   getTelegramUser();
 
-    const formatAddress = (addr: string) => {
-    if (!addr) return "";
-    return `${addr.slice(0, 10)}...${addr.slice(-10)}`;
-    };
+  //   const timer = setTimeout(getTelegramUser, 500);
+
+  //   return () => clearTimeout(timer);
+  // }, []);
+
+  console.log("telegramId data", telegramId);
+
+  const handleSignIn = useCallback(
+    async (walletAddress: string) => {
+      try {
+        console.log("telegramId", telegramId);
+        const { data } = await axios.post(
+          `http://localhost:5000/api/auth/nonce`,
+          { address: walletAddress }
+        );
+        const nonce = data.nonce;
+
+        if (!provider) throw new Error("No provider found");
+
+        const signer = await provider.getSigner();
+        const signature = await signer.signMessage(
+          `Sign this message to log in: ${nonce}`
+        );
+
+        const verifyRes = await axios.post(
+          `http://localhost:5000/api/auth/verify`,
+          {
+            address: walletAddress,
+            signature,
+            tier: selectedTier,
+            amount,
+            // telegram: 6195798875,
+            telegram: telegramId,
+          }
+        );
+
+        const { token } = verifyRes.data;
+        localStorage.setItem("auth_token", token);
+
+        console.log("✅ Signed in successfully:", { selectedTier, amount });
+      } catch (error) {
+        console.error("❌ Wallet sign-in failed", error);
+      }
+    },
+    [telegramId, provider, selectedTier, amount]
+  );
+
+  useEffect(() => {
+    if (isConnected && address) {
+      setWalletAddress(address);
+      handleSignIn(address);
+    } else {
+      setWalletAddress(null);
+    }
+  }, [isConnected, address, setWalletAddress, handleSignIn]);
 
   return (
-    <div className="flex min-h-screen items-center font-dm justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] px-6">
-        {isConnected ? (
-        <div className="flex flex-col items-center space-y-2 bg-gray-800 rounded-lg p-4 shadow-md">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-200">
-              {formatAddress(address?address:"")}
-            </span>
-          </div>
-          <Button
-            onClick={logout}
-            className="px-4 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
-          >
-            Disconnect
-          </Button>
+    <div>
+      {isConnected ? (
+        <div>
+          <span>{formatAddress(address || "")}</span>
+          <Button onClick={logout}>Disconnect</Button>
         </div>
       ) : (
         <Button
-          onClick={openModal}
-          className="px-6 py-2 bg-yellow-400 text-black font-semibold rounded hover:bg-yellow-500"
+          borderColor="#EBB457"
+          fromColor="#efefef"
+          toColor="#797979"
+          onClick={() => setIsWalletOpen(true)}
         >
           Connect Wallet
         </Button>
       )}
-      
-        <Modal isOpen={isWalletOpen} onClose={() => setIsWalletOpen(false)}>
-        <h2 className="text-2xl font-bold my-6 text-center">
-            Connect Wallet
-        </h2>
 
-        
-        <div className="flex flex-col items-center mb-6">
-            <button
-            className="m-2 px-4 py-2 bg-yellow-300 rounded w-56 font-semibold"
+      <Modal isOpen={isWalletOpen} onClose={() => setIsWalletOpen(false)}>
+        <h2>Connect Wallet</h2>
+        <div>
+          <Button
+            borderColor="#797979"
+            fromColor="#EBB457"
+            toColor="#efefef"
             onClick={() => connect("metamask")}
-            >
+          >
             Connect MetaMask
-            </button>
+          </Button>
 
-            {/* <button
-            className="m-2 px-4 py-2 bg-purple-300 rounded w-56 font-semibold"
-            onClick={() => connect("phantom")}
-            >
-            Connect Phantom
-            </button> */}
-
-            <button
-            className="m-2 px-4 py-2 bg-blue-300 rounded w-56 font-semibold"
+          <Button
+            borderColor="#797979"
+            fromColor="#EBB457"
+            toColor="#efefef"
+            marginTop="mt-6"
             onClick={() => connect("walletConnect")}
             disabled={!isReady}
-            >
+          >
             Trust Wallet
-            </button>
-
-            <button
-            className="m-2 px-4 py-2 bg-green-300 rounded w-56 font-semibold"
-            onClick={() => connect("coinbase")}
-            disabled={!isReady}
-            >
-            Connect Coinbase Wallet
-            </button>
+          </Button>
         </div>
-        </Modal>
+      </Modal>
     </div>
   );
 }

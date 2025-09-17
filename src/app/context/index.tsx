@@ -14,8 +14,8 @@ if (!projectId) {
 }
 
 const metadata = {
-  name: 'Tidy',
-  description: 'Tidy Token',
+  name: 'TIDYCOIN',
+  description: 'TIDYCOIN',
   url: 'https://tidy-mocha.vercel.app/',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
