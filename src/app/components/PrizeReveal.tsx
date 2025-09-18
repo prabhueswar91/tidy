@@ -44,6 +44,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
   const [userId, setUserId] = useState<number | null>(1);
   const [isClaim, setisClaim] = useState<boolean>(false);
   const [claimed, setclaimed] = useState<boolean>(false);
+  const [showreveal, setShowreveal] = useState<boolean>(true);
   const [walletAddress, setwalletAddress] = useState<string>("");
   const { telegramId } = useTelegram();
 
@@ -97,6 +98,8 @@ export default function PrizeReveal({ duration }: { duration: number }) {
       console.log("userId", userId);
       return;
     }
+
+    setShowreveal(false)
 
     try {
       setLoading(true);
@@ -244,7 +247,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
             )
           )}
 
-          {isCompleted && !reward && (
+          {isCompleted && showreveal && (
             <Button
               image={<Image src={Gift} alt="Gift" width={18} height={18} />}
               className="w-full max-w-sm"
