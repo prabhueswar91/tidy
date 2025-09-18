@@ -244,7 +244,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
             )
           )}
 
-          {isCompleted && (
+          {isCompleted && !reward && (
             <Button
               image={<Image src={Gift} alt="Gift" width={18} height={18} />}
               className="w-full max-w-sm"
