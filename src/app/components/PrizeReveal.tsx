@@ -244,7 +244,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
             )
           )}
 
-          {!loading && !reward && (
+          {!isCompleted && (
             <Button
               image={<Image src={Gift} alt="Gift" width={18} height={18} />}
               className="w-full max-w-sm"
@@ -360,7 +360,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
               className="w-20 h-20"
             />
 
-            <div className="flex flex-col items-center gap-1 text-lg text-gray-400">
+            <div className="flex flex-col items-center gap-1 text-lg text-gray-400" onClick={()=>navigatehome()}>
               <p className="cursor-pointer">Good Luck</p>
             </div>
           </div>
