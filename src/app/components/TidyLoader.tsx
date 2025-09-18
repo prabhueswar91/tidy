@@ -15,7 +15,7 @@ export default function TidyLoader() {
 
         {/* Loading Text */}
         <h1 className="text-white text-xl font-bold tracking-widest">
-          Loading TidyCoin...
+          Loading TidyZen...
         </h1>
         <p className="mt-3 text-xs text-gray-400">
           Please wait while we prepare your experience

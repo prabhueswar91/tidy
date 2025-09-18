@@ -96,7 +96,7 @@ export default function Login() {
     <div className="flex min-h-screen items-center font-dm justify-center text-[#FFFEEF] bg-gradient-to-b from-[#0a0a0a] to-[#1e293b]">
       <Card paddingY="py-16 md:py-20">
         <h1 className="text-white text-xl font-bold tracking-widest">
-          TIDYCOIN
+          TIDYZEN
         </h1>
         <p className="mt-1 text-xl font-normal">TidyZen Moments</p>
         <p className="mt-6">Choose Today&apos;s Zen Level</p>

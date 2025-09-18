@@ -14,8 +14,8 @@ if (!projectId) {
 }
 
 const metadata = {
-  name: 'TIDYCOIN',
-  description: 'TIDYCOIN',
+  name: 'TIDYZEN',
+  description: 'TIDYZEN',
   url: 'https://test.bloxio.co/',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }

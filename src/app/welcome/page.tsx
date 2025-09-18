@@ -10,14 +10,14 @@ export default function WelcomePage() {
       <div className="text-center p-6 max-w-md">
         <Image
           src={Logo1}
-          alt="TidyCoin Logo"
+          alt="TidyZen Logo"
           width={200}
           height={200}
           className="mx-auto mb-6 rounded-xl shadow-lg"
           priority
         />
 
-        <h2 className="text-2xl font-bold mb-3">👋 Welcome to TidyCoin</h2>
+        <h2 className="text-2xl font-bold mb-3">👋 Welcome to TidyZen</h2>
         <p className="mb-6 text-gray-300">
           Join our community and follow updates below:
         </p>
@@ -31,7 +31,7 @@ export default function WelcomePage() {
               background: "linear-gradient(to right, #242424, #525252)",
             }}
           >
-            🚀 Join Tidycoin Community
+            🚀 Join TidyZen Community
           </Link>
 
           <Link
