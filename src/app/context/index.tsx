@@ -3,7 +3,8 @@
 import { wagmiAdapter, projectId,networks } from '../config/wagmiConfig'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { base } from '@reown/appkit/networks'
+import { SolanaAdapter } from '@reown/appkit-adapter-solana/react'
+import { base,solana } from '@reown/appkit/networks'
 import React, { type ReactNode } from 'react'
 import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
 
@@ -21,9 +22,9 @@ const metadata = {
 }
 console.log(projectId,'projectIdprojectIdprojectId')
 createAppKit({
-  adapters: [wagmiAdapter],
+  adapters: [wagmiAdapter,new SolanaAdapter()],
   projectId,
-  networks: [networks[0]],
+  networks: [networks[0],solana],
   defaultNetwork: base,
   metadata: metadata,
   features: {
