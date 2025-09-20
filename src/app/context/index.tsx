@@ -20,7 +20,7 @@ const metadata = {
   url: 'https://test.bloxio.co/',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
-console.log(projectId,'projectIdprojectIdprojectId')
+console.log(projectId,'projectIdprojectIdprojectIdssss')
 createAppKit({
   adapters: [wagmiAdapter,new SolanaAdapter()],
   projectId,
