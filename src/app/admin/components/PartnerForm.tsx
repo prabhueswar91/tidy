@@ -5,79 +5,132 @@ import axiosInstance from "./axiosInstance";
 import { toast } from "react-hot-toast";
 
 interface Partner {
-  id?: number;
-  name: string;
-  coin: string;
+  id: number;
+  groupName: string;
+  project: string;
+  contact: string;
+  duration: string;
+  symbol?: string;
   walletAddress?: string | null;
+  tokenAddress?: string | null;
+  channelId: number;
+  approved?: boolean;
+  adminIds?: number[];
+  url?: string | null;
+  logo?: string | null;
 }
 
 interface PartnerFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  partner?: Partner; // if editing
+  partner?: Partner;
 }
 
-export default function PartnerForm({ isOpen, onClose, onSuccess, partner }: PartnerFormProps) {
-  const [name, setName] = useState("");
-  const [coin, setCoin] = useState("");
+export default function PartnerForm({
+  isOpen,
+  onClose,
+  onSuccess,
+  partner,
+}: PartnerFormProps) {
+  const [groupName, setGroupName] = useState("");
+  const [project, setProject] = useState("");
+  const [contact, setContact] = useState("");
+  const [duration, setDuration] = useState("");
+  const [symbol, setSymbol] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [channelId, setChannelId] = useState<number | "">("");
+  const [tokenAddress, setTokenAddress] = useState("");
+  const [approved, setApproved] = useState(false);
+  const [url, seturl] = useState("");
+  const [logo, setLogo] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (partner) {
-      setName(partner.name);
-      setCoin(partner.coin);
+      let NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!;
+      let logoUrl = `${NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/${partner.logo}`
+      setGroupName(partner.groupName);
+      setProject(partner.project);
+      setContact(partner.contact);
+      setDuration(partner.duration);
+      setSymbol(partner.symbol || "");
       setWalletAddress(partner.walletAddress || "");
+      setChannelId(partner.channelId ?? "");
+      setTokenAddress(partner.tokenAddress || "");
+      setApproved(partner.approved ?? false);
+      seturl(partner.url || "");
+      setPreviewUrl(logoUrl || null);
     } else {
-      setName("");
-      setCoin("");
+      setGroupName("");
+      setProject("");
+      setContact("");
+      setDuration("");
+      setSymbol("");
       setWalletAddress("");
+      setChannelId("");
+      setTokenAddress("");
+      setApproved(false);
+      seturl("");
+      setLogo(null);
+      setPreviewUrl(null);
     }
   }, [partner]);
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      setLogo(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
+    if (!groupName.trim()) return toast.error("Group Name is required.");
+    if (!project.trim()) return toast.error("Project is required.");
+    if (!contact.trim()) return toast.error("Contact is required.");
+    if (!duration.trim()) return toast.error("Duration is required.");
+    if (channelId === "" || isNaN(Number(channelId)))
+      return toast.error("Channel ID is required.");
+
     try {
+      const formData = new FormData();
+      formData.append("groupName", groupName);
+      formData.append("project", project);
+      formData.append("contact", contact);
+      formData.append("duration", duration);
+      formData.append("symbol", symbol || "");
+      formData.append("walletAddress", walletAddress || "");
+      formData.append("channelId", String(channelId));
+      formData.append("tokenAddress", tokenAddress || "");
+      formData.append("approved", approved ? "true" : "false");
+      formData.append("url", url || "");
+      if (logo) formData.append("logo", logo);
+
+      let res;
       if (partner?.id) {
-        const res = await axiosInstance.put(`/partner/${partner.id}`, {
-          name,
-          coin,
-          walletAddress: walletAddress || null,
+        res = await axiosInstance.put(`/partner/${partner.id}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
         });
-        if (res.data.success) {
-          toast.success("Partner updated successfully!");
-          onSuccess();
-          onClose();
-        } else {
-          toast.error(res.data.error || "Failed to update partner.");
-        }
       } else {
-        const res = await axiosInstance.post("/partner", {
-          name,
-          coin,
-          walletAddress: walletAddress || null,
+        res = await axiosInstance.post("/partner", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
         });
-        if (res.data.success) {
-          toast.success("Partner added successfully!");
-          onSuccess();
-          onClose();
-        } else {
-          toast.error(res.data.error || "Failed to add partner.");
-        }
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error(err.message);
-        toast.error(err.message || "Server error.");
-      } else if (typeof err === "object" && err !== null && "response" in err) {
-        const e = err as { response?: { data?: { error?: string } } };
-        toast.error(e.response?.data?.error || "Server error.");
+
+      if (res.data.success) {
+        toast.success(partner ? "Partner updated successfully!" : "Partner added successfully!");
+        onSuccess();
+        onClose();
       } else {
-        toast.error("Server error.");
+        toast.error(res.data.error || "Failed to save partner.");
       }
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || err.message || "Server error.");
     } finally {
       setLoading(false);
     }
@@ -94,31 +147,107 @@ export default function PartnerForm({ isOpen, onClose, onSuccess, partner }: Par
         >
           ✕
         </button>
-        <h2 className="text-lg font-bold mb-4">{partner ? "Edit Partner" : "Add Partner"}</h2>
+        <h2 className="text-lg font-bold mb-4">
+          {partner ? "Edit Partner" : "Add Partner"}
+        </h2>
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
             type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="Group Name (required)"
+            value={groupName}
+            onChange={(e) => setGroupName(e.target.value)}
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
             required
           />
           <input
             type="text"
-            placeholder="Coin"
-            value={coin}
-            onChange={(e) => setCoin(e.target.value)}
-            className="border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="Project (required)"
+            value={project}
+            onChange={(e) => setProject(e.target.value)}
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
             required
+          />
+          <input
+            type="text"
+            placeholder="Contact (required)"
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Duration (required)"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
+            required
+          />
+
+          <input
+            type="url"
+            placeholder="Website Link (optional)"
+            value={url}
+            onChange={(e) => seturl(e.target.value)}
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
+          />
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleLogoChange}
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
+          />
+          {previewUrl && (
+            <img
+              src={previewUrl}
+              alt="Logo Preview"
+              className="w-20 h-20 rounded-md object-cover border"
+            />
+          )}
+
+          <input
+            type="number"
+            placeholder="Channel ID (required)"
+            value={channelId}
+            onChange={(e) =>
+              setChannelId(e.target.value === "" ? "" : Number(e.target.value))
+            }
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Token Address (optional)"
+            value={tokenAddress}
+            onChange={(e) => setTokenAddress(e.target.value)}
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
+          />
+          <input
+            type="text"
+            placeholder="Symbol (optional)"
+            value={symbol}
+            onChange={(e) => setSymbol(e.target.value)}
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
           />
           <input
             type="text"
             placeholder="Wallet Address (optional)"
             value={walletAddress}
             onChange={(e) => setWalletAddress(e.target.value)}
-            className="border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
           />
+
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={approved}
+              onChange={(e) => setApproved(e.target.checked)}
+            />
+            Approved
+          </label>
+
           <button
             type="submit"
             className={`bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition ${
@@ -126,7 +255,11 @@ export default function PartnerForm({ isOpen, onClose, onSuccess, partner }: Par
             }`}
             disabled={loading}
           >
-            {loading ? "Saving..." : partner ? "Update Partner" : "Add Partner"}
+            {loading
+              ? "Saving..."
+              : partner
+              ? "Update Partner"
+              : "Add Partner"}
           </button>
         </form>
       </div>

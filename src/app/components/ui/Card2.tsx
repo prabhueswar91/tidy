@@ -4,9 +4,9 @@ import React from "react";
 
 export default function Card2({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-black/90 md:p-6">
+    <div className="w-full min-h-screen flex items-center justify-center bg-black/90">
       <div
-        className="relative w-full max-w-sm overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.6)] ring-1 ring-white/10 flex flex-col items-center justify-start p-6 py-20"
+        className="relative w-full max-w-sm h-screen overflow-auto scrollbar-hide shadow-[0_10px_40px_rgba(0,0,0,0.6)] ring-1 ring-white/10 flex flex-col items-center justify-start p-5"
         style={{
           background: `
             radial-gradient(70% 55% at 0% 0%, #141318 0%, transparent 60%),
@@ -25,6 +25,17 @@ export default function Card2({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </div>
+
+      <style jsx global>{`
+        /* Hide scrollbar for all browsers */
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+      `}</style>
     </div>
   );
 }

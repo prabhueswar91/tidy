@@ -1,0 +1,89 @@
+"use client";
+
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+import axiosInstance from "../utils/axiosInstance";
+
+interface UserInfo {
+  telegram_id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  tier: string | null;
+  silverPaid: boolean | false;
+  goldPaid: boolean | false;
+}
+
+
+interface UserInfoContextType {
+  userInfo: UserInfo | null;
+  getUserInfo: () => Promise<void>;
+}
+
+
+const UserInfoContext = createContext<UserInfoContextType>({
+  userInfo: null,
+  getUserInfo: async () => {},
+});
+
+export const UserContext = () => useContext(UserInfoContext);
+
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+
+  
+  const getUserInfo = useCallback(async () => {
+    console.log("context called");
+
+    if (typeof window === "undefined" || !window.Telegram?.WebApp) {
+      console.warn("⚠️ Telegram WebApp not found");
+      return;
+    }
+
+    const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+    if (!tgUser || !tgUser.id) {
+      console.warn("⚠️ Telegram WebApp exists, but user not ready yet");
+      return;
+    }
+
+    try {
+      const res = await axiosInstance.post("/auth/getUserIdByTelegram", {
+       telegramId: tgUser.id,
+      });
+
+      const data = res.data.userInfo;
+
+      setUserInfo({
+        telegram_id: data.telegram_id || tgUser.id || null,
+        first_name: data.first_name || tgUser.first_name || null,
+        last_name: data.last_name || tgUser.last_name || null,
+        tier: data.tier || null,
+        silverPaid: data.silverPaid || false,
+        goldPaid: data.goldPaid || false,
+      });
+
+      console.log("✅ User Info:", data);
+    } catch (err) {
+      console.error("❌ Failed to fetch user info:", err);
+    }
+  }, []);
+
+  
+  useEffect(() => {
+    getUserInfo();
+    const timer = setTimeout(getUserInfo, 500);
+    return () => clearTimeout(timer);
+  }, [getUserInfo]);
+
+  return (
+    <UserInfoContext.Provider value={{ userInfo, getUserInfo }}>
+      {children}
+    </UserInfoContext.Provider>
+  );
+};

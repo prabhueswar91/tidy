@@ -1,11 +1,11 @@
-// app/ClientLayout.tsx
 "use client";
 
 import { Toaster } from "react-hot-toast";
 import { usePathname } from "next/navigation";
 import ContextProvider from "./context";
 import { TelegramProvider } from "./context/TelegramContext";
-import ErudaInit from "./components/ErudaInit";
+import { UserProvider } from "./context/UserContext";
+// import ErudaInit from "./components/ErudaInit";
 
 export default function ClientLayout({
   cookies,
@@ -17,11 +17,41 @@ export default function ClientLayout({
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
 
-    if (isAdmin) {
+  const toastOptions = {
+    style: {
+      background: "linear-gradient(135deg, #0B1925, #141318)",
+      color: "#BFF36D",
+      border: "1px solid #8EFFC7",
+      fontWeight: 600,
+      fontFamily: "DM Sans, sans-serif",
+      borderRadius: "12px",
+      padding: "12px 16px",
+      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.3)",
+    },
+    success: {
+      iconTheme: {
+        primary: "#8EFFC7",
+        secondary: "#141318",
+      },
+    },
+    error: {
+      iconTheme: {
+        primary: "#FF6B6B",
+        secondary: "#141318",
+      },
+    },
+  };
+
+  if (isAdmin) {
     return (
       <main>
         {children}
-        <Toaster position="top-right" reverseOrder={false} />
+        <Toaster
+          position="top-right"
+          reverseOrder={false}
+          toastOptions={toastOptions}
+          gutter={12}
+        />
       </main>
     );
   }
@@ -30,11 +60,18 @@ export default function ClientLayout({
     <>
       <ContextProvider cookies={cookies}>
         <TelegramProvider>
+          <UserProvider>
           {children}
-          <Toaster position="top-right" reverseOrder={false} />
+          <Toaster
+            position="top-right"
+            reverseOrder={false}
+            toastOptions={toastOptions}
+            gutter={12}
+          />
+          </UserProvider>
         </TelegramProvider>
       </ContextProvider>
-      <ErudaInit />
+      {/* <ErudaInit /> */}
     </>
   );
 }

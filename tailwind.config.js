@@ -12,9 +12,23 @@ module.exports = {
         dm: ["'DM Sans'", "sans-serif"],                 
         roboto: ["'Roboto'", "sans-serif"],                
         playfair: ["'Playfair Display'", "serif"],
-        open: ["'Open Sans'", "sans-serif"],        
+        open: ["'Open Sans'", "sans-serif"],
+        do:["'Do Hyeon'", "sans-serif"], 
+        awesome:["'Awesome Serif VAR'","serif"],
+        dt:["'DT Getai Grotesk Display'", "sans-serif"],      
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        ".font-semi": {
+          "font-variation-settings": `"wght" 600`, // semi-bold
+        },
+        ".font-extra-tall": {
+          "font-variation-settings": `"YTLC" 750`, // example axis (You’ll replace with real axis tag)
+        },
+      });
+    },
+  ],
 }

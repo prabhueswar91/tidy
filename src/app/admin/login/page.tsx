@@ -37,11 +37,9 @@ export default function LoginPage() {
       console.error("Login error:", err);
 
       if (err instanceof Error) {
-        // Standard JS error
         setError(err.message);
         toast.error(err.message);
       } else if (typeof err === "object" && err !== null && "response" in err) {
-        // Likely an Axios-style error
         const e = err as { response?: { data?: { error?: string } } };
         const msg = e.response?.data?.error || "An unexpected error occurred.";
         setError(msg);
