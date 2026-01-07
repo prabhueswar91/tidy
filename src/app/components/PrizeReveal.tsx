@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Card3 from "../components/ui/Card3";
+import { useSearchParams } from "next/navigation";
 import Invite from "../components/Invite";
 import Image from "next/image";
 import CircleImg from "../assets/circle.svg";
@@ -15,10 +16,13 @@ import Price from "../assets/price.svg";
 import GoodLuck from "../assets/goodluck.svg";
 import { useAppStore } from "../store/useAppStore";
 import axiosInstance from "../utils/axiosInstance";
-import { motion } from "framer-motion";
 import { useTelegram } from "../context/TelegramContext";
-import TidyLoader from "../components/TidyLoader";
-import { useRouter } from "next/navigation";
+import { UserContext } from "../context/UserContext";
+// import TidyLoader from "../components/TidyLoader";
+import { useRouter,usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import StakeButton from "./StakeButton";
+import { encryptData } from "../rewards/auth2/encrypt";
 
 export type Reward = {
   id: number;
@@ -26,6 +30,9 @@ export type Reward = {
   tier: string;
   type: string;
   value: string;
+  amount: string;
+  symbol: string;
+  zenCode?: string | null;
   probability: number | null;
   spinDate: string | null;
   createdAt?: string;
@@ -33,23 +40,37 @@ export type Reward = {
 };
 
 export default function PrizeReveal({ duration }: { duration: number }) {
-  const router = useRouter();
+   const { getUserInfo } = UserContext();
   const [timeLeft, setTimeLeft] = useState(duration);
   const [rangeValue, setRangeValue] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   const [reward, setReward] = useState<Reward | null>(null);
   const [loading, setLoading] = useState(false);
-  // const telegramId = useAppStore((state) => state.telegramId);
-  const selectedTier = useAppStore((state) => state.selectedTier);
+  const { selectedTier, zenCode } = useAppStore();
   const [userId, setUserId] = useState<number | null>(1);
   const [isClaim, setisClaim] = useState<boolean>(false);
   const [claimed, setclaimed] = useState<boolean>(false);
-  const [showreveal, setShowreveal] = useState<boolean>(true);
   const [walletAddress, setwalletAddress] = useState<string>("");
   const { telegramId } = useTelegram();
+  const [highlighted, setHighlighted] = useState<number | null>(null);
+  const [finalReward, setFinalReward] = useState<number | null>(null);
+  const [showMessage, setShowMessage] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const router = useRouter();
+   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const zen_code = searchParams.get("zen_code");
+
+  // const telegramId = 6195798875;
+
+  const intervalAni: any = useRef(null);
 
   useEffect(() => {
-    if (!telegramId) return;
+    if (!telegramId) {
+      toast.error("Telegram ID not found. Please log in via Telegram.");
+      setLoading(false);
+      return;
+    }
 
     const fetchUserId = async () => {
       try {
@@ -92,22 +113,41 @@ export default function PrizeReveal({ duration }: { duration: number }) {
       return () => clearInterval(timer);
     }
   }, [duration]);
+  const rewards = ["🎁 Zen Moment", "💎 $TIDY", "🌱 Quote", "🔥 Partner Token"];
 
+  useEffect(() => {
+    // if (finalReward === null) return; // don't run until finalReward is set
+
+    let i = 0;
+    intervalAni.current = setInterval(() => {
+      setHighlighted(i);
+      i = (i + 1) % rewards.length; // cycle around
+    }, 300);
+
+    return () => {
+      if (intervalAni.current) clearInterval(intervalAni.current);
+    };
+  }, [rewards.length]);
+
+  useEffect(() => {
+    if (!loading && !reward && isCompleted) {
+      setTimeout(()=>{
+        handleReveal()
+      }, 100)
+    }
+  }, [loading, reward, isCompleted])
   const handleReveal = async () => {
     if (!userId) {
       console.log("userId", userId);
       return;
     }
 
-    setShowreveal(false)
-
     try {
       setLoading(true);
-      console.log("reward", reward);
       let newtier = null;
+      const code = reward?.zenCode || zenCode || null;
 
       if (reward && reward.value === "Higher Tier Access") {
-        console.log("123");
         if (selectedTier === "BRONZE") {
           newtier = "SILVER";
         } else if (selectedTier === "SILVER") {
@@ -120,14 +160,25 @@ export default function PrizeReveal({ duration }: { duration: number }) {
         `${process.env.NEXT_PUBLIC_API_URL}/reward/play`,
         {
           userId,
-           tier: newtier !== null ? newtier : selectedTier,
+          tier: newtier !== null ? newtier : selectedTier,
           durationSeconds: duration,
+          zenCode: zen_code || null,
+          initData:window?.Telegram?.WebApp.initData
         }
       );
 
+      const chkCode = searchParams.get("zen_code");
+      if (chkCode) {
+        router.replace(pathname);
+      }
+     
+        
       setTimeout(() => {
         setReward(res.data.reward);
         setLoading(false);
+        getUserInfo();
+        if (intervalAni.current) clearInterval(intervalAni.current);
+        // setHighlighted(res.data.reward);
       }, 1500);
     } catch (err) {
       console.error("❌ API Error:", err);
@@ -152,15 +203,17 @@ export default function PrizeReveal({ duration }: { duration: number }) {
 
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/reward/claim-reward`,
-        {
+        {data: encryptData({
           userId,
           id: reward?.id || 0,
           walletAddress,
-        }
+          initData:window?.Telegram?.WebApp?.initData,
+        })}
       );
 
       if (res && res.data && res.data.status) {
-        toast.success("Successfully claimed TIDY tokens.", {
+        let symbol = res.data.symbol?res.data.symbol:"$TIDY"
+        toast.success(`Successfully claimed ${symbol} tokens.`, {
           id: "123",
           duration: 3000,
           icon: "✅",
@@ -169,6 +222,8 @@ export default function PrizeReveal({ duration }: { duration: number }) {
           setclaimed(true);
           setisClaim(false);
         }, 1500);
+      }else if(res?.data?.error) {
+        toast.error(res?.data?.error);
       } else {
         toast.error("Failed to claim.", {
           id: "123",
@@ -187,24 +242,23 @@ export default function PrizeReveal({ duration }: { duration: number }) {
       setisClaim(false);
     }
   }
-   const navigatehome = () => {
-    router.push("/");
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] font-dm text-[#FFFEEF] md:px-4">
       <Card3>
         <div className="w-full flex flex-col items-center gap-6 sm:gap-8">
+          <StakeButton />
           {!isCompleted ? (
-            <div className="w-full max-w-sm bg-[#14131899] border border-[#333333] rounded-xl px-2 sm:px-6 py-8 text-center">
-              <div className="mx-auto max-w-[180px] h-40 md:h-60 relative">
+            <div className="w-full max-w-md bg-[#14131899] border-2 border-[#333333] rounded-xl px-2 sm:px-6 py-8 text-center backdrop-blur-md shadow-[0_0_20.9px_0_#000000]">
+              <div className="absolute inset-0 before:block before:absolute before:inset-0 before:bg-[url('/spingreenbg.png')] before:bg-cover before:bg-center before:opacity-80"></div>
+              <div className="mx-auto w-[244px] min-h-[260px] h-40 md:h-60 relative">
                 <div className="w-full h-full">
                   <motion.div
-                    animate={{ rotate: -360 }}
+                    animate={{ rotate: [0, -360] }}
                     transition={{
                       repeat: Infinity,
-                      ease: "linear",
                       duration: 10,
+                      ease: "linear",
                     }}
                     className="w-full h-full"
                   >
@@ -217,52 +271,63 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                   </motion.div>
                 </div>
               </div>
-              <h1 className="mt-2 md:mt-6 text-xl sm:text-3xl font-bold">
+              {/* <motion.div
+                key={timeLeft}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.2 }}
+                className="text-[40px] font-bold"
+              >
                 {timeLeft}
-              </h1>
-              <p className="text-xs sm:text-sm tracking-widest">SECONDS</p>
-              <input
+              </motion.div>
+
+              <p className="text-[14px] font-dm sm:text-sm leading-[170%] tracking-[0.24em]">
+                SECONDS
+              </p> */}
+
+              <motion.input
                 type="range"
                 min={0}
                 max={duration}
                 value={rangeValue}
                 readOnly
                 className="w-full mt-6 accent-[#737157]"
+                transition={{ ease: "linear", duration: 0.05 }}
               />
-              <p className="mt-4 text-[10px] sm:text-xs">
+
+              <p className="mt-4 text-[14px] font-dm text-[#FFFEEF] leading-[170%] tracking-[-0.03em]">
                 YOUR PRIZE WILL BE REVEALED AFTER.....
               </p>
             </div>
           ) : (
             !reward &&
             !loading && (
-              <div className="w-full max-w-sm bg-[#14131899] border border-[#333333] rounded sm:px-6 py-14 text-center">
-                <div className="my-20 md:my-36 flex flex-col items-center gap-4">
+              <div className="w-full max-w-md border-2 border-[#333333] rounded sm:px-6 py-14 text-center backdrop-blur-md shadow-[0_0_20.9px_0_#000000] bg-[#14131899]">
+                <div className="absolute inset-0 before:block before:absolute before:inset-0 before:bg-[url('/spingreenbg.png')] before:bg-cover before:bg-center before:opacity-80"></div>
+                <div className="flex flex-col items-center gap-4 min-h-[260px] justify-center">
                   <Image src={Done} alt="Done" width={50} height={50} />
-                  <h1 className="text-xl sm:text-3xl font-bold">
-                    Moment Completed!
-                  </h1>
+                  <p className="text-[26px] font-open sm:text-3xl font-[600] leading-[102%] tracking-[-0.05em]">
+                    Moment <br /> Completed
+                  </p>
                 </div>
               </div>
             )
           )}
 
-          {isCompleted && showreveal && (
+          {/* {!loading && !reward && (
             <Button
+              className="w-full max-w-md disabled:opacity-50 disabled:cursor-not-allowed"
               image={<Image src={Gift} alt="Gift" width={18} height={18} />}
-              className="w-full max-w-sm"
+              // className="w-full max-w-sm"
               borderColor={isCompleted ? "#D2A100" : "#695204ff"}
               fromColor={isCompleted ? "#110E05" : "#0b0903ff"}
               toColor={isCompleted ? "#362A02" : "#211a02ff"}
-              marginTop="mt-10"
               disabled={!isCompleted}
               onClick={handleReveal}
             >
               REVEAL YOUR PRIZE
             </Button>
-          )}
-
-          {loading && <TidyLoader />}
+          )} */}
 
           {reward && !loading && (
             <div className="w-full max-w-sm bg-[#14131899] border border-[#333333] rounded px-6 py-8 text-center shadow-[0_4px_30px_rgba(0,0,0,0.9)]">
@@ -277,7 +342,9 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                 <div className="absolute -top-[10%] inset-0 flex flex-col items-center justify-center">
                   <p className="text-black font-semibold text-md text-center leading-tight">
                     {reward.tier} <br />
-                    <span className="text-xs">PRIZE</span>
+                    <span className="text-[24px] font-open font-[600] leading-[102%] tracking-[-0.05em]">
+                      PRIZE
+                    </span>
                   </p>
                 </div>
               </div>
@@ -295,7 +362,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
               {reward.type === "TIDY_ZEN_MOMENT" && (
                 <>
                   <p className="mt-16 mb-12 text-sm text-[#d1d5db]">
-                    🌿 You unlocked another spin! Click reveal again.
+                    🌿 You unlocked another moment. Click to claim.
                   </p>
                 </>
               )}
@@ -303,7 +370,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
               {reward.type === "TOKEN" && (
                 <>
                   <p className="mt-6 text-sm text-[#d1d5db]">
-                    🎉 You won {reward.value} tokens!
+                    🎉 You won {reward.amount} {reward.symbol} tokens!
                   </p>
                   <input
                     type="text"
@@ -321,18 +388,136 @@ export default function PrizeReveal({ duration }: { duration: number }) {
           )}
         </div>
 
+        {/* {loading && <TidyLoader />} */}
+        {/* Shuffle reward animation */}
+        {/* Shuffle all rewards inside ONE main card */}
+
+        {loading && (
+          <div className="mt-10 w-full max-w-md">
+            <div className="w-full max-w-sm bg-[#14131899] border border-[#333333] rounded sm:px-6 py-14 text-center">
+              {/* <div className="rounded-2xl bg-gradient-to-b from-[#1e293b] to-[#0f172a] shadow-2xl border border-gray-700 p-8 text-center"> */}
+              <div className="grid grid-cols-1 gap-4">
+                {rewards.map((r, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{
+                      opacity: highlighted === i || finalReward === i ? 1 : 0.1, // fade in/out
+                      scale: finalReward === i ? 1.1 : 1,
+                    }}
+                    transition={{ duration: 0.25 }}
+                    className={`rounded-xl border p-4 shadow-md transition ${
+                      finalReward === i
+                        ? "bg-yellow-900/40 border-yellow-400"
+                        : "bg-gray-800/30 border-gray-600"
+                    }`}
+                  >
+                    <div className="text-3xl mb-2 text-white">
+                      {r.split(" ")[0]}
+                    </div>
+                    <h2
+                      className={`text-lg font-bold ${
+                        finalReward === i ? "text-yellow-300" : "text-gray-400"
+                      }`}
+                    >
+                      {r.replace(/^[^\s]+\s/, "")}
+                    </h2>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <AnimatePresence>
+          {showMessage && finalReward !== null && (
+            <motion.div
+              className="fixed inset-0 flex items-center justify-center bg-black/70 z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ duration: 0.5, type: "spring" }}
+                className="flex flex-col items-center w-[90%] max-w-md"
+              >
+                <div className="w-full max-w-sm bg-[#14131899] border border-[#333333] rounded sm:px-6 py-14 text-center">
+                  <div className="w-full rounded-2xl bg-gradient-to-b from-[#1e293b] to-[#0f172a] shadow-2xl border border-gray-700 p-8 text-center">
+                    {finalReward !== null && rewards[finalReward] && (
+                      <>
+                        <div className="text-6xl mb-4">
+                          <span>{rewards[finalReward].split(" ")[0]}</span>
+                        </div>
+                        <h2 className="text-xl font-bold text-yellow-300">
+                          {rewards[finalReward].replace(/^[^\s]+\s/, "")}
+                        </h2>
+                      </>
+                    )}
+
+                    <div className="mt-8">
+                      <h3 className="text-sm tracking-widest text-white font-semibold">
+                        THANK YOU
+                      </h3>
+                      <p className="text-xs italic text-gray-300 mt-1">
+                        FOR TAKING A TIDYZEN MOMENT
+                      </p>
+                      <p className="text-[11px] text-gray-400 mt-4">
+                        Powered by{" "}
+                        <span className="font-semibold text-yellow-400">
+                          TidyCoin
+                        </span>{" "}
+                        and JUNGL
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-6 w-full flex flex-col items-center gap-4">
+                    <button
+                      onClick={() => {
+                        setFinalReward(null);
+                        setShowMessage(false);
+                      }}
+                      className="w-full py-3 rounded-full bg-gradient-to-r from-gray-800 to-gray-700 text-white font-semibold shadow-md hover:from-gray-700 hover:to-gray-600 transition"
+                    >
+                      START AGAIN
+                    </button>
+
+                    <div className="text-center">
+                      <button
+                        onClick={() => setInviteOpen(true)}
+                        className="text-white font-semibold hover:text-yellow-300"
+                      >
+                        INVITE A FRIEND
+                      </button>
+                      <p className="text-xs text-gray-400">
+                        And Win Extra Zen Moments
+                      </p>
+                    </div>
+                    {/* Modal */}
+                    <Invite />
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {reward &&
           reward.type === "TIDY_ZEN_MOMENT" &&
           reward.value !== "Higher Tier Access" && (
             <>
               <Button
-                className="w-full mt-6"
+                className="w-full mt-6 max-w-md bg-[linear-gradient(90deg,#110E05_0%,#362A02_100%)]"
                 borderColor="#D2A100"
                 fromColor="#110E05"
                 toColor="#362A02"
-                onClick={handleReveal}
+                //onClick={() => router.push("/Tier")}
+                onClick={() => {
+                  router.push(`/Tier?zen_code=${reward?.zenCode}`);
+                  router.refresh(); // ✅ Forces revalidation / refresh
+                }}
               >
-                Reveal Again
+                Claim Your Moment
               </Button>
             </>
           )}
@@ -346,7 +531,12 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                 borderColor="#D2A100"
                 fromColor="#110E05"
                 toColor="#362A02"
-                onClick={handleReveal}
+                //onClick={handleReveal}
+                //onClick={() => router.push(`/Tier?zen_code=${reward?.zenCode}`)}
+                onClick={() => {
+                  router.push(`/Tier?zen_code=${reward?.zenCode}`);
+                  router.refresh(); // ✅ Forces revalidation / refresh
+                }}
               >
                 Higher Tier Unlocked
               </Button>
@@ -363,7 +553,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
               className="w-20 h-20"
             />
 
-            <div className="flex flex-col items-center gap-1 text-lg text-gray-400" onClick={()=>navigatehome()}>
+            <div className="flex flex-col items-center gap-1 text-lg text-gray-400">
               <p className="cursor-pointer">Good Luck</p>
             </div>
           </div>
@@ -384,14 +574,44 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                 : "CLAIM YOUR PRIZE"}
             </button>
 
-           <div className="flex flex-col items-center gap-1 text-xs text-gray-400" onClick={()=>navigatehome()}>
+            <div className="flex flex-col items-center gap-1 text-xs text-gray-400">
               <p>or</p>
-              <p className="underline cursor-pointer hover:text-white">
+              <button className="underline cursor-pointer hover:text-white" onClick={() => router.push("/")}>
+            
                 DO IT LATER
-              </p>
+              </button>
             </div>
           </div>
         )}
+        {reward && !loading && (
+        <div className="flex items-center justify-between w-full max-w-md gap-2">
+        <Button
+            className="!py-1 w-full max-w-sm text-sm text-[#D2A100] px-2 bg-[linear-gradient(90deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0.3)_100%)] font-semibold font-sans"
+            borderColor={"#045867"}
+            onClick={() =>
+            window.open(
+                "https://t.me/tidycoincommunity",
+                "_blank"
+            )
+            }
+        >
+           JOIN TIDYZEN'S TG COMMUNITY
+        </Button>
+        <Button
+            className="!py-1 w-full max-w-sm text-sm text-[#D2A100] px-2 bg-[linear-gradient(90deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0.3)_100%)] font-semibold font-sans"
+            borderColor={"#D2A100"}
+            fromColor={"#110E05"}
+            toColor={"#362A02"}
+            onClick={() =>
+            window.open(
+                "https://discord.gg/3hES55jtsj",
+                "_blank"
+            )
+            }
+        >
+            JOIN JUNGL'S DISCORD
+        </Button>
+      </div> )}
         <Invite />
       </Card3>
 
