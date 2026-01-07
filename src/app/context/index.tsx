@@ -1,9 +1,9 @@
 'use client'
 
-import { wagmiAdapter, projectId,networks, bitcoinAdapter } from '../config/wagmiConfig'
+import { wagmiAdapter, projectId,networks } from '../config/wagmiConfig'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { base, bitcoin } from '@reown/appkit/networks'
+import { base } from '@reown/appkit/networks'
 import React, { type ReactNode } from 'react'
 import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
 
@@ -14,15 +14,16 @@ if (!projectId) {
 }
 
 const metadata = {
-  name: 'TIDYZEN',
-  description: 'TIDYZEN',
+  name: 'TIDYCOIN',
+  description: 'TIDYCOIN',
   url: 'https://test.bloxio.co/',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
+console.log(projectId,'projectIdprojectIdprojectId')
 createAppKit({
-  adapters: [wagmiAdapter, bitcoinAdapter],
+  adapters: [wagmiAdapter],
   projectId,
-  networks: [base, bitcoin],
+  networks: [networks[0]],
   defaultNetwork: base,
   metadata: metadata,
   features: {

@@ -1,10 +1,9 @@
 "use client";
 
-import { useState,useEffect } from "react";
+import { useState } from "react";
 import Card2 from "../components/ui/Card2";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useSearchParams } from "next/navigation";
 import Plus from "../assets/plus.svg";
 import Star from "../assets/star-arrow.svg";
 import Button from "../components/ui/Button";
@@ -12,115 +11,80 @@ import Image from "next/image";
 import PrizeReveal from "../components/PrizeReveal";
 import { useAppStore } from "../store/useAppStore";
 import { useTelegram } from "../context/TelegramContext";
-import { useRouter,usePathname } from "next/navigation";
-import { UserContext } from "../context/UserContext";
+import { useRouter } from "next/navigation";
 
 export default function TierPage() {
   const [duration, setDuration] = useState(20);
   const [showPrizeReveal, setShowPrizeReveal] = useState(false);
-  const [loading, setloading] = useState(false);
-  const searchParams = useSearchParams();
-  const { telegramId } = useTelegram();
-  // const telegramId = 6195798875;
-  const { selectedTier, zenCode } = useAppStore();
+   const [loading, setloading] = useState(false);
+   const { telegramId } = useTelegram();
+  const { selectedTier } = useAppStore();
   const router = useRouter();
-  const pathname = usePathname();
-  const { userInfo, getUserInfo } = UserContext();
-  const zen_code = searchParams.get("zen_code");
+  
 
-  console.log(zen_code,'zenCodezenCodezenCode',zenCode)
+const handleStart = async () => {
 
-  useEffect(() => {
-    if (zen_code) {
-      try {
-          checkCode()
-      } catch (err) {
-        console.error("Failed to decrypt payload", err);
-      }
-    }
-  }, [zen_code]);
-
-  function checkCode(){
-    setShowPrizeReveal(false);
-    setDuration(20);
-  }
-
-  const handleStart = async () => {
-    if (!telegramId) {
-      toast.error("Telegram ID not found");
-      return;
-    }
-    try {
-      setloading(true);
-      const res = await axios.post(
+  if(!telegramId) return
+      try{
+        setloading(true)
+        const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/reward/check-play`,
         {
-          telegramId,
-          tier: selectedTier,
-          zenCode: zen_code ? zen_code : null,
+          telegramId
         }
-      );
-      setloading(false);
-      if (res && res.data && res.data.error) {
-        toast.error(res.data.error, {
+        );
+        setloading(false)
+        if(res && res.data && res.data.status){
+        toast.error("You have already spun today. Please try again tomorrow.", {
           id: "123",
           duration: 5000,
-          icon: "❌",
-        });
-        return;
-      } else if (res && res.data && res.data.status) {
-        toast.error("You have used your daily Zen moment. Please come back tomorrow or upgrade your tier to continue", {
-          id: "123",
-          duration: 5000,
-          icon: "❌",
-        });
-        return;
+          icon: '❌'
+        })
+        return
+        }
+        setShowPrizeReveal(true);
+      }catch(err){
+        setloading(false)
       }
       
-      setShowPrizeReveal(true);
-    } catch (err) {
-      setloading(false);
-    }
   };
 
   if (showPrizeReveal) {
-    return <PrizeReveal duration={duration} />;
+    return <PrizeReveal duration={duration} />; 
   }
+
+  // console.log("selectedTier", selectedTier)
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] font-dm text-[#FFFEEF]">
       <Card2>
-        <div className="relative w-full max-w-sm bg-[#14131899] border border-[#333333] rounded px-6 text-center shadow-[0_4px_30px_rgba(0,0,0,0.9)] mt-10">
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#AC8B8B4D] border border-[#AC8B8B] px-4 py-1 rounded text-[10px] font-dm font-[600] shadow-md uppercase text-[#AC8B8B]">
+        <div className="relative w-full max-w-sm bg-[#14131899] border border-[#333333] rounded px-6 text-center shadow-[0_4px_30px_rgba(0,0,0,0.9)]">
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#AC8B8B4D] border border-[#AC8B8B] px-4 py-1 rounded text-xs font-thin shadow-md">
             CURRENT TIER{" "}
-            <span className="ml-1 text-[20px] font-semibold font-dm text-[#AC8B8B]">
-              {selectedTier ? selectedTier.toUpperCase() : "None"}
+            <span className="ml-1 text-lg font-semibold text-[#AC8B8B]">
+               {selectedTier ? selectedTier.toUpperCase() : "None"}
             </span>
           </div>
 
-          <p className="mt-14 font-open font-normal text-[18px] leading-[170%] tracking-[-0.06em] text-[#FFFEEF]">
-            Customize Your
-          </p>
-          <p className="font-open font-semibold text-[26px] leading-[170%] tracking-[-0.05em] text-[#FFFEEF]">
-            TidyZen Moments
-          </p>
+          <h2 className="mt-14 text-lg">Customize Your</h2>
+          <h1 className="text-2xl font-bold">TidyZen Moments</h1>
 
           <div className="mt-0">
             <Button
               image={<Image src={Plus} alt="Plus" width={18} height={18} />}
               borderColor="#43411D"
-              className="text-[#43411D] bg-[#FFFEEF] text-[16px] font-semibold"
-              onClick={() => router.push("/?upgrade=true")}
-              disabled={userInfo?.tier=="GOLD"?true:false}
+              fromColor="#FFFEEF"
+              toColor="#FFFEEF"
+              className="text-[#43411D]"
+              marginTop="mt-10"
+              onClick={() => router.push("/")} 
             >
               UPGRADE TIER
             </Button>
-            <p className="mt-2 font-dm text-sm font-[500]">
-              More Time, Increased odds
-            </p>
+            <p className="mt-2 text-xs">More Time, Increased odds</p>
           </div>
 
-          <h3 className="mt-14 text-[18px] font-open  font-[400] leading-[170%] tracking-[0.16em]">
+          <h3 className="mt-14 text-lg tracking-widest text-open font-thin">
             CHOOSE DURATION
           </h3>
 
@@ -144,13 +108,13 @@ export default function TierPage() {
         </div>
 
         <Button
-          image={<Image src={Star} alt="Star" width={20} height={20} />}
-          className="w-full font-open fs-[18px] leading-[170%] font-[600] max-w-xs bg-[linear-gradient(90deg,#242424_0%,#525252_100%)]"
+          image={<Image src={Star} alt="Star" width={18} height={18} />}
+          className="w-full max-w-xs"
           marginTop="mt-10"
           disabled={loading}
           onClick={handleStart}
         >
-          {loading ? "Loading" : "START YOUR MOMENT"}
+          {loading?"Loading":"START YOUR MOMENT"}
         </Button>
       </Card2>
     </div>

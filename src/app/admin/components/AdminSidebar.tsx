@@ -22,11 +22,7 @@ export default function AdminSidebar() {
   }, []);
 
   const links = [
-    {
-      label: "Dashboard",
-      href: "/admin/dashboard",
-      icon: <FiHome size={20} />,
-    },
+    { label: "Dashboard", href: "/admin/dashboard", icon: <FiHome size={20} /> },
     { label: "Users", href: "/admin/users", icon: <FiUsers size={20} /> },
     { label: "Partner", href: "/admin/partner", icon: <FiLayers size={20} /> },
   ];
@@ -34,11 +30,7 @@ export default function AdminSidebar() {
   return (
     <aside
       className={`transition-all duration-300 shadow-md relative
-        ${
-          isMobile
-            ? "absolute z-50 top-0 left-0 h-screen"
-            : "h-full flex-shrink-0"
-        }
+        ${isMobile ? "absolute z-50 top-0 left-0 h-screen" : "h-full flex-shrink-0"}
         ${collapsed ? "w-16" : "w-60"}
       `}
       style={{ backgroundColor: "#033503ff" }}
@@ -61,18 +53,20 @@ export default function AdminSidebar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`
-                  flex items-center gap-3 px-3 py-3 rounded-lg font-semibold border-2 transition-all duration-300
-                  ${
-                    isActive
-                      ? "border-yellow-500 bg-gradient-to-br from-[#362A02] to-[#110E05] text-white"
-                      : "border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-[#737157] hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white"
-                  }
+                className={`flex items-center gap-3 px-3 py-3 rounded-lg font-semibold border-2 transition-all duration-300
+                  ${isActive ? "border-yellow-500" : "border-[#D2A100]"}
                 `}
+                style={{
+                  color: "#737157",
+                  background: isActive
+                    ? "linear-gradient(135deg, #362A02, #110E05)"
+                    : "linear-gradient(135deg, #110E05, #362A02)",
+                }}
               >
                 <span className="flex-shrink-0">{link.icon}</span>
+
                 {!collapsed && (
-                  <span className="transition-colors duration-300">
+                  <span className="transition-colors duration-300 hover:text-white">
                     {link.label}
                   </span>
                 )}

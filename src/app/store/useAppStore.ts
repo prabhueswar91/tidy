@@ -10,9 +10,6 @@ interface AppState {
 
   telegramId: string | null;
   setTelegramId: (id: string | null) => void;
-
-   zenCode: string | null;
-  setZenCode: (code: string | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -25,7 +22,4 @@ export const useAppStore = create<AppState>((set) => ({
 
   telegramId: null,
   setTelegramId: (id) => set({ telegramId: id }),
-
-   zenCode: null,
-  setZenCode: (code) => set({ zenCode: code }),
 }));
