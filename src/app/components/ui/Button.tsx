@@ -21,31 +21,27 @@ export default function Button({
   icon,
   image,
   borderColor = "#7C7C7C",
-  fromColor = "#242424",
-  toColor = "#525252",
   onClick,
   className = "",
-  marginTop = "mt-20",
-  shadowClass = "shadow-lg shadow-black/40", // ✅ default shadow
+  shadowClass = "shadow-lg shadow-black/40",
   disabled = false,
 }: ButtonProps) {
   return (
     <button
       onClick={onClick}
-       disabled={disabled}
+      disabled={disabled}
       className={`
-        ${marginTop} w-full rounded-full 
-        border py-3 font-semibold 
+        mt-5 w-full rounded-full 
+        border py-3
         hover:scale-105 transition flex items-center justify-center
         ${shadowClass} ${className}
       `}
       style={{
-        borderColor: borderColor,
-        background: `linear-gradient(to right, ${fromColor}, ${toColor})`,
+        borderColor: borderColor
       }}
     >
       {icon || image ? (
-        <span className="flex items-center gap-2">
+        <span className="flex items-center gap-1">
           {icon && <span>{icon}</span>}
           {image && <span>{image}</span>}
           <span>{children}</span>

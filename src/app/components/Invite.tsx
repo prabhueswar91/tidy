@@ -1,7 +1,4 @@
 "use client";
-
-import { useState } from "react";
-import { useAppStore } from "../store/useAppStore";
 import { useTelegram } from "../context/TelegramContext";
 
 export default function Invite() {

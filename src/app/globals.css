@@ -21,10 +21,23 @@
   }
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;   
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.font-dm {
+  font-family: var(--font-dm-sans);
 }
 
 /* Coin container */
@@ -94,3 +107,10 @@ body {
 .animate-bounce-delay2 { animation: bounce-delay2 1s ease-in-out infinite; animation-delay: 0.2s; }
 .animate-bounce-delay3 { animation: bounce-delay3 1s ease-in-out infinite; animation-delay: 0.4s; }
 .animate-bounce-delay4 { animation: bounce-delay4 1s ease-in-out infinite; animation-delay: 0.6s; }
+ 
+@font-face {
+  font-family: "Awesome Serif VAR";
+  src: url("/fonts/AwesomeSerifVAR.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+}
