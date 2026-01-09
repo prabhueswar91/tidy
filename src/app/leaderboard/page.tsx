@@ -31,6 +31,7 @@ export default function Leaderboard() {
   const [userPoints, setUserPoints] = useState<any>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sValue, setsValue] = useState("");
 
   useEffect(() => {
     if (!telegramId) {
@@ -59,7 +60,7 @@ export default function Leaderboard() {
     if (!userId) return;
 
     fetchUserPoints();
-    fetchLeaderboard(activeTab);
+    fetchLeaderboard(activeTab,"");
   }, [userId, activeTab]);
 
   const fetchUserPoints = async () => {
@@ -75,13 +76,14 @@ export default function Leaderboard() {
   };
 
   // Fetch leaderboard based on tab
-  const fetchLeaderboard = async (type: string) => {
+  const fetchLeaderboard = async (type: string,search:string) => {
     setLoading(true);
     try {
       const res = await axiosInstance.get(
-        `/points/leaderboard?type=${type.toLowerCase()}`
+        `/points/leaderboard?type=${type.toLowerCase()}&search=${search}`
       );
       setLeaderboard(res.data);
+      setsValue("")
     } catch (err) {
       toast.error("Failed to load leaderboard");
     }
@@ -89,6 +91,15 @@ export default function Leaderboard() {
   };
 
   if (loading) return <TidyLoader />;
+
+  function handleSearch(){
+    fetchLeaderboard(activeTab,sValue)
+  }
+
+  function onchangeSearch(e:any){
+    setsValue(e.target.value)
+    console.log(e.target.value)
+  }
 
   return (
     <div className="relative bg-[#141318]/40 w-full min-h-screen flex justify-center text-[#FFFEEF] font-dm p-4 overflow-auto scrollbar-hide">
@@ -164,8 +175,15 @@ export default function Leaderboard() {
             <input
               type="text"
               placeholder="Search Telegram Handle"
-              className="bg-transparent outline-none text-[#D3D3C6] placeholder-white placeholder:text-[#D3D3C6] w-full"
+              className="bg-transparent outline-none text-[#D3D3C6] placeholder:text-[#D3D3C6] w-full"
+              onChange={onchangeSearch}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
             />
+
           </div>
         </div>
 
@@ -187,7 +205,7 @@ export default function Leaderboard() {
 
                       <td className="px-3 py-3">
                         <div className="flex items-center gap-2 justify-center">
-                          {user.avatar ? (
+                          {/* {user.avatar ? (
                             <Image
                               src={user.avatar}
                               alt={user.username || "User"}
@@ -198,7 +216,8 @@ export default function Leaderboard() {
                             />
                           ) : (
                             <div className="w-6 h-6 rounded-full bg-[#FFFFFF33]" />
-                          )}
+                          )} */}
+                          {/* <div className="w-6 h-6 rounded-full bg-[#FFFFFF33]" /> */}
 
                           <span className="truncate max-w-[120px]">
                             {user.username || "User"}
@@ -227,7 +246,7 @@ export default function Leaderboard() {
             className="text-white bg-gradient-to-r from-[#242424] to-[#525252] text-[16px] font-semibold"
             onClick={() => router.push("/?upgrade=true")}
           >
-            INVITE FRIENDS +1000XP
+            INVITE FRIENDS +250XP
           </Button>
         </div>
       </div>
