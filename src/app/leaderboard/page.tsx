@@ -61,6 +61,7 @@ export default function Leaderboard() {
 
     fetchUserPoints();
     fetchLeaderboard(activeTab,"");
+    setsValue("")
   }, [userId, activeTab]);
 
   const fetchUserPoints = async () => {
