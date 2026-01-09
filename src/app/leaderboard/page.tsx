@@ -83,7 +83,6 @@ export default function Leaderboard() {
         `/points/leaderboard?type=${type.toLowerCase()}&search=${search}`
       );
       setLeaderboard(res.data);
-      setsValue("")
     } catch (err) {
       toast.error("Failed to load leaderboard");
     }
@@ -177,6 +176,7 @@ export default function Leaderboard() {
               placeholder="Search Telegram Handle"
               className="bg-transparent outline-none text-[#D3D3C6] placeholder:text-[#D3D3C6] w-full"
               onChange={onchangeSearch}
+              value={sValue}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSearch();
