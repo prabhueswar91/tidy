@@ -299,6 +299,29 @@ export default function PendingRewards() {
         >
           {claiming ? "Claiming..." : "Claim Reward"}
         </button>
+          <div className="mt-6 pt-5 border-t border-gray-200">
+  <div className="text-center">
+    <p className="text-sm text-gray-500 mb-3">Join our communities</p>
+    
+    <div className="flex flex-wrap justify-center gap-2">
+      <a
+        href="https://t.me/+CDA1mBAvkTI4MjI1"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#110E05] to-[#362A02] text-white rounded-lg font-medium hover:opacity-90 transition-all duration-200 border border-[#D2A100]/30"
+      >
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.06-.20-.07-.06-.17-.04-.24-.02-.10.02-1.79 1.14-5.06 3.34-.48.33-.92.49-1.31.48-.43-.01-1.27-.24-1.89-.44-.76-.24-1.36-.37-1.31-.78.03-.24.37-.48 1.03-.74 4.05-1.66 6.77-2.76 8.14-3.31 3.92-1.61 4.73-1.89 5.26-1.9.12 0 .38.03.55.18.14.13.18.30.20.42.02.12.02.38.01.52z"/>
+        </svg>
+        <span>Tidy Community</span>
+      </a>
+
+    </div>
+    
+    <p className="text-xs text-gray-400 mt-3">Get support and stay updated</p>
+  </div>
+</div>
+
       </Modal>
 
       <style jsx>{`
