@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiHome, FiUsers, FiLayers, FiMenu } from "react-icons/fi";
+import { FiHome, FiUsers, FiLayers, FiMenu,
+  FiTrendingUp,
+  FiCreditCard,
+  FiZap } from "react-icons/fi";
 import { useState, useEffect } from "react";
 
 export default function AdminSidebar() {
@@ -29,7 +32,9 @@ export default function AdminSidebar() {
     },
     { label: "Users", href: "/admin/users", icon: <FiUsers size={20} /> },
     { label: "Partner", href: "/admin/partner", icon: <FiLayers size={20} /> },
-    { label: "Leaderboard", href: "/admin/leaderboard", icon: <FiUsers size={20} /> },
+    { label: "Leaderboard", href: "/admin/leaderboard", icon: <FiTrendingUp  size={20} /> },
+    { label: "Subscriptions", href: "/admin/subscriptions", icon: <FiCreditCard size={20} /> },
+    { label: "Booster Service", href: "/admin/boosterservice", icon: <FiZap  size={20} /> },
   ];
 
   return (
