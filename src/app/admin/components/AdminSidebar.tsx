@@ -29,6 +29,7 @@ export default function AdminSidebar() {
     },
     { label: "Users", href: "/admin/users", icon: <FiUsers size={20} /> },
     { label: "Partner", href: "/admin/partner", icon: <FiLayers size={20} /> },
+    { label: "Leaderboard", href: "/admin/leaderboard", icon: <FiUsers size={20} /> },
   ];
 
   return (

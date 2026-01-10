@@ -6,21 +6,21 @@ import { toast } from "react-hot-toast";
 import Loader from "../components/Loader";
 
 interface User {
-  id: number;
+  userId: number;
   username: string;
-  phoneNumber?: string;
   telegramId: number;
-  tier: string;
-  walletAddress?: string | null;
-  profilePhotoUrl?: string | null;
-  createdAt: string; 
+  totalPoint: string;
+  walletAddress: string;
 }
 
-export default function AdminUsers() {
+export default function AdminLeaderList() {
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [search, setSearch] = useState("");
+
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
@@ -29,20 +29,47 @@ export default function AdminUsers() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/admin/users", {
-        params: { search, page, limit },
+
+      const res = await axiosInstance.get("/admin/leader-list", {
+        params: {
+          fromDate,
+          toDate,
+          search,
+          page,
+          limit,
+        },
       });
 
       if (res.data.success) {
         setUsers(res.data.data);
         setTotal(res.data.total);
       } else {
-        toast.error(res.data.error || "Failed to fetch users.");
+        toast.error(res.data.error || "Failed to fetch leaderboard.");
       }
     } catch (err: any) {
       toast.error(err?.response?.data?.error || "Server error.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const exportCSV = async () => {
+    try {
+      setisExport(true)
+      const res = await axiosInstance.get("/admin/leader-list/export", {
+        params: { fromDate, toDate, search },
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(res.data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "leaderboard.csv";
+      a.click();
+    } catch {
+      toast.error("CSV export failed.");
+    }finally{
+      setisExport(false)
     }
   };
 
@@ -52,41 +79,60 @@ export default function AdminUsers() {
 
   const totalPages = Math.ceil(total / limit);
 
-  async function exportUsers(){
-    try {
-      setisExport(true)
-      const res = await axiosInstance.get("/admin/users/export", {
-        params: { search },
-        responseType: "blob",
+  async function clearSearch(){
+      setFromDate("")
+      setToDate('')
+      setSearch("")
+
+      try {
+      setLoading(true);
+
+      const res = await axiosInstance.get("/admin/leader-list", {
+        params: {
+          fromDate:"",
+          toDate:"",
+          search:"",
+          page,
+          limit,
+        },
       });
 
-      const url = window.URL.createObjectURL(res.data);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "users.csv";
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch {
-      toast.error("Export failed");
-    }finally{
-      setisExport(false)
+      if (res.data.success) {
+        setUsers(res.data.data);
+        setTotal(res.data.total);
+      } else {
+        toast.error(res.data.error || "Failed to fetch leaderboard.");
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error || "Server error.");
+    } finally {
+      setLoading(false);
     }
-
   }
 
   return (
     <div className="p-4 bg-gray-50 rounded-md shadow-md">
-      <h2 className="text-xl font-bold mb-4">Users</h2>
+      <h2 className="text-xl font-bold mb-4">Leaderboard List</h2>
 
-      
-      <div className="flex gap-3 mb-4">
+      <div className="flex flex-wrap gap-3 mb-4">
         <input
-          placeholder="Search username / phone / telegram / wallet"
+          type="date"
+          value={fromDate}
+          onChange={(e) => setFromDate(e.target.value)}
+          className="border px-2 py-1 rounded"
+        />
+        <input
+          type="date"
+          value={toDate}
+          onChange={(e) => setToDate(e.target.value)}
+          className="border px-2 py-1 rounded"
+        />
+        <input
+          placeholder="Search username / telegram ID"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border px-3 py-1 rounded w-80"
+          className="border px-2 py-1 rounded w-60"
         />
-
         <button
           onClick={() => {
             setPage(1);
@@ -96,66 +142,45 @@ export default function AdminUsers() {
         >
           Search
         </button>
-
         <button
-          onClick={exportUsers}
+          onClick={()=>clearSearch()}
+          className="flex items-center gap-3 px-3 py-3 rounded-lg font-semibold border-2 transition-all duration-300 border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-[#737157] hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white"
+        >
+          Clear
+        </button>
+        <button
+          onClick={exportCSV}
           className="flex items-center gap-3 px-3 py-3 rounded-lg font-semibold border-2 transition-all duration-300 border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-[#737157] hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white"
         >
           {isExport?"Downloading..":"Export CSV"}
         </button>
       </div>
 
-
       {loading ? (
         <Loader />
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto border">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="border px-3 py-2">Date</th>
-                  <th className="border px-3 py-2">Telegram ID</th>
-                  {/* <th className="border px-3 py-2">Profile</th> */}
-                  <th className="border px-3 py-2">Username</th>
-                  <th className="border px-3 py-2">Phone</th>
-                  <th className="border px-3 py-2">Tier</th>
-                  <th className="border px-3 py-2">Wallet</th>
+          <table className="min-w-full table-auto border">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="border px-3 py-2">Telegram ID</th>
+                <th className="border px-3 py-2">Username</th>
+                <th className="border px-3 py-2">Total Point</th>
+                <th className="border px-3 py-2">Wallet Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u) => (
+                <tr key={u.userId}>
+                  <td className="border px-3 py-2">{u.telegramId}</td>
+                  <td className="border px-3 py-2">{u.username}</td>
+                  <td className="border px-3 py-2">{u.totalPoint}</td>
+                  <td className="border px-3 py-2">{u.walletAddress || "N/A"}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td className="px-4 py-2 border">
-                    {new Date(user.createdAt).toLocaleDateString()}{" "}
-                    {new Date(user.createdAt).toLocaleTimeString()}
-                  </td>
-                    <td className="border px-3 py-2">{user.telegramId}</td>
-                    {/* <td className="border px-3 py-2">
-                      {user.profilePhotoUrl ? (
-                        <img
-                          src={user.profilePhotoUrl}
-                          className="w-10 h-10 rounded-full"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                          N/A
-                        </div>
-                      )}
-                    </td> */}
-                    <td className="border px-3 py-2">{user.username}</td>
-                    <td className="border px-3 py-2">{user.phoneNumber || ""}</td>
-                    <td className="border px-3 py-2">{user.tier}</td>
-                    <td className="border px-3 py-2">
-                      {user.walletAddress || "N/A"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
 
-          {/* Pagination */}
           <div className="flex justify-between items-center mt-4">
             <div>
               Page {page} of {totalPages}
@@ -175,7 +200,6 @@ export default function AdminUsers() {
               >
                 Next
               </button>
-
               <select
                 value={limit}
                 onChange={(e) => {

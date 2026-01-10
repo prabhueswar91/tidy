@@ -23,6 +23,7 @@ import { useRouter,usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import StakeButton from "./StakeButton";
 import { encryptData } from "../rewards/auth2/encrypt";
+import Modal from "../components/ui/Modal";
 
 export type Reward = {
   id: number;
@@ -56,6 +57,10 @@ export default function PrizeReveal({ duration }: { duration: number }) {
   const [finalReward, setFinalReward] = useState<number | null>(null);
   const [showMessage, setShowMessage] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [isCommunityModalOpen, setIsCommunityModalOpen] = useState(false);
+  const [isFetch, setisFetch] = useState(false);
+  const [groupList, setgroupList] = useState([]);
+
   const router = useRouter();
    const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -232,15 +237,36 @@ export default function PrizeReveal({ duration }: { duration: number }) {
         });
         setisClaim(false);
       }
-    } catch (err) {
-      console.error("❌ API Error:", err);
-      toast.error("Failed to claim.", {
-        id: "123",
-        duration: 3000,
-        icon: "❌",
-      });
+    } catch (err:any) {
+      console.error("Claim error:", err);
+      const errorMessage = 
+      err?.response?.data?.error ||           // API error message
+      err?.response?.data?.message ||         // Alternative message field
+      err?.message ||                          // Generic error message
+      "Something went wrong while claiming";   
+      toast.error(errorMessage);
+      if(errorMessage=="Join our Telegram community to unlock claiming."){
+        getCommunityList()
+      }
+    }finally {
       setisClaim(false);
     }
+  }
+
+  async function getCommunityList(){
+    setisFetch(true)
+    try{
+      const {data:response} = await axiosInstance.post("/points/joined-community-list", {telegramId});
+      if(response && response.list){
+        setgroupList(response.list);
+        setIsCommunityModalOpen(true);
+      }
+    }catch(err){
+    
+    }finally{
+      setisFetch(false)
+    }
+    
   }
 
   return (
@@ -382,6 +408,25 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                   <p className="mt-2 text-[11px]">
                     For Tokens Enter Base Wallet
                   </p>
+                  <div className="mt-6 pt-5 border-t border-gray-200">
+            <div className="text-center">
+              <p className="text-sm text-gray-500 mb-3">Join our Telegram community to unlock claiming.</p>
+              
+              <div className="flex flex-wrap justify-center gap-2" onClick={()=>getCommunityList()}>
+                <a
+                  href="javascript:void(0)"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#110E05] to-[#362A02] text-white rounded-lg font-medium hover:opacity-90 transition-all duration-200 border border-[#D2A100]/30"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.06-.20-.07-.06-.17-.04-.24-.02-.10.02-1.79 1.14-5.06 3.34-.48.33-.92.49-1.31.48-.43-.01-1.27-.24-1.89-.44-.76-.24-1.36-.37-1.31-.78.03-.24.37-.48 1.03-.74 4.05-1.66 6.77-2.76 8.14-3.31 3.92-1.61 4.73-1.89 5.26-1.9.12 0 .38.03.55.18.14.13.18.30.20.42.02.12.02.38.01.52z"/>
+                  </svg>
+                  <span>{isFetch?"Loading...":"Join Community"}</span>
+                </a>
+
+              </div>
+            </div>
+          </div>
                 </>
               )}
             </div>
@@ -614,6 +659,70 @@ export default function PrizeReveal({ duration }: { duration: number }) {
       </div> )}
         <Invite />
       </Card3>
+
+      <Modal
+    isOpen={isCommunityModalOpen}
+    onClose={() => setIsCommunityModalOpen(false)}
+    >
+    <h2 className="text-lg font-bold mb-4 text-center">
+    Join Telegram Communities
+    </h2>
+
+    <div className="space-y-3">
+    {groupList.map((group: any) => (
+      <div
+        key={group.groupId}
+        className="flex items-center justify-between p-3 rounded-lg border border-[#362A02] bg-[#110E05]"
+      >
+        <div>
+          <p className="text-sm font-semibold text-[#FFFEEF]">
+            {group.groupName}
+          </p>
+          <a
+            href={group.groupLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-[#D2A100] hover:underline break-all"
+          >
+            {group.groupLink}
+          </a>
+        </div>
+
+        <div className="ml-3">
+          {group.isJoined ? (
+            <span className="text-xs px-2 py-1 rounded-full bg-green-600 text-white">
+              Joined
+            </span>
+          ) : (
+            <a
+              href={group.groupLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs px-3 py-1 rounded-full bg-gradient-to-r from-[#110E05] to-[#362A02] border border-[#D2A100] text-white hover:opacity-90"
+            >
+              Join
+            </a>
+          )}
+        </div>
+      </div>
+    ))}
+
+    {groupList.length === 0 && (
+      <p className="text-center text-sm text-gray-400">
+        No communities found
+      </p>
+    )}
+    </div>
+
+    <div className="mt-5 flex justify-center">
+    <button
+      onClick={() => setIsCommunityModalOpen(false)}
+      className="px-6 py-2 rounded-lg border border-[#D2A100] bg-gradient-to-r from-[#110E05] to-[#362A02] text-white"
+    >
+      Close
+    </button>
+    </div>
+    </Modal>
 
       <style jsx>{`
         .animate-spin-slow {
