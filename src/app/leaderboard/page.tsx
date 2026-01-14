@@ -101,6 +101,17 @@ export default function Leaderboard() {
     console.log(e.target.value)
   }
 
+  const generateTelegramUrl = () => {
+    const url = `http://t.me/${process.env.NEXT_PUBLIC_CHANNEL_NAME}?start=${telegramId}`
+    const shareUrl = encodeURIComponent(url);
+    return `https://t.me/share/url?url=${shareUrl}`;
+  };
+
+  const handleShare = () => {
+    if (!telegramId) return
+    window.open(generateTelegramUrl(), '_blank', 'width=600,height=400');
+  };
+
   return (
     <div className="relative bg-[#141318]/40 w-full min-h-screen flex justify-center text-[#FFFEEF] font-dm p-4 overflow-auto scrollbar-hide">
       <Image
@@ -245,7 +256,7 @@ export default function Leaderboard() {
             image={<Image src={Star} alt="Plus" width={18} height={18} />}
             borderColor="#7C7C7C"
             className="text-white bg-gradient-to-r from-[#242424] to-[#525252] text-[16px] font-semibold"
-            onClick={() => router.push("/?upgrade=true")}
+            onClick={() => handleShare()}
           >
             INVITE FRIENDS +250XP
           </Button>
