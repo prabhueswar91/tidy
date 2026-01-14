@@ -15,9 +15,11 @@ import { ethers } from "ethers";
 import Close from "../assets/close.svg";
 import { useRouter } from "next/navigation";
 import { User } from "lucide-react";
+import { useTelegram } from "../context/TelegramContext";
 
 export default function Account() {
   const { userInfo } = UserContext();
+  const { telegramId } = useTelegram();
   const router = useRouter();
 
   const [points, setPoints] = useState<any>(null);
@@ -26,6 +28,7 @@ export default function Account() {
   const [baseAddress, setbaseAddress] = useState("");
   const [solAddress, setsolAddress] = useState("");
   const [bnbAddress, setbnbAddress] = useState("");
+  const [xpbalance, setxpbalance] = useState(0);
 
   useEffect(() => {
     if (!userInfo?.id) return;
@@ -36,6 +39,7 @@ export default function Account() {
         const res = await axiosInstance.get(`/points/user/${userInfo.id}/weekly`);
         setPoints(res.data);
         setbaseAddress(res.data?.walletAddress)
+        getXPbalance(res.data?.walletAddress)
       } catch (err) {
         console.error("Failed to fetch points", err);
       }
@@ -44,6 +48,19 @@ export default function Account() {
 
     fetchPoints();
   }, [userInfo]);
+
+    async function getXPbalance(addr:string){
+        try{
+          const { data } = await axiosInstance.post("/auth/get-xp-balance", {
+            walletAddress:addr,
+            telegramId: telegramId
+          });
+          const bal = data?.balance ? Number(parseFloat(data.balance).toFixed(4)) : 0;
+          setxpbalance(bal);
+        }catch(error: unknown){
+          
+        }
+    }
 
   async function updateWallet(){
     
@@ -159,6 +176,12 @@ export default function Account() {
                     Weekly{" "}
                   </span>
                   +{points?.point ?? 0}
+                </p>
+              </div>
+               <div className="flex items-center justify-between">
+                <p className="text-[#FFFEEF99] text-sm">XP Balance</p>
+                <p className="font-semibold">
+                  {xpbalance ?? 0} XP
                 </p>
               </div>
             </>
