@@ -41,7 +41,7 @@ export type Reward = {
 };
 
 export default function PrizeReveal({ duration }: { duration: number }) {
-   const { getUserInfo } = UserContext();
+   const { getUserInfo, userInfo } = UserContext();
   const [timeLeft, setTimeLeft] = useState(duration);
   const [rangeValue, setRangeValue] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -65,7 +65,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
    const pathname = usePathname();
   const searchParams = useSearchParams();
   const zen_code = searchParams.get("zen_code");
-
+  console.log(userInfo,'userInfouserInfo11112')
   // const telegramId = 6195798875;
 
   const intervalAni: any = useRef(null);
@@ -82,15 +82,19 @@ export default function PrizeReveal({ duration }: { duration: number }) {
         const res = await axiosInstance.post("/auth/getUserIdByTelegram", {
           telegramId,
         });
-        setUserId(res.data.userId);
-        console.log("✅ User ID:", res.data.userId);
+        if(res.data.userId){
+          setUserId(res.data.userId);
+          setwalletAddress(res?.data?.userInfo?.walletAddress);
+          console.log("✅ User ID:", res.data.userId);
+        }
+        
       } catch (err) {
         console.error("❌ Failed to fetch user ID:", err);
       }
     };
 
     fetchUserId();
-  }, [telegramId]);
+  }, [userInfo]);
 
   useEffect(() => {
     setTimeLeft(duration);
@@ -402,7 +406,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                     type="text"
                     placeholder="ENTER RECEIVING WALLET..."
                     value={walletAddress}
-                    onChange={(e) => setwalletAddress(e.target.value)}
+                    readOnly
                     className="w-full mt-8 px-4 py-3 bg-[#9292924D] border border-[#929292] rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-yellow-400 placeholder-[#CFCFCF] placeholder:text-xs"
                   />
                   <p className="mt-2 text-[11px]">

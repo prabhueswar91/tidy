@@ -40,6 +40,7 @@ export default function Login() {
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [loading, setLoading] = useState(true);
   const [loading1, setLoading1] = useState(false);
+   const [baseAddress, setbaseAddress] = useState("");
   const router = useRouter();
 
   const {
@@ -160,7 +161,13 @@ export default function Login() {
       setloader(false)
       return;
     }
-
+    
+    if(!baseAddress){
+      toast.error("Please update your wallet and continue");
+      setloader(false)
+      router.push(`/settings`);
+      return
+    }
 
     // if(isApproved || userTier=="GOLD" || selectedTier.toUpperCase() === userTier || selectedTier.toUpperCase() === "BRONZE"){
     //   router.push("/Tier");
@@ -281,6 +288,11 @@ export default function Login() {
   function isApiError(err: unknown): err is ApiError {
     return typeof err === "object" && err !== null && "response" in err;
   }
+
+  useEffect(() => {
+    if (!userInfo?.walletAddress) return;
+    setbaseAddress(userInfo?.walletAddress)
+  }, [userInfo]);
 
   if (loading || loading1) {
     return <TidyLoader />;

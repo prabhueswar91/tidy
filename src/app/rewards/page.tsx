@@ -72,6 +72,11 @@ export default function PendingRewards() {
 
   // Open claim modal
   const openClaimModal = (reward: any) => {
+    if(!walletAddress){
+      toast.error("Please update your wallet and continue");
+      router.push(`/settings`);
+      return
+    }
     setSelectedReward(reward);
     setIsModalOpen(true);
   };
@@ -314,6 +319,7 @@ export default function PendingRewards() {
           value={walletAddress}
           onChange={(e) => setWalletAddress(e.target.value)}
           className="w-full mb-4 p-2 rounded border border-gray-600 text-black"
+          readOnly
         />
         <button
           onClick={handleClaim}

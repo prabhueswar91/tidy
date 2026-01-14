@@ -5,11 +5,28 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Tidy from "../assets/tidy.svg";
 import Gift from "../assets/gift-icon.svg";
+import { User } from "lucide-react";
 
 export default function StakeButton() {
     const router = useRouter();
+    const handleProfileClick = () => {
+        router.push('/settings');
+    };
+
   return (
     <div className="flex items-center justify-between w-full max-w-md gap-2">
+        <div className="absolute top-0 right-0 z-10">
+        <button
+            type="button"
+            className="flex items-center justify-center w-5 h-5 rounded-full bg-[#FFFEEF] text-[#43411D] hover:opacity-90"
+            onClick={handleProfileClick}
+        >
+        <User size={14} />
+        </button>
+
+        </div>
+
+
         <Button
             className="!py-1 w-full max-w-sm text-sm text-[#77EBFF] px-2 bg-[linear-gradient(90deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0.3)_100%)] font-semibold  font-sans"
            // image={<Image src={Tidy} alt="Tidy" width={18} height={18} />}
