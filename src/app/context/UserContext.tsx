@@ -42,30 +42,29 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const getUserInfo = useCallback(async () => {
     console.log("context called");
 
-    // if (typeof window === "undefined" || !window.Telegram?.WebApp) {
-    //   console.warn("⚠️ Telegram WebApp not found");
-    //   return;
-    // }
+    if (typeof window === "undefined" || !window.Telegram?.WebApp) {
+      console.warn("⚠️ Telegram WebApp not found");
+      return;
+    }
 
-    // const tgUser = window?.Telegram?.WebApp.initDataUnsafe?.user;
+    const tgUser = window?.Telegram?.WebApp.initDataUnsafe?.user;
     
-    // if (!tgUser || !tgUser.id) {
-    //   console.warn("⚠️ Telegram WebApp exists, but user not ready yet");
-    //   return;
-    // }
+    if (!tgUser || !tgUser.id) {
+      console.warn("⚠️ Telegram WebApp exists, but user not ready yet");
+      return;
+    }
 
     try {
       const res = await axiosInstance.post("/auth/getUserIdByTelegram", {
-       //telegramId: tgUser.id,
-       telegramId: "956672855",
+       telegramId: tgUser.id,
       });
 
       const data = res.data.userInfo;
 
       setUserInfo({
         id: data.id,
-        telegram_id: "956672855",
-        first_name: "Prabhu",
+        telegram_id: data.telegram_id || tgUser.id || null,
+        first_name: data.first_name || tgUser.first_name || null,
         tier: data.tier || null,
         silverPaid: data.silverPaid || false,
         goldPaid: data.goldPaid || false,

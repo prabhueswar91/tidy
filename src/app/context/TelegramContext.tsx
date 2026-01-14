@@ -17,7 +17,7 @@ const TelegramContext = createContext<TelegramContextType>({
 export const useTelegram = () => useContext(TelegramContext);
 
 export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [telegramId, setTelegramId] = useState<string | null>("956672855");
+  const [telegramId, setTelegramId] = useState<string | null>(null);
   const [userdata, setUserData] = useState<any | null>(null);
   const [hash, setHash] = useState<string | null>(null);
 
