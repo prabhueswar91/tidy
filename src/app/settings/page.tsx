@@ -40,6 +40,8 @@ export default function Account() {
         setPoints(res.data);
         setbaseAddress(res.data?.walletAddress)
         getXPbalance(res.data?.walletAddress)
+        setbnbAddress(res.data?.bnbAddress)
+        setsolAddress(res.data?.solAddress)
       } catch (err) {
         console.error("Failed to fetch points", err);
       }
@@ -80,6 +82,8 @@ export default function Account() {
     try {
       let a = encryptData({
         baseAddress,
+        bnbAddress,
+        solAddress,
         initData:window?.Telegram?.WebApp?.initData
       })
       const res = await axiosInstance.post("/points/update-wallet", {data:a});
