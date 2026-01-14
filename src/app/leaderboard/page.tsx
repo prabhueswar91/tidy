@@ -12,7 +12,8 @@ import Search from "../assets/search.svg";
 import Star from "../assets/star-arrow.svg";
 import Button from "../components/ui/Button";
 import { useTelegram } from "../context/TelegramContext";
-import { Info } from "lucide-react";
+import { Info,User } from "lucide-react";
+
 
 const tabs = ["Weekly", "Monthly", "Overall"];
 
@@ -223,6 +224,7 @@ export default function Leaderboard() {
                             <div className="w-6 h-6 rounded-full bg-[#FFFFFF33]" />
                           )} */}
                           {/* <div className="w-6 h-6 rounded-full bg-[#FFFFFF33]" /> */}
+                          <User size={8} strokeWidth={2.5} className="rounded-full w-4 h-4 object-cover border border-[#FFFFFF33]"/>
 
                           <span className="truncate max-w-[120px]">
                             {user.username || "User"}

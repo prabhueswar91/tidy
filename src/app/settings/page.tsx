@@ -14,6 +14,7 @@ import { encryptData } from "../rewards/auth2/encrypt";
 import { ethers } from "ethers";
 import Close from "../assets/close.svg";
 import { useRouter } from "next/navigation";
+import { User } from "lucide-react";
 
 export default function Account() {
   const { userInfo } = UserContext();
@@ -123,14 +124,15 @@ export default function Account() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {points?.avatar ? (
-                    <Image
-                      src={points.avatar}
-                      alt="Profile"
-                      width={36}
-                      height={36}
-                      className="rounded-full w-6 h-6"
-                      unoptimized
-                    />
+                    // <Image
+                    //   src={points.avatar}
+                    //   alt="Profile"
+                    //   width={36}
+                    //   height={36}
+                    //   className="rounded-full w-6 h-6"
+                    //   unoptimized
+                    // />
+                    <User size={14} strokeWidth={2.5} className="rounded-full w-6 h-6"/>
                   ) : (
                     <div className="w-6 h-6 rounded-full bg-gray-400/40" />
                   )}
