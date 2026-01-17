@@ -139,7 +139,7 @@ const router = useRouter();
         return;
       }
 
-      const gasCost = (gasLimit * gasPrice * 12n) / 10n;
+      const gasCost = (gasLimit * gasPrice * BigInt(12)) / BigInt(10);
 
       const nativeBal = await provider.getBalance(address);
       if (nativeBal < gasCost) {
