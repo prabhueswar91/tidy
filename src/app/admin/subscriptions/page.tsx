@@ -5,11 +5,15 @@ import axiosInstance from "../components/axiosInstance";
 import { toast } from "react-hot-toast";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
+type SubType = "days" | "weeks" | "months";
+
 interface Sub {
   id: number;
-  totaldays: number;
+  totaldays: number; // keeping your existing field name from backend
   price: number;
+  durationType?: SubType; // add this if backend returns it; safe as optional
 }
+
 const BTN =
   "flex items-center gap-3 px-3 py-3 rounded-lg font-semibold border-2 transition-all duration-300 border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-[#737157] hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white";
 
@@ -17,7 +21,9 @@ export default function AdminSubscriptions() {
   const [list, setList] = useState<Sub[]>([]);
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
-  const [totaldays, setTotaldays] = useState("");
+
+  const [type, setType] = useState<SubType>("days"); // NEW
+  const [totalValue, setTotalValue] = useState(""); // renamed from totaldays for UI clarity
   const [price, setPrice] = useState("");
   const [isSubmit, setisSubmit] = useState(false);
 
@@ -32,74 +38,86 @@ export default function AdminSubscriptions() {
 
   const openAdd = () => {
     setEditId(null);
-    setTotaldays("");
+    setType("days");
+    setTotalValue("");
     setPrice("");
     setOpen(true);
   };
 
   const openEdit = (s: Sub) => {
     setEditId(s.id);
-    setTotaldays(String(s.totaldays));
+    setType((s.durationType as SubType) || "days");
+    setTotalValue(String(s.totaldays));
     setPrice(String(s.price));
     setOpen(true);
   };
 
-    const save = async () => {
-        const days = totaldays.trim();
-        const amount = price.trim();
+  const totalPlaceholder =
+    type === "days"
+      ? "Total Days"
+      : type === "weeks"
+      ? "Total Weeks"
+      : "Total Months";
 
-        if (!days || !amount) {
-            toast.error("Total days and price are required");
-            return;
-        }
+  const save = async () => {
+    const total = totalValue.trim();
+    const amount = price.trim();
 
-        if (!/^\d+$/.test(days)) {
-            toast.error("Total days must be a whole number");
-            return;
-        }
+    if (!total || !amount) {
+      toast.error(`${totalPlaceholder} and price are required`);
+      return;
+    }
 
-        if (!/^\d+(\.\d+)?$/.test(amount)) {
-            toast.error("Price must be a valid number");
-            return;
-        }
+    if (!/^\d+$/.test(total)) {
+      toast.error(`${totalPlaceholder} must be a whole number`);
+      return;
+    }
 
-        const totalDaysNum = Number(days);
-        const priceNum = Number(amount);
+    if (!/^\d+(\.\d+)?$/.test(amount)) {
+      toast.error("Price must be a valid number");
+      return;
+    }
 
-        if (totalDaysNum <= 0) {
-            toast.error("Total days must be greater than 0");
-            return;
-        }
+    const totalNum = Number(total);
+    const priceNum = Number(amount);
 
-        if (priceNum <= 0) {
-            toast.error("Price must be greater than 0");
-            return;
-        }
+    if (totalNum <= 0) {
+      toast.error(`${totalPlaceholder} must be greater than 0`);
+      return;
+    }
 
-        try {
-        setisSubmit(true)
-        if (editId) {
-            await axiosInstance.post(`/admin/update-subscriptions`, {
-                id: editId,
-                totaldays: totalDaysNum,
-                price: priceNum,
-            });
-        } else {
-            await axiosInstance.post("/admin/add-subscriptions", {
-                totaldays: totalDaysNum,
-                price: priceNum,
-            });
-        }
+    if (priceNum <= 0) {
+      toast.error("Price must be greater than 0");
+      return;
+    }
 
-        toast.success(editId?"Updated successfully":"Saved successfully");
-        setOpen(false);
-        fetchData();
-        } catch {
-            toast.error("Save failed");
-        }finally{
-            setisSubmit(false)
-        }
-    };
+    try {
+      setisSubmit(true);
+
+      const payload = {
+        totaldays: totalNum, // keep backend param name as-is
+        price: priceNum,
+        type,
+      };
+
+      if (editId) {
+        await axiosInstance.post(`/admin/update-subscriptions`, {
+          id: editId,
+          ...payload,
+        });
+      } else {
+        await axiosInstance.post("/admin/add-subscriptions", payload);
+      }
+
+      toast.success(editId ? "Updated successfully" : "Saved successfully");
+      setOpen(false);
+      fetchData();
+    } catch {
+      toast.error("Save failed");
+    } finally {
+      setisSubmit(false);
+    }
+  };
 
   const remove = async (id: number) => {
     if (!confirm("Are you sure you want to delete this subscription?")) return;
@@ -120,7 +138,8 @@ export default function AdminSubscriptions() {
       <table className="min-w-full border">
         <thead className="bg-gray-200">
           <tr>
-            <th className="border px-3 py-2">Total Days</th>
+            <th className="border px-3 py-2">Type</th>
+            <th className="border px-3 py-2">Total</th>
             <th className="border px-3 py-2">Price</th>
             <th className="border px-3 py-2">Actions</th>
           </tr>
@@ -128,24 +147,26 @@ export default function AdminSubscriptions() {
         <tbody>
           {list.map((s) => (
             <tr key={s.id}>
+              <td className="border px-3 py-2 capitalize">{s.durationType ?? "days"}</td>
               <td className="border px-3 py-2">{s.totaldays}</td>
-              <td className="border px-3 py-2">{s.price}</td>
-             <td className="border px-3 py-2 flex gap-4">
-                <button
+              <td className="border px-3 py-2">{s.price} USDC</td>
+              <td className="border px-3 py-2">
+                <div className="flex gap-4">
+                  <button
                     onClick={() => openEdit(s)}
                     className="flex items-center gap-1 text-green-600 font-semibold hover:text-green-800"
-                >
+                  >
                     <FaEdit /> Edit
-                </button>
+                  </button>
 
-                <button
+                  <button
                     onClick={() => remove(s.id)}
                     className="flex items-center gap-1 text-red-600 font-semibold hover:text-red-800"
-                >
+                  >
                     <FaTrash /> Delete
-                </button>
-                </td>
-
+                  </button>
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -158,15 +179,47 @@ export default function AdminSubscriptions() {
               {editId ? "Edit Subscription" : "Add Subscription"}
             </h3>
 
+            <div className="flex gap-4 mb-4">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="subType"
+                  checked={type === "days"}
+                  onChange={() => setType("days")}
+                />
+                Days
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="subType"
+                  checked={type === "weeks"}
+                  onChange={() => setType("weeks")}
+                />
+                Weeks
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="subType"
+                  checked={type === "months"}
+                  onChange={() => setType("months")}
+                />
+                Months
+              </label>
+            </div>
+
             <input
-              placeholder="Total Days"
-              value={totaldays}
-              onChange={(e) => setTotaldays(e.target.value)}
+              placeholder={totalPlaceholder}
+              value={totalValue}
+              onChange={(e) => setTotalValue(e.target.value)}
               className="w-full border p-2 mb-3 rounded"
             />
 
             <input
-              placeholder="Price"
+              placeholder="Price(USDC)"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               className="w-full border p-2 mb-4 rounded"
@@ -175,7 +228,7 @@ export default function AdminSubscriptions() {
             <div className="flex justify-end gap-3">
               <button onClick={() => setOpen(false)}>Cancel</button>
               <button className={BTN} onClick={save} disabled={isSubmit}>
-                {isSubmit?"Processing":"Save"}
+                {isSubmit ? "Processing" : "Save"}
               </button>
             </div>
           </div>

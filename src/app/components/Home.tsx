@@ -64,6 +64,7 @@ export default function Home({ onStart }: HomeProps) {
 
 
   async function navPartner(){
+     console.log(channelId,telegramId,"navPartner")
     if(!telegramId) {
       toast.error("Telegram ID not found");
       console.log("id not found")
@@ -82,6 +83,16 @@ export default function Home({ onStart }: HomeProps) {
 
   if(loading) {
     return <TidyLoader />
+  }
+
+  async function navService(){
+    console.log(channelId,telegramId,"navService")
+    if(!telegramId) {
+      toast.error("Telegram ID not found");
+      console.log("id not found")
+      return;
+    }
+    router.push(`/booster-service?channel_id=${channelId}`);
   }
 
   return (
@@ -180,6 +191,17 @@ export default function Home({ onStart }: HomeProps) {
         >
           BECOME A PARTNER
         </button>
+        {channelId &&<button
+          className="inline-block text-[#FFFEEF] font-semibold text-base px-8 py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] font-dm underline"
+          style={{
+            fontSize: "16px",
+            lineHeight: "170%",
+            letterSpacing: "-0.03em",
+          }}
+          onClick={()=>navService()}
+        >
+          BOOSTER SERVICE
+        </button>}
         <div className="text-xs mt-4 font-open">Powered by JunglCorp & TidyCoin</div>
       </motion.div>
     </motion.div>

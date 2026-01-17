@@ -1,0 +1,183 @@
+"use client";
+
+import { X, ChevronDown, Info } from "lucide-react";
+import { useState } from "react";
+import { Contract, parseUnits, formatUnits } from "ethers";
+import { toast } from "react-hot-toast";
+import {Plan} from "./page";
+import axiosInstance from "../utils/axiosInstance";
+import { useWallet } from "../hooks/useWallet";
+import {encryptData} from "../rewards/auth2/encrypt"
+import Modal from "../components/ui/Modal";
+import PayBoosterModal from "./PayBoosterModal";
+
+const textMuted = "text-[#FFFEEF]/60";
+
+export const ERC20_ABI = [
+  "function decimals() view returns (uint8)",
+  "function balanceOf(address owner) view returns (uint256)",
+  "function transfer(address to, uint256 value) returns (bool)",
+];
+
+
+export default function SecondPage({
+  onClose,
+  plans,
+  selectedPlanId,
+  setSelectedPlanId,
+  expandedSection,
+  setExpandedSection,
+  selectedPlan,
+}: {
+  onClose: () => void;
+  plans: Plan[];
+  selectedPlanId: number | null;
+  setSelectedPlanId: (id: number) => void;
+  expandedSection: string | null;
+  setExpandedSection: (v: string | null) => void;
+  selectedPlan: Plan | null;
+}) {
+
+const { provider, address, isConnected, connect, logout, formatAddress } = useWallet();
+
+  const [paying, setPaying] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+const [usdcBalance, setUsdcBalance] = useState<string>("0");
+const [decimals, setDecimals] = useState<number>(6);
+const [balLoading, setBalLoading] = useState(false);
+
+
+  const USDC_ADDRESS = process.env.NEXT_PUBLIC_USDC_ADDRESS as string;
+  const ADMIN_WALLET = process.env.NEXT_PUBLIC_ADMIN_WALLET as string;
+
+
+  const includes = [
+    "Tidyzen users must join your telegram to qualify for $TIDY, claims, xp rewards and xp boosts",
+    "Rewards unlocked via tidyzen",
+    "Traffic spread over time",
+  ];
+
+  const fundsUsage = [
+    "User must join our telegram",
+    "Rewards unlocked via tidyzen",
+    "Traffic spread over time",
+  ];
+
+  return (
+    <div className={"min-h-screen bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] text-[#FFFEEF] flex items-center justify-center p-4"}>
+      <div className="w-full max-w-md relative">
+        <button
+          onClick={onClose}
+          className="absolute -top-2 right-0 w-10 h-10 bg-black/40 hover:bg-black/60 rounded-full flex items-center justify-center border border-[#FFFEEF]/10 transition-colors"
+        >
+          <X size={20} className="text-[#FFFEEF]" />
+        </button>
+
+        <h1 className="text-2xl font-bold text-[#FFFEEF] mb-6 text-center">
+          Activate telegram booster
+        </h1>
+
+        <div className={`bg-[#0b0f17]/70 backdrop-blur-xl rounded-2xl border border-[#FFFEEF]/10 shadow-2xl p-5 mb-6`}>
+          {plans.map((plan) => (
+            <button
+              key={plan.id}
+              onClick={() => setSelectedPlanId(plan.id)}
+              className={`w-full text-left p-4 rounded-xl mb-3 last:mb-0 transition-all border ${
+                selectedPlanId === plan.id
+                  ? "bg-yellow-400/10 border-yellow-400 ring-2 ring-yellow-400/40"
+                  : "bg-black/25 border-[#FFFEEF]/10 hover:border-[#FFFEEF]/20"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    selectedPlanId === plan.id
+                      ? `border-yellow-400`
+                      : "border-[#FFFEEF]/30"
+                  }`}
+                >
+                  {selectedPlanId === plan.id && (
+                    <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                  )}
+                </div>
+
+                <div className="flex-1">
+                  <div className="text-[#FFFEEF] font-medium">{plan.label}</div>
+                  <div className={`text-sm ${textMuted}`}>{plan.price} USDC</div>
+                </div>
+              </div>
+            </button>
+          ))}
+
+          <div className="mt-6">
+            <h3 className="text-[#FFFEEF] text-sm font-semibold mb-3">
+              What this includes :
+            </h3>
+            <ul className="space-y-2">
+              {includes.map((item, index) => (
+                <li key={index} className={`flex items-start gap-2 text-xs ${textMuted}`}>
+                  <span className="text-yellow-400 mt-0.5">•</span>
+                  <span className="flex-1">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mt-6">
+            <button
+              onClick={() =>
+                setExpandedSection(expandedSection === "funds" ? null : "funds")
+              }
+              className={`w-full flex items-center justify-between text-sm font-semibold pt-4 border-t border-[#FFFEEF]/10`}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-[#FFFEEF]">How funds are used?</span>
+                <Info size={14} className={textMuted} />
+              </div>
+              <ChevronDown
+                size={18}
+                className={`transition-transform text-[#FFFEEF] ${
+                  expandedSection === "funds" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {expandedSection === "funds" && (
+              <ul className="mt-3 space-y-2">
+                {fundsUsage.map((item, index) => (
+                  <li key={index} className={`flex items-start gap-2 text-xs ${textMuted}`}>
+                    <span className="text-yellow-400 mt-0.5">•</span>
+                    <span className="flex-1">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
+       <button
+  className="w-full bg-[linear-gradient(90deg,#f5d35f_0%,#d6a532_100%)] text-black hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-yellow-400/40 disabled:opacity-50"
+  disabled={!selectedPlan}
+  onClick={() => setIsModalOpen(true)}
+>
+  {isConnected ? "PAY & ACTIVATE BOOSTER" : "CONNECT WALLET"}
+</button>
+
+<PayBoosterModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  selectedPlan={selectedPlan}
+  usdcAddress={USDC_ADDRESS}
+  adminWallet={ADMIN_WALLET}
+/>
+
+
+
+        <p className={`text-center text-sm ${textMuted}`}>
+          Activation starts after approval
+        </p>
+      </div>
+
+    </div>
+  );
+}

@@ -57,6 +57,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const res = await axiosInstance.post("/auth/getUserIdByTelegram", {
        telegramId: tgUser.id,
+       //telegramId:956672855
       });
 
       const data = res.data.userInfo;
@@ -65,6 +66,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         id: data.id,
         telegram_id: data.telegram_id || tgUser.id || null,
         first_name: data.first_name || tgUser.first_name || null,
+
         tier: data.tier || null,
         silverPaid: data.silverPaid || false,
         goldPaid: data.goldPaid || false,

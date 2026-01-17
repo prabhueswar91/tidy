@@ -3,7 +3,7 @@
 import { wagmiAdapter, projectId,networks, bitcoinAdapter } from '../config/wagmiConfig'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { base, bitcoin } from '@reown/appkit/networks'
+import { baseSepolia, bitcoin } from '@reown/appkit/networks'
 import React, { type ReactNode } from 'react'
 import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
 
@@ -22,8 +22,8 @@ const metadata = {
 createAppKit({
   adapters: [wagmiAdapter, bitcoinAdapter],
   projectId,
-  networks: [base, bitcoin],
-  defaultNetwork: base,
+  networks: [baseSepolia, bitcoin],
+  defaultNetwork: baseSepolia,
   metadata: metadata,
   features: {
     analytics: true

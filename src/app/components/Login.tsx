@@ -306,7 +306,7 @@ export default function Login() {
         </h1>
 
         {/* Subtitle */}
-        <p className="font-open font-[400] text-[32px] leading-[170%] text-[#FFFEEF] " onClick={()=> router.push("/booster-service")}>
+        <p className="font-open font-[400] text-[32px] leading-[170%] text-[#FFFEEF] ">
           TidyZen Moments
         </p>
 
