@@ -31,7 +31,7 @@ export default function Invite() {
        INVITE A FRIEND
       </button>
       <p className=" text-xs text-white-600">
-        And Win Extra Zen Moments
+        And win extra zen moments
       </p>
     </div>
     </>

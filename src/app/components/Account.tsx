@@ -73,7 +73,7 @@ export default function Account() {
                 </div>
 
                 <p className="text-[#FFFEEF99] text-xs font-light">
-                  IPSM{" "}
+                  Total XP{" "}
                   <span className="text-[#FFFEEF] font-medium text-sm">
                     {points?.total ?? 0}
                   </span>
@@ -83,7 +83,7 @@ export default function Account() {
               <div className="my-3 border-t border-[#333333]" />
 
               <div className="flex items-center justify-between">
-                <p className="text-[#FFFEEF99] text-sm">Weekly</p>
+                <p className="text-[#FFFEEF99] text-sm">REWARDS</p>
                 <p className="font-semibold">
                   <span className="text-[#FFFEEF99] font-light text-xs">
                     Weekly{" "}

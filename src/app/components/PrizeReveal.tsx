@@ -540,7 +540,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                         INVITE A FRIEND
                       </button>
                       <p className="text-xs text-gray-400">
-                        And Win Extra Zen Moments
+                        And win extra zen moments
                       </p>
                     </div>
                     {/* Modal */}

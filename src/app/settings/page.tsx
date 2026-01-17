@@ -64,12 +64,12 @@ export default function Account() {
         }
     }
 
-  async function updateWallet(){
-    
+  async function updateWallet() {
+
     if (!baseAddress) {
       toast.error("Please enter a wallet address");
       return;
-    }else if (!ethers.isAddress(baseAddress)) {
+    } else if (!ethers.isAddress(baseAddress)) {
       toast.error("Enter valid wallet address.", {
         id: "123",
         duration: 3000,
@@ -86,22 +86,22 @@ export default function Account() {
         solAddress,
         initData:window?.Telegram?.WebApp?.initData
       })
-      const res = await axiosInstance.post("/points/update-wallet", {data:a});
+      const res = await axiosInstance.post("/points/update-wallet", { data: a });
 
       if (res.data?.status) {
         toast.success("Wallet updated successfully!");
-      } else if(res?.data?.error) {
+      } else if (res?.data?.error) {
         toast.error(res?.data?.error);
-      }else{
-         toast.error("Try again later");
+      } else {
+        toast.error("Try again later");
       }
-    } catch (err:any) {
+    } catch (err: any) {
       console.error("Claim error:", err);
-      const errorMessage = 
-      err?.response?.data?.error ||
-      err?.response?.data?.message ||
-      err?.message ||
-      "Something went wrong while claiming";   
+      const errorMessage =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Something went wrong while claiming";
       toast.error(errorMessage);
     } finally {
       setisSubmit(false);
@@ -110,7 +110,7 @@ export default function Account() {
 
   return (
     <div className="relative bg-[#141318]/40 w-full min-h-screen flex justify-center text-[#FFFEEF] font-dm p-4 overflow-auto scrollbar-hide">
-      
+
       <Image
         src={BgCard}
         alt="Background"
@@ -126,11 +126,11 @@ export default function Account() {
 
       <div className="relative w-full max-w-3xl flex flex-col items-center mx-auto space-y-4 mt-4">
         <button
-        onClick={() => router.push("/")}
-        className="self-end bg-black border-2 border-[#8C6C00] p-2 rounded-full"
-      >
-        <Image src={Close} alt="close" width={14} height={14} />
-      </button>
+          onClick={() => router.push("/")}
+          className="self-end bg-black border-2 border-[#8C6C00] p-2 rounded-full"
+        >
+          <Image src={Close} alt="close" width={14} height={14} />
+        </button>
         <div className="page-title text-xl font-bold">
           Account & Linked Wallets
         </div>
@@ -164,7 +164,7 @@ export default function Account() {
                 </div>
 
                 <p className="text-[#FFFEEF99] text-xs font-light">
-                  IPSM{" "}
+                  Total XP{" "}
                   <span className="text-[#FFFEEF] font-medium text-sm">
                     {points?.total ?? 0}
                   </span>
@@ -174,7 +174,7 @@ export default function Account() {
               <div className="my-3 border-t border-[#333333]" />
 
               <div className="flex items-center justify-between">
-                <p className="text-[#FFFEEF99] text-sm">Weekly</p>
+                <p className="text-[#FFFEEF99] text-sm">REWARDS</p>
                 <p className="font-semibold">
                   <span className="text-[#FFFEEF99] font-light text-xs">
                     Weekly{" "}
@@ -213,16 +213,16 @@ export default function Account() {
 
           {/* BASE (EVM) */}
           <div className="flex flex-col gap-2">
-          <div className="flex flex-col gap-2">
-            <label className="text-[#FFFEEF] text-sm font-medium">BASE (EVM)</label>
-            <input
-              type="text"
-              placeholder="Enter wallet address"
-              className="bg-[#9292924D] border border-[#929292]/30 rounded-md px-3 py-2 text-[#FFFEEF] placeholder:text-[#FFFEEF]/60 outline-none focus:border-[#D2A100] focus:bg-[#0000004D]"
-              value={baseAddress}
-              onChange={(e) => setbaseAddress(e.target.value)}
-            />
-          </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-[#FFFEEF] text-sm font-medium">BASE (EVM)</label>
+              <input
+                type="text"
+                placeholder="Enter wallet address"
+                className="bg-[#9292924D] border border-[#929292]/30 rounded-md px-3 py-2 text-[#FFFEEF] placeholder:text-[#FFFEEF]/60 outline-none focus:border-[#D2A100] focus:bg-[#0000004D]"
+                value={baseAddress}
+                onChange={(e) => setbaseAddress(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -253,7 +253,7 @@ export default function Account() {
             className="w-fulltext-[#FFFEEF] bg-gradient-to-r from-[#110E05] to-[#362A02] text-[16px] font-semibold px-4 !py-2"
             onClick={() => updateWallet()}
           >
-            {isSubmit?"Updating...":"SAVE WALLET"}
+            {isSubmit ? "Updating..." : "SAVE WALLET"}
           </Button>
         </div>
       </div>
