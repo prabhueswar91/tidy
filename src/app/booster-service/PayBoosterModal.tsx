@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Contract, parseUnits, formatUnits, isAddress } from "ethers";
+import { useEffect, useState } from "react";
+import { Contract, parseUnits, formatUnits } from "ethers";
 import { toast } from "react-hot-toast";
 import Modal from "../components/ui/Modal"; // adjust path if needed
 import axiosInstance from "../utils/axiosInstance"; // adjust path if needed
@@ -17,41 +17,36 @@ export const ERC20_ABI = [
 
 export type BoosterPlan = { id: number; label: string; price: number };
 
+ const USDC_ADDRESS = process.env.NEXT_PUBLIC_USDC_ADDRESS as string;
+const ADMIN_WALLET = process.env.NEXT_PUBLIC_ADMIN_WALLET as string;
+
 export default function PayBoosterModal({
   isOpen,
   onClose,
   selectedPlan,
-  usdcAddress,
-  adminWallet,
   onSuccess,
 }: {
   isOpen: boolean;
   onClose: () => void;
   selectedPlan: BoosterPlan | null;
-  usdcAddress: string;
-  adminWallet: string;
   onSuccess?: () => void;
 }) {
   const { provider, address, isConnected, connect, logout, formatAddress } =
     useWallet();
-const router = useRouter();
+  const router = useRouter();
   const [paying, setPaying] = useState(false);
   const [balLoading, setBalLoading] = useState(false);
   const [usdcBalance, setUsdcBalance] = useState("0");
   const [decimals, setDecimals] = useState(6);
 
-  const canUseConfig = useMemo(() => {
-    return isAddress(usdcAddress || "") && isAddress(adminWallet || "");
-  }, [usdcAddress, adminWallet]);
-
   const loadUsdcBalance = async () => {
     try {
-      if (!provider || !address || !canUseConfig) return;
+      if (!provider || !address) return;
 
       setBalLoading(true);
 
       // Check token contract exists on this chain (prevents decimals() -> 0x)
-      const code = await provider.getCode(usdcAddress);
+      const code = await provider.getCode(USDC_ADDRESS);
       if (!code || code === "0x") {
         setUsdcBalance("0");
         toast.error("Token contract not found on this network.");
@@ -59,7 +54,7 @@ const router = useRouter();
       }
 
       const signer = await provider.getSigner();
-      const token = new Contract(usdcAddress, ERC20_ABI, signer);
+      const token = new Contract(USDC_ADDRESS, ERC20_ABI, signer);
 
       let d = 6;
       try {
@@ -91,7 +86,7 @@ const router = useRouter();
         return;
       }
 
-      if (!canUseConfig) {
+      if (!USDC_ADDRESS) {
         toast.error("Please try again later");
         return;
       }
@@ -109,14 +104,14 @@ const router = useRouter();
 
       setPaying(true);
 
-      const code = await provider.getCode(usdcAddress);
+      const code = await provider.getCode(USDC_ADDRESS);
       if (!code || code === "0x") {
         toast.error("Token contract not found on this network.");
         return;
       }
 
       const signer = await provider.getSigner();
-      const token = new Contract(usdcAddress, ERC20_ABI, signer);
+      const token = new Contract(USDC_ADDRESS, ERC20_ABI, signer);
 
       let d = await token.decimals();
      
@@ -130,7 +125,7 @@ const router = useRouter();
         return;
       }
 
-      const gasLimit = await token.transfer.estimateGas(adminWallet, amount);
+      const gasLimit = await token.transfer.estimateGas(ADMIN_WALLET, amount);
       const feeData = await provider.getFeeData();
       const gasPrice = feeData.maxFeePerGas ?? feeData.gasPrice ?? null;
 
@@ -149,7 +144,7 @@ const router = useRouter();
         return;
       }
 
-      const tx = await token.transfer(adminWallet, amount);
+      const tx = await token.transfer(ADMIN_WALLET, amount);
       toast.success("Transaction submitted");
 
       const receipt = await tx.wait();

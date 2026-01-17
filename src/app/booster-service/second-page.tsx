@@ -167,8 +167,6 @@ const [balLoading, setBalLoading] = useState(false);
   isOpen={isModalOpen}
   onClose={() => setIsModalOpen(false)}
   selectedPlan={selectedPlan}
-  usdcAddress={USDC_ADDRESS}
-  adminWallet={ADMIN_WALLET}
 />
 
 
