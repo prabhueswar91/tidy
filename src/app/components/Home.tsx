@@ -104,13 +104,11 @@ export default function Home({ onStart }: HomeProps) {
 
   async function navService(){
     console.log(channelId,telegramId,"navService")
-    if(!telegramId) {
-      toast.error("Telegram ID not found");
+    if(!telegramId || !showUpgrade) {
+      toast.error("Please try again later");
       console.log("id not found")
       return;
     }
-    const res = await axiosInstance.post("/reward/check-booster-service",{channel_id:channelId,telegramId});
-    const approved = res?.data?.isAdmin ? "true" : "false";
     router.push(`/booster-service?channel_id=${channelId}`);
   }
 

@@ -159,7 +159,7 @@ export default function PayBoosterModal({
         walletAddress: address,
         price: String(selectedPlan.price),
         token: "USDC",
-        // initData: window?.Telegram?.WebApp?.initData,
+        initData: window?.Telegram?.WebApp?.initData,
       });
 
       const res = await axiosInstance.post("/points/activate-booster", {
