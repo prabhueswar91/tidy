@@ -32,6 +32,7 @@ export default function Home({ onStart }: HomeProps) {
 
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [showUpgrade, setshowUpgrade] = useState(false);
   const [partners, setPartners] = useState<Partner[]>([]);
 
   const { telegramId } = useTelegram();
@@ -60,7 +61,15 @@ export default function Home({ onStart }: HomeProps) {
     };
 
     fetchPartners();
+    checkBoosterService()
   }, []);
+
+  async function checkBoosterService() {
+    const res = await axiosInstance.post("/reward/check-booster-service",{channel_id:channelId,telegramId});
+    if(res?.data?.isAdmin){
+      setshowUpgrade(true)
+    }
+  }
 
 
   async function navPartner(){
@@ -92,6 +101,8 @@ export default function Home({ onStart }: HomeProps) {
       console.log("id not found")
       return;
     }
+    const res = await axiosInstance.post("/reward/check-booster-service",{channel_id:channelId,telegramId});
+    const approved = res?.data?.isAdmin ? "true" : "false";
     router.push(`/booster-service?channel_id=${channelId}`);
   }
 
@@ -191,7 +202,7 @@ export default function Home({ onStart }: HomeProps) {
         >
           BECOME A PARTNER
         </button>
-        {channelId &&<button
+        {showUpgrade &&<button
           className="inline-block text-[#FFFEEF] font-semibold text-base px-8 py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] font-dm underline"
           style={{
             fontSize: "16px",
