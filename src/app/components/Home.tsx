@@ -41,7 +41,8 @@ export default function Home({ onStart }: HomeProps) {
   const router = useRouter();
   const channelId = searchParams.get("channel_id");
   const upgrade = searchParams.get("upgrade");
-
+  const start = searchParams.get("start");
+  console.log(start,'startstartstart')
   if(upgrade=="true"){
     onStart();
   }
