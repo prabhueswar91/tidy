@@ -285,7 +285,7 @@ export default function AdminBoosterService() {
               <option value="">Select Subscription</option>
               {subs.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.totaldays} days – {s.price} USDC
+                  {s.totaldays} {s.durationType} – {s.price} USDC
                 </option>
               ))}
             </select>
