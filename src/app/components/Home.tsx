@@ -62,8 +62,15 @@ export default function Home({ onStart }: HomeProps) {
     };
 
     fetchPartners();
-    checkBoosterService()
   }, []);
+
+  useEffect(() => {
+    console.log(telegramId,'telegramIdtelegramId')
+    if(telegramId){
+      checkBoosterService()
+    }
+    
+  }, [telegramId]);
 
   async function checkBoosterService() {
     const res = await axiosInstance.post("/reward/check-booster-service",{channel_id:channelId,telegramId});
