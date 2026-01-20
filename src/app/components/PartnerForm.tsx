@@ -151,7 +151,7 @@ export default function TokenForm() {
                 {!submitted ? (
                   <>
                     <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
-                      Enter your Project Telegram Handle
+                      Enter your project telegram handle
                       <input
                         type="text"
                         value={projectHandle}
@@ -176,7 +176,7 @@ export default function TokenForm() {
 
                     <div className="flex flex-col gap-2 my-3 text-left">
                       <span className="text-sm font-light text-[#FFFEEF]">
-                        Select Usage Duration
+                        Select usage duration
                       </span>
                       <div className="flex items-center gap-4 flex-wrap">
                         {["1month", "3month", "6month"].map((month) => (
@@ -203,7 +203,7 @@ export default function TokenForm() {
                     </div>
 
                     <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
-                      Enter your Contact Telegram Handle
+                      Enter your contact telegram handle
                       <input
                         type="text"
                         value={contactHandle}
@@ -217,7 +217,7 @@ export default function TokenForm() {
                     </p>
 
                 <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left mt-3">
-                  Enter your Project Website URL
+                  Enter your project website url
                   <input
                     type="url"
                     value={websiteUrl}
@@ -228,7 +228,7 @@ export default function TokenForm() {
                 </label>
 
                 <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left mt-3">
-                  Upload your Project Logo (PNG or JPG)
+                  Upload your project logo (PNG or JPG)
                   <input
                     type="file"
                     accept="image/png, image/jpeg"

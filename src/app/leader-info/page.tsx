@@ -50,12 +50,9 @@ export default function XP() {
             </li>
             <li>
               <span className="font-medium">Invite Friends</span> →
-              <span className="text-xs font-light"> +10,000 XP</span>
+              <span className="text-xs font-light"> 250 XP</span>
             </li>
-            <li>
-              <span className="font-medium">Paid moments</span> →
-              <span className="text-xs font-light"> More XP</span>
-            </li>
+            
           </ul>
         </div>
 
