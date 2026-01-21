@@ -11,7 +11,7 @@ import {encryptData} from "../rewards/auth2/encrypt"
 import Modal from "../components/ui/Modal";
 import PayBoosterModal from "./PayBoosterModal";
 
-const textMuted = "text-[#FFFEEF]/60";
+const textMuted = "text-[#FFFEEF]";
 
 export const ERC20_ABI = [
   "function decimals() view returns (uint8)",
@@ -54,7 +54,7 @@ const [balLoading, setBalLoading] = useState(false);
   const includes = [
     "Tidyzen users must join your telegram to qualify for $TIDY, claims, xp rewards and xp boosts",
     "Rewards unlocked via tidyzen",
-    "Traffic spread over time",
+    "User growth spread out over time",
   ];
 
   const fundsUsage = [
@@ -73,37 +73,37 @@ const [balLoading, setBalLoading] = useState(false);
           <X size={20} className="text-[#FFFEEF]" />
         </button>
 
-        <h1 className="text-2xl font-bold text-[#FFFEEF] mb-6 text-center">
+        <h1 className="text-[26px] font-semibold text-[#FFFEEF]  font-open mb-6 text-center">
           Activate telegram booster
         </h1>
 
-        <div className={`bg-[#0b0f17]/70 backdrop-blur-xl rounded-2xl border border-[#FFFEEF]/10 shadow-2xl p-5 mb-6`}>
+        <div className={`bg-[#141318]/40 backdrop-blur-md rounded-2xl border-2 border-[#333333] shadow-2xl p-5 mb-6`}>
           {plans.map((plan) => (
             <button
               key={plan.id}
               onClick={() => setSelectedPlanId(plan.id)}
               className={`w-full text-left p-4 rounded-xl mb-3 last:mb-0 transition-all border ${
                 selectedPlanId === plan.id
-                  ? "bg-yellow-400/10 border-yellow-400 ring-2 ring-yellow-400/40"
-                  : "bg-black/25 border-[#FFFEEF]/10 hover:border-[#FFFEEF]/20"
+                  ? "bg-[#141318] border-[linear-gradient(105.65deg,#FFD563_0%,#B47E00_104.27%)] ring-2 ring-[#D7AE1C]/40"
+                  : "bg-[#141318]/60 border-[#333333] hover:border-[#FFFEEF]/20"
               }`}
             >
               <div className="flex items-center gap-3">
                 <div
                   className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                     selectedPlanId === plan.id
-                      ? `border-yellow-400`
+                      ? `border-[linear-gradient(105.65deg,#FFD563_0%,#B47E00_104.27%)]`
                       : "border-[#FFFEEF]/30"
                   }`}
                 >
                   {selectedPlanId === plan.id && (
-                    <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                    <div className="w-3 h-3 rounded-full bg-[#D7AE1C]" />
                   )}
                 </div>
 
                 <div className="flex-1">
-                  <div className="text-[#FFFEEF] font-medium">{plan.label}</div>
-                  <div className={`text-sm ${textMuted}`}>{plan.price} USDC</div>
+                  <div className="text-[#FFFEEF] text-[20px] font-medium font-sans">{plan.label}</div>
+                  <div className={`text-[16px] font-normal font-sans ${textMuted}`}>{plan.price} USDC</div>
                 </div>
               </div>
             </button>
@@ -113,17 +113,19 @@ const [balLoading, setBalLoading] = useState(false);
             <h3 className="text-[#FFFEEF] text-sm font-semibold mb-3">
               What this includes :
             </h3>
+            <div className="p-[2px] rounded-full mb-2
+            bg-[linear-gradient(90deg,rgba(126,126,126,0.3)_0%,rgba(126,126,126,0.8)_50%,rgba(126,126,126,0.3)_100%)]" />
             <ul className="space-y-2">
               {includes.map((item, index) => (
-                <li key={index} className={`flex items-start gap-2 text-xs ${textMuted}`}>
-                  <span className="text-yellow-400 mt-0.5">•</span>
-                  <span className="flex-1">{item}</span>
+                <li key={index} className={`flex items-start gap-2 font-medium font-sans text-[16px] ${textMuted}`}>
+                  <span className="text-[#D3D3C6]  mt-0.5">•</span>
+                  <span className="flex-1 text-[#D3D3C6] text-[12px] font-medium">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <button
               onClick={() =>
                 setExpandedSection(expandedSection === "funds" ? null : "funds")
@@ -146,17 +148,17 @@ const [balLoading, setBalLoading] = useState(false);
               <ul className="mt-3 space-y-2">
                 {fundsUsage.map((item, index) => (
                   <li key={index} className={`flex items-start gap-2 text-xs ${textMuted}`}>
-                    <span className="text-yellow-400 mt-0.5">•</span>
-                    <span className="flex-1">{item}</span>
+                    <span className="text-[#D3D3C6] mt-0.5">•</span>
+                    <span className="flex-1 text-[#D3D3C6] text-[12px] font-medium">{item}</span>
                   </li>
                 ))}
               </ul>
             )}
-          </div>
+          </div> */}
         </div>
 
        <button
-  className="w-full bg-[linear-gradient(90deg,#f5d35f_0%,#d6a532_100%)] text-black hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-yellow-400/40 disabled:opacity-50"
+  className="w-full bg-[linear-gradient(90deg,#110e05_0%,#362a02_100%)] font-open text-[18px]  text-[#FFFEEF] hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-[#D2A100] disabled:opacity-50"
   disabled={!selectedPlan}
   onClick={() => setIsModalOpen(true)}
 >
@@ -171,7 +173,7 @@ const [balLoading, setBalLoading] = useState(false);
 
 
 
-        <p className={`text-center text-sm ${textMuted}`}>
+        <p className={`text-center text-[#FFFEEF] font-semibold font-sans text-[16px] ${textMuted}`}>
           Activation starts after approval
         </p>
       </div>
