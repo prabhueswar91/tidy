@@ -32,7 +32,7 @@ export default function FirstPage({
   onContinue: () => void;
 }) {
   const features = [
-    { icon: <Clock size={20} />, text: "Limited time activation" },
+    { icon: <Clock size={20} />, text: "Time activation" },
     // { icon: <DollarSign size={20} />, text: "Rewards paid in $tidy" },
     { icon: <UserCheck size={20} />, text: "Verified telegram joins" },
   ];

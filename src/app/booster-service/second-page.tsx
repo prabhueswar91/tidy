@@ -53,7 +53,7 @@ const [balLoading, setBalLoading] = useState(false);
 
   const includes = [
     "Tidyzen users must join your telegram to qualify for $TIDY, claims, xp rewards and xp boosts",
-    "Rewards unlocked via tidyzen",
+    "Rewards unlocked via TidyZen",
     "User growth spread out over time",
   ];
 
