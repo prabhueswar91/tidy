@@ -19,10 +19,20 @@ import { useTelegram } from "../context/TelegramContext";
 
 export default function Account() {
   const { userInfo } = UserContext();
-  const { telegramId } = useTelegram();
-  const router = useRouter();
+  const { telegramId, userdata } = useTelegram();
+const router = useRouter();
+// const profilePic = userdata?.photo_url;
+const profilePic =
+  userdata?.photo_url ||
+  "https://i.pravatar.cc/150?img=3";
 
-  const [points, setPoints] = useState<any>(null);
+  const telegramDisplayName =
+  userdata?.username
+    ? `@${userdata.username}`
+    : userdata?.first_name
+    ? userdata.first_name
+    : "—";
+const [points, setPoints] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [isSubmit, setisSubmit] = useState(false);
   const [baseAddress, setbaseAddress] = useState("");
@@ -107,9 +117,13 @@ export default function Account() {
       setisSubmit(false);
     }
   }
+useEffect(() => {
+  console.log("Telegram photo:", userdata?.photo_url);
+}, [userdata]);
 
   return (
-    <div className="relative bg-[#141318]/40 w-full min-h-screen flex justify-center text-[#FFFEEF] font-dm p-4 overflow-auto scrollbar-hide">
+    
+    <div className="relative bg-[#141318]/40 w-full min-h-screen p-4 text-[#FFFEEF] font-dm  overflow-x-hidden">
 
       <Image
         src={BgCard}
@@ -117,17 +131,17 @@ export default function Account() {
         className="absolute inset-0 w-full h-full object-cover -z-10"
       />
 
-      <button
+      {/* <button
         onClick={() => router.push("/")}
-        className="self-end bg-black border-2 border-[#8C6C00] p-2 rounded-full"
+        className="ml-auto bg-black border-2 border-[#8C6C00] p-2 rounded-full"
       >
         <Image src={Close} alt="close" width={14} height={14} />
-      </button>
+      </button> */}
 
       <div className="relative w-full max-w-3xl flex flex-col items-center mx-auto space-y-4 mt-4">
         <button
           onClick={() => router.push("/")}
-          className="self-end bg-black border-2 border-[#8C6C00] p-2 rounded-full"
+          className="ml-auto bg-black border-2 border-[#8C6C00] p-2 rounded-full"
         >
           <Image src={Close} alt="close" width={14} height={14} />
         </button>
@@ -144,23 +158,24 @@ export default function Account() {
             <>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  {points?.avatar ? (
-                    // <Image
-                    //   src={points.avatar}
-                    //   alt="Profile"
-                    //   width={36}
-                    //   height={36}
-                    //   className="rounded-full w-6 h-6"
-                    //   unoptimized
-                    // />
-                    <User size={14} strokeWidth={2.5} className="rounded-full w-6 h-6"/>
-                  ) : (
-                    <div className="w-6 h-6 rounded-full bg-gray-400/40" />
-                  )}
+                    {profilePic ? (
+  <Image
+    src={profilePic}
+    alt="Telegram Profile"
+    width={36}
+    height={36}
+    className="rounded-full w-6 h-6 object-cover"
+    unoptimized
+  />
+) : (
+  <div className="w-6 h-6 rounded-full bg-gray-400/40 flex items-center justify-center">
+    <User size={14} strokeWidth={2.5} />
+  </div>
+)}
+ <span className="font-medium text-sm">
+  {telegramDisplayName}
+</span>
 
-                  <span className="font-medium text-sm">
-                    @{points?.username || "—"}
-                  </span>
                 </div>
 
                 <p className="text-[#FFFEEF99] text-xs font-light">

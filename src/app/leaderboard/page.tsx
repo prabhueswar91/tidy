@@ -25,7 +25,11 @@ const TAB_TYPE_MAP: Record<string, number> = {
 
 export default function Leaderboard() {
   const router = useRouter();
-  const { telegramId } = useTelegram();
+const { telegramId, userdata } = useTelegram();
+useEffect(() => {
+  console.log("Telegram userdata:", userdata);
+}, [userdata]);
+
   // const telegramId = 6195798875;
 
   const [activeTab, setActiveTab] = useState("Weekly");
@@ -148,11 +152,47 @@ export default function Leaderboard() {
             </span>
           </div>
         </div> */}
+        {/* USER SUMMARY BAR */}
+<div className="w-full bg-[#14131899]/80 border border-[#333333] rounded-xl px-4 py-3 flex items-center justify-between">
+  
+  {/* LEFT: Avatar + Name */}
+  <div className="flex items-center gap-3">
+    {userdata?.photo_url ? (
+      <Image
+        src={userdata.photo_url}
+        alt="Profile"
+        width={40}
+        height={40}
+        className="rounded-full object-cover"
+        unoptimized
+      />
+    ) : (
+      <div className="w-10 h-10 rounded-full bg-[#2A2A2A] flex items-center justify-center">
+        <User size={16} />
+      </div>
+    )}
+
+    <span className="font-medium text-sm">
+      {userdata?.username
+        ? `@${userdata.username}`
+        : userdata?.first_name || "User"}
+    </span>
+  </div>
+
+  {/* RIGHT: TOTAL XP */}
+  <div className="text-right">
+    <p className="text-[11px] text-[#FFFEEF99]">Total XP</p>
+    <p className="text-sm font-semibold">
+      {userPoints?.totalPoint ?? 0}
+    </p>
+  </div>
+</div>
+
         <div className="flex flex-col justify-center text-center">
         <h3 className="text-xl font-bold">LeaderBoard</h3>
         <div className="flex items-center justify-center gap-2">
           <p className="text-sm font-light">
-          Play And Refer To Climb The Leaderboard
+          Play and refer to climb the leaderboard
           </p>
         <Info size={12} onClick={() => router.push("/leader-info")}/>
         </div>
@@ -190,7 +230,7 @@ export default function Leaderboard() {
             {/* Input */}
             <input
               type="text"
-              placeholder="Search Telegram Handle"
+              placeholder="Search telegram handle"
               className="bg-transparent outline-none text-[#D3D3C6] placeholder:text-[#D3D3C6] w-full"
               onChange={onchangeSearch}
               value={sValue}
@@ -214,10 +254,15 @@ export default function Leaderboard() {
               <table className="w-full text-xs">
                 <tbody className="divide-y divide-[#FFFFFF33]">
                   {leaderboard.map((user, index) => (
-                    <tr
-                      key={user.userId ?? index}
-                      className="text-center hover:bg-[#1f1e25] transition-colors"
-                    >
+                   <tr
+  key={user.userId ?? index}
+  className={`text-center transition-colors ${
+    user.userId === userId
+      ? "bg-[#2A2414] border-l-4 border-[#D2A100]"
+      : "hover:bg-[#1f1e25]"
+  }`}
+>
+
                       <td className="px-3 py-3">{index + 1}</td>
 
                       <td className="px-3 py-3">

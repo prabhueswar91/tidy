@@ -14,6 +14,7 @@ import { useTelegram } from "../context/TelegramContext";
 import { UserContext } from "../context/UserContext";
 import { useAppStore } from "../store/useAppStore";
 import {encryptData} from "./auth2/encrypt"
+import { User } from "lucide-react";
 
 export default function PendingRewards() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function PendingRewards() {
   const [referrals, setReferrals] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const { setSelectedTier, setZenCode } = useAppStore();
-
+ const [userPoints, setUserPoints] = useState<any>(null);
   // Claim modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
@@ -40,27 +41,56 @@ export default function PendingRewards() {
   
   // const telegramId = 6195798875;
   console.log(userInfo,'userInfouserInfo',userInfo?.walletAddress)
-  useEffect(() => {
-    async function fetchPending() {
-      try {
-        const res = await axiosInstance.post("/reward/pending", { telegramId });
+  // useEffect(() => {
+  //   async function fetchPending() {
+  //     try {
+  //       const res = await axiosInstance.post("/reward/pending", { telegramId });
 
-        if (res.data?.status) {
-          setRewards(res.data.rewards || []);
-          setReferrals(res.data.referrals || []);
-          setUser(res.data.user || null);
-        } else {
-          toast.error(res.data?.message || "Failed to load pending rewards");
-        }
-      } catch (err) {
-        console.error("Pending fetch error:", err);
-        toast.error("Something went wrong fetching pending rewards");
-      } finally {
-        setLoading(false);
+  //       if (res.data?.status) {
+  //         setRewards(res.data.rewards || []);
+  //         setReferrals(res.data.referrals || []);
+  //         setUser(res.data.user || null);
+  //       } else {
+  //         toast.error(res.data?.message || "Failed to load pending rewards");
+  //       }
+  //     } catch (err) {
+  //       console.error("Pending fetch error:", err);
+  //       toast.error("Something went wrong fetching pending rewards");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  //   fetchPending();
+  // }, []);
+useEffect(() => {
+  if (!telegramId) {
+    console.warn("⏳ Waiting for telegramId...");
+    return;
+  }
+
+  async function fetchPending() {
+    try {
+      const res = await axiosInstance.post("/reward/pending", {
+        telegramId,
+      });
+
+      if (res.data?.status) {
+        setRewards(res.data.rewards || []);
+        setReferrals(res.data.referrals || []);
+        setUser(res.data.user || null);
+      } else {
+        toast.error(res.data?.message || "Failed to load pending rewards");
       }
+    } catch (err) {
+      console.error("Pending fetch error:", err);
+      toast.error("Something went wrong fetching pending rewards");
+    } finally {
+      setLoading(false);
     }
-    fetchPending();
-  }, []);
+  }
+
+  fetchPending();
+}, [telegramId]); // 👈 IMPORTANT
 
   useEffect(() => {
     if(userInfo?.walletAddress){
@@ -178,7 +208,40 @@ export default function PendingRewards() {
         >
           <Image src={Close} alt="close icon" className="w-4 h-4" />
         </button>
+<div className="w-full bg-[#14131899]/80 border border-[#333333] rounded-xl px-4 py-3 flex items-center justify-between">
+  
+  {/* LEFT: Avatar + Name */}
+  <div className="flex items-center gap-3">
+    {userdata?.photo_url ? (
+      <Image
+        src={userdata.photo_url}
+        alt="Profile"
+        width={40}
+        height={40}
+        className="rounded-full object-cover"
+        unoptimized
+      />
+    ) : (
+      <div className="w-10 h-10 rounded-full bg-[#2A2A2A] flex items-center justify-center">
+        <User size={16} />
+      </div>
+    )}
 
+    <span className="font-medium text-sm">
+      {userdata?.username
+        ? `@${userdata.username}`
+        : userdata?.first_name || "User"}
+    </span>
+  </div>
+
+  {/* RIGHT: TOTAL XP */}
+  <div className="text-right">
+    <p className="text-[11px] text-[#FFFEEF99]">Total XP</p>
+    <p className="text-sm font-semibold">
+      {userPoints?.totalPoint ?? 0}
+    </p>
+  </div>
+</div>
         <div className="bg-[#141318cc] backdrop-blur-sm rounded-lg pt-4">
           <h2 className="text-md font-bold mb-3 text-[#D2A100] text-center">
             Pending Rewards

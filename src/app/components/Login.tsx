@@ -15,7 +15,7 @@ import Invite from "../components/Invite";
 import { useTelegram } from "../context/TelegramContext";
 import { UserContext } from "../context/UserContext";
 import { useWallet } from "../hooks/useWallet";
-
+import { User } from "lucide-react";
 interface Tier {
   id: number;
   name: string;
@@ -133,7 +133,9 @@ export default function Login() {
     };
     fetchTiers();
   }, []);
-
+const handleProfileClick = () => {
+        router.push('/settings');
+    };
   const handleTierSelect = (tier: Tier) => {
     setSelectedTier(tier.name, tier.amount);
     console.log(userInfo,'userInfo>>>>>>>>>>>>>>')
@@ -301,6 +303,15 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center font-dm justify-center text-[#FFFEEF] bg-gradient-to-b from-[#0a0a0a] to-[#1e293b]">
       <Card>
+        <div className="flex justify-center mt-4 mb-4">
+     <button
+                    type="button"
+                    className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-[#EBB457] to-[#efefef] text-white hover:opacity-90 shadow-md hover:shadow-lg transition-all duration-200"
+                    onClick={handleProfileClick}
+                >
+                    <User size={18} strokeWidth={2.5} />
+                </button>
+  </div>
         <h1 className="text-center font-dt font-[900] uppercase tracking-[0.1em] text-2xl mt-[3rem]">
           TIDYCOIN
         </h1>

@@ -15,7 +15,7 @@ export default function StakeButton() {
 
   return (
     <div className="flex items-center justify-between w-full max-w-md gap-2">
-        <div className="absolute top-0.5 right-4 z-10">
+        {/* <div className="absolute top-0.5 right-4 z-10">
             <button
                 type="button"
                 className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-[#EBB457] to-[#efefef] text-white hover:opacity-90 shadow-md hover:shadow-lg transition-all duration-200"
@@ -23,7 +23,7 @@ export default function StakeButton() {
             >
                 <User size={14} strokeWidth={2.5} />
             </button>
-        </div>
+        </div> */}
 
 
         <Button
