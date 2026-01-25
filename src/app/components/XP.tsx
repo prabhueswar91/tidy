@@ -29,7 +29,7 @@ export default function XP() {
         </div>
 
         <div className="w-full bg-[#14131866]/40 border-[1.5px] border-[#333333] rounded-md p-4">
-          <ul className="list-disc list-outside pl-5 flex flex-col gap-2 text-sm text-[#FFFEEF]">
+          {/* <ul className="list-disc list-outside pl-5 flex flex-col gap-2 text-sm text-[#FFFEEF]">
             <li>
               <span className="font-medium">Win $TIDY</span> →
               <span className="text-xs font-light">
@@ -45,7 +45,24 @@ export default function XP() {
               <span className="font-medium">Paid moments</span> →
               <span className="text-xs font-light"> More XP</span>
             </li>
-          </ul>
+          </ul> */}
+          <ul className="list-disc list-outside pl-5 flex flex-col gap-2 text-sm text-[#FFFEEF]">
+  <li>
+    <span className="font-medium">Win $TIDY</span>
+    <span className="text-xs font-light"> — Earn XP (10 $TIDY = 1 XP)</span>
+  </li>
+  <li>
+    <span className="font-medium">Invite Friends</span>
+    <span className="text-xs font-light">
+      {" "} — Get 1,000 XP when your friend joins and earns XP
+    </span>
+  </li>
+  <li>
+    <span className="font-medium">Paid Moments</span>
+    <span className="text-xs font-light"> — Earn bonus XP</span>
+  </li>
+</ul>
+
         </div>
 
         <div className="grid grid-cols-3 gap-4 w-full">

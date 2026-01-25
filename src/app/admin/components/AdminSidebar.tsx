@@ -72,7 +72,7 @@ export default function AdminSidebar() {
                   ${
                     isActive
                       ? "border-yellow-500 bg-gradient-to-br from-[#362A02] to-[#110E05] text-white"
-                      : "border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-[#737157] hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white"
+                      : "border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-[#FFFEEF] hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white"
                   }
                 `}
               >

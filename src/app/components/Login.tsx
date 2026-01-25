@@ -303,16 +303,16 @@ const handleProfileClick = () => {
   return (
     <div className="flex min-h-screen items-center font-dm justify-center text-[#FFFEEF] bg-gradient-to-b from-[#0a0a0a] to-[#1e293b]">
       <Card>
-        <div className="flex justify-center mt-4 mb-4">
+        <div className="flex justify-center items-center mt-4 mb-4">
      <button
                     type="button"
                     className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-[#EBB457] to-[#efefef] text-white hover:opacity-90 shadow-md hover:shadow-lg transition-all duration-200"
                     onClick={handleProfileClick}
                 >
-                    <User size={18} strokeWidth={2.5} />
+                    <User size={20} strokeWidth={2.5} />
                 </button>
   </div>
-        <h1 className="text-center font-dt font-[900] uppercase tracking-[0.1em] text-2xl mt-[3rem]">
+        <h1 className="text-center font-dt font-[900] uppercase tracking-[0.1em] text-2xl mt-[1rem]">
           TIDYCOIN
         </h1>
 
@@ -322,8 +322,8 @@ const handleProfileClick = () => {
         </p>
 
         {/* Section Label */}
-        <p className="mt-10 text-center font-dm text-[20px] font-medium tracking-[-0.03em] text-[#FFFEEF] capitalize">
-          Choose Today&apos;s Zen Level
+        <p className="mt-10 text-center font-dm text-[20px] font-medium tracking-[-0.03em] text-[#FFFEEF] ">
+          Choose today&apos;s zen level
         </p>
         <div className="mb-10 mt-1 border-b-2 border-[#FFFEEF]/10"></div>
 

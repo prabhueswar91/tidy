@@ -92,14 +92,14 @@ export default function AdminUsers() {
             setPage(1);
             fetchUsers();
           }}
-          className="flex items-center gap-3 px-3 py-3 rounded-lg font-semibold border-2 transition-all duration-300 border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-[#737157] hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white"
+          className="flex items-center gap-3 px-3 py-3 rounded-lg font-semibold border-2 transition-all duration-300 border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-white hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white"
         >
           Search
         </button>
 
         <button
           onClick={exportUsers}
-          className="flex items-center gap-3 px-3 py-3 rounded-lg font-semibold border-2 transition-all duration-300 border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-[#737157] hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white"
+          className="flex items-center gap-3 px-3 py-3 rounded-lg font-semibold border-2 transition-all duration-300 border-[#D2A100] bg-gradient-to-br from-[#110E05] to-[#362A02] text-white hover:border-yellow-500 hover:from-[#362A02] hover:to-[#110E05] hover:text-white"
         >
           {isExport?"Downloading..":"Export CSV"}
         </button>

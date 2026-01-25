@@ -99,7 +99,7 @@ export default function TierPage() {
           </div>
 
           <p className="mt-14 font-open font-normal text-[18px] leading-[170%] tracking-[-0.06em] text-[#FFFEEF]">
-            Customize Your
+            Customize your
           </p>
           <p className="font-open font-semibold text-[26px] leading-[170%] tracking-[-0.05em] text-[#FFFEEF]">
             TidyZen Moments
@@ -116,7 +116,7 @@ export default function TierPage() {
               UPGRADE TIER
             </Button>
             <p className="mt-2 font-dm text-sm font-[500]">
-              More Time, Increased odds
+              More time, increased odds
             </p>
           </div>
 

@@ -139,14 +139,14 @@ useEffect(() => {
       </button> */}
 
       <div className="relative w-full max-w-3xl flex flex-col items-center mx-auto space-y-4 mt-4">
-        <button
+        {/* <button
           onClick={() => router.push("/")}
           className="ml-auto bg-black border-2 border-[#8C6C00] p-2 rounded-full"
         >
           <Image src={Close} alt="close" width={14} height={14} />
-        </button>
+        </button> */}
         <div className="page-title text-xl font-bold">
-          Account & Linked Wallets
+          Account & linked wallets
         </div>
 
         <div className="w-full bg-[#14131899]/6 border-[1.5px] border-[#333333] rounded-md p-4">

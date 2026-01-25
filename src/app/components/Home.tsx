@@ -206,7 +206,7 @@ export default function Home({ onStart }: HomeProps) {
           }}
           onClick={()=>navPartner()}
         >
-          BECOME A PARTNER
+          BECOME A PARTNER AND ACCESS OUR TELEGRAM BOOSTER SERVICE
         </button>
         {showUpgrade &&<button
           className="inline-block text-[#FFFEEF] font-semibold text-base px-8 py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] font-dm underline"
