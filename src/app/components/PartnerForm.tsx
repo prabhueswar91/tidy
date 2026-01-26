@@ -91,9 +91,14 @@ export default function TokenForm() {
       console.log("✅ Partner created:", response.data);
       setSubmitted(true);
       toast.success("Application submitted successfully!");
-    } catch (error) {
+    } catch (error:any) {
       console.error("❌ Error creating partner:", error);
-      toast.error("Failed to submit. Please try again!");
+      const errorMessage = 
+      error?.response?.data?.error ||           // API error message
+      error?.response?.data?.message ||         // Alternative message field
+      error?.message ||                          // Generic error message
+      "Failed to submit. Please try again!";   
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
