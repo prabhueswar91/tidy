@@ -38,7 +38,8 @@ export default function TokenForm() {
 
 
   const handleSubmit = async () => {
-    if (!telegramId || !channel_id) return;
+    // if (!telegramId || !channel_id) return;
+    if (!telegramId) return;
 
     
     if (!projectHandle.trim()) {
