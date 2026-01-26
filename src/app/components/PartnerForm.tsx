@@ -75,7 +75,7 @@ export default function TokenForm() {
       const formData = new FormData();
       formData.append("project", projectHandle);
       formData.append("telegramId", telegramId);
-      formData.append("channelId", channel_id);
+      formData.append("channelId", channel_id || "");
       //formData.append("tokenAddress", tokenEnabled ? baseToken : "");
       formData.append("contact", contactHandle);
       formData.append("duration", selectedUsage);
