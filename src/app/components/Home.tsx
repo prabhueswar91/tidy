@@ -51,7 +51,7 @@ export default function Home({ onStart }: HomeProps) {
     const fetchPartners = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/public/partner/approved-list`
+          `https://tidyzen.tidyonchain.com/api/public/partner/approved-list`
         );
         if (res.data.success) {
           setPartners(res.data.data);
