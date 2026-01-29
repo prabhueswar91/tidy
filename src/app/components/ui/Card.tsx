@@ -39,7 +39,7 @@ export default function Card({
       {!disableOverlay && variant === "default" && (
         <div className="absolute inset-0 bg-[#0B1925] before:absolute before:inset-x-0 before:top-0 before:h-[40%] before:bg-[radial-gradient(ellipse_at_top,#BFF36D3B_0%,transparent_70%)] before:opacity-90 after:absolute after:inset-x-0 after:bottom-0 after:h-[40%] after:bg-[radial-gradient(ellipse_at_bottom,#BFF36D80_0%,transparent_70%)] after:opacity-90 pointer-events-none"></div>
       )}
-      <div className="relative z-10 p-4 py-2">
+      <div className="relative z-10 mt-8 p-4 py-2">
         <StakeButton />
         <div>
           <Button

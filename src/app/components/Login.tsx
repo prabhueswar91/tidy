@@ -133,6 +133,22 @@ export default function Login() {
     };
     fetchTiers();
   }, []);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+useEffect(() => {
+  const tgUser = window?.Telegram?.WebApp?.initDataUnsafe?.user;
+
+  if (tgUser?.photo_url) {
+    setPhotoUrl(tgUser.photo_url);
+  } else if (process.env.NODE_ENV === "development") {
+    setPhotoUrl("https://i.pravatar.cc/150?img=3"); // DEV mock
+  } else {
+    setPhotoUrl(null);
+  }
+}, []);
+
+
+
 const handleProfileClick = () => {
         router.push('/settings');
     };
@@ -304,13 +320,32 @@ const handleProfileClick = () => {
     <div className="flex min-h-screen items-center font-dm justify-center text-[#FFFEEF] bg-gradient-to-b from-[#0a0a0a] to-[#1e293b]">
       <Card>
         <div className="flex justify-center items-center mt-4 mb-4">
-     <button
+     {/* <button
                     type="button"
                     className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-[#EBB457] to-[#efefef] text-white hover:opacity-90 shadow-md hover:shadow-lg transition-all duration-200"
                     onClick={handleProfileClick}
                 >
                     <User size={20} strokeWidth={2.5} />
-                </button>
+                </button> */}
+               <button
+  type="button"
+  onClick={handleProfileClick}
+  className="flex items-center justify-center 
+             w-12 h-12 rounded-full overflow-hidden
+             bg-gradient-to-br from-[#EBB457] to-[#efefef]
+             shadow-md hover:shadow-lg transition-all duration-200"
+>
+  {photoUrl ? (
+    <img
+      src={photoUrl}
+      alt="Telegram Profile"
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <User size={18} strokeWidth={2.5} />
+  )}
+</button>
+
   </div>
         <h1 className="text-center font-dt font-[900] uppercase tracking-[0.1em] text-2xl mt-[1rem]">
           TIDYCOIN

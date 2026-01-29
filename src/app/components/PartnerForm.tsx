@@ -38,8 +38,7 @@ export default function TokenForm() {
 
 
   const handleSubmit = async () => {
-    // if (!telegramId || !channel_id) return;
-    if (!telegramId) return;
+    if (!telegramId || !channel_id) return;
 
     
     if (!projectHandle.trim()) {
@@ -75,7 +74,7 @@ export default function TokenForm() {
       const formData = new FormData();
       formData.append("project", projectHandle);
       formData.append("telegramId", telegramId);
-      formData.append("channelId", channel_id || "");
+      formData.append("channelId", channel_id);
       //formData.append("tokenAddress", tokenEnabled ? baseToken : "");
       formData.append("contact", contactHandle);
       formData.append("duration", selectedUsage);
@@ -92,14 +91,9 @@ export default function TokenForm() {
       console.log("✅ Partner created:", response.data);
       setSubmitted(true);
       toast.success("Application submitted successfully!");
-    } catch (error:any) {
+    } catch (error) {
       console.error("❌ Error creating partner:", error);
-      const errorMessage = 
-      error?.response?.data?.error ||           // API error message
-      error?.response?.data?.message ||         // Alternative message field
-      error?.message ||                          // Generic error message
-      "Failed to submit. Please try again!";   
-      toast.error(errorMessage);
+      toast.error("Failed to submit. Please try again!");
     } finally {
       setLoading(false);
     }
