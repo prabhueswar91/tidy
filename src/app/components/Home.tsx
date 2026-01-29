@@ -166,11 +166,11 @@ export default function Home({ onStart }: HomeProps) {
               {partner.logo ? (
                 <>
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/${partner.logo}`}
+                  src={`http://3.11.18.144:5002/uploads1/partner_logos/${partner.logo}`}
                   alt={partner.groupName || "Partner Logo"}
                   fill
                   style={{ objectFit: "contain" }}
-                />
+              />
                 {!partner.groupName && <Image
                   src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/star.png`}
                   alt={"star"}
