@@ -19,12 +19,6 @@ export default function XP() {
       />
 
       <div className="relative w-full max-w-3xl flex flex-col items-center mx-auto space-y-4 mt-4">
-         <button
-          onClick={() => router.push("/")}
-          className="self-end bg-black border-2 border-[#8C6C00] p-2 rounded-full"
-        >
-          <Image src={Close} alt="close" width={14} height={14} />
-        </button>
         <div className="page-title text-xl font-semibold">
           XP & Leaderboards
         </div>
