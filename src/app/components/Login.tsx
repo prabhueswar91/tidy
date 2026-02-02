@@ -180,12 +180,12 @@ const handleProfileClick = () => {
       return;
     }
     
-    if(!baseAddress){
-      toast.error("Please update your wallet and continue");
-      setloader(false)
-      router.push(`/settings`);
-      return
-    }
+    // if(!baseAddress){
+    //   toast.error("Please update your wallet and continue");
+    //   setloader(false)
+    //   router.push(`/settings`);
+    //   return
+    // }
 
     // if(isApproved || userTier=="GOLD" || selectedTier.toUpperCase() === userTier || selectedTier.toUpperCase() === "BRONZE"){
     //   router.push("/Tier");

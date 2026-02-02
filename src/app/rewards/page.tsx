@@ -102,11 +102,11 @@ useEffect(() => {
 
   // Open claim modal
   const openClaimModal = (reward: any) => {
-    if(!walletAddress){
-      toast.error("Please update your wallet and continue");
-      router.push(`/settings`);
-      return
-    }
+    // if(!walletAddress){
+    //   toast.error("Please update your wallet and continue");
+    //   router.push(`/settings`);
+    //   return
+    // }
     setSelectedReward(reward);
     setIsModalOpen(true);
   };
