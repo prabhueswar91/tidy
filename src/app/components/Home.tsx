@@ -178,8 +178,8 @@ export default function Home({ onStart }: HomeProps) {
                 </div>
 
 
-                                {!partner.groupName && <img
-                  src="http://3.11.18.144:5002/uploads/partner_logos/star.png"
+                {!partner.groupName && <img
+                  src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/star.png`}
                   alt="star"
                   className="absolute bottom-0 right-0 w-5 h-5 z-50"
                 />
