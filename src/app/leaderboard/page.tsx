@@ -179,7 +179,7 @@ useEffect(() => {
   <div className="text-right">
     <p className="text-[11px] text-[#FFFEEF99]">Total XP</p>
     <p className="text-sm font-semibold">
-      {userPoints ?? 0}
+      {xpbalance ?? 0}
     </p>
   </div>
 </div>
