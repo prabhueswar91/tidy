@@ -35,6 +35,7 @@ export default function TokenForm() {
   const [loading, setLoading] = useState(false);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
+const [featured, setFeatured] = useState<"yes" | "no">("no");
 
 
   const handleSubmit = async () => {
@@ -81,6 +82,7 @@ export default function TokenForm() {
       formData.append("url", websiteUrl);
       formData.append("logo", logoFile);
       formData.append("data", decodeURIComponent(data || ""));
+formData.append("featured", featured);
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"}/public/partner`,
@@ -201,6 +203,37 @@ export default function TokenForm() {
                         ))}
                       </div>
                     </div>
+                    <div className="flex flex-col gap-3 text-left mt-4">
+  <span className="text-sm font-light text-[#FFFEEF]">
+    Contribute $100 in your native token to be featured in our leaderboard competitions and get your logo on our front page
+  </span>
+
+  <div className="flex items-center gap-6">
+    <label className="flex items-center gap-2 cursor-pointer">
+      <input
+        type="radio"
+        name="featured"
+        value="yes"
+        checked={featured === "yes"}
+        onChange={() => setFeatured("yes")}
+        className="accent-yellow-400"
+      />
+      <span className="text-sm font-light">Yes</span>
+    </label>
+
+    <label className="flex items-center gap-2 cursor-pointer">
+      <input
+        type="radio"
+        name="featured"
+        value="no"
+        checked={featured === "no"}
+        onChange={() => setFeatured("no")}
+        className="accent-yellow-400"
+      />
+      <span className="text-sm font-light">No</span>
+    </label>
+  </div>
+</div>
 
                     <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
                       Enter your contact telegram handle
@@ -263,7 +296,7 @@ export default function TokenForm() {
               <div className="w-full mt-4">
                 {!submitted ? (
                   <Button onClick={handleSubmit} disabled={loading} className="bg-[linear-gradient(90deg,#242424_0%,#525252_100%)]">
-                    CONTINUE
+                    CONTINUE TO OUR TELEGRAM BOOSTER SERVICE
                   </Button>
                 ) : (
                   <Button onClick={handleReset}>START AGAIN</Button>

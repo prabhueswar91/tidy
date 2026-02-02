@@ -116,7 +116,7 @@ export default function TierPage() {
               UPGRADE TIER
             </Button>
             <p className="mt-2 font-dm text-sm font-[500]">
-              More time, increased odds
+              More time = increased odds
             </p>
           </div>
 

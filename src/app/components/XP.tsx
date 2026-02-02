@@ -22,7 +22,7 @@ export default function XP() {
           <div className="flex-1 w-[120] h-[2px] bg-gradient-to-r from-[#765F0F00] to-[#DCB11C]" />
 
           <span className="text-xs font-medium text-[#FFFEEF] tracking-wide">
-            How It Works
+            How it works
           </span>
 
           <div className="flex-1 h-[2px] bg-gradient-to-l from-[#765F0F00] to-[#DCB11C]" />
@@ -52,7 +52,7 @@ export default function XP() {
     <span className="text-xs font-light"> — Earn XP (10 $TIDY = 1 XP)</span>
   </li>
   <li>
-    <span className="font-medium">Invite Friends</span>
+    <span className="font-medium">Invite friends</span>
     <span className="text-xs font-light">
       {" "} — Get 1,000 XP when your friend joins and earns XP
     </span>
@@ -99,7 +99,7 @@ export default function XP() {
               height={20}
               className="mr-3 w-8 h-8"
             />
-            Rewards for top ranks Coming soon
+            Rewards for top ranks coming soon
           </div>
         </div>
         <div className="w-full mx-4 !mt-12">

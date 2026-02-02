@@ -167,21 +167,23 @@ export default function Home({ onStart }: HomeProps) {
                 <>
                 
                <div className="w-20 h-16 flex items-center justify-center bg-transparent rounded-md">
-                <Image
-                  src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads1/partner_logos/${partner.logo}`}
-                  alt={partner.groupName || "Partner Logo"}
-                  width={48}
-                  height={48}
-                  unoptimized
-                  className="object-contain max-w-full max-h-full"
-                />
-              </div>
-            {!partner.groupName && <img
-                src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/star.png`}
-                alt="star"
-                className="absolute bottom-0 right-0 w-5 h-5 z-50"
-              />
-              }
+  <Image
+    src={`http://3.11.18.144:5002/uploads1/partner_logos/${partner.logo}`}
+    alt={partner.groupName || "Partner Logo"}
+    width={64}
+    height={56}
+    unoptimized
+    className="object-contain max-w-full max-h-full"
+  />
+</div>
+
+
+                {!partner.groupName && <img
+  src="http://3.11.18.144:5002/uploads/partner_logos/star.png"
+  alt="star"
+  className="absolute bottom-0 right-0 w-5 h-5 z-50"
+/>
+}
                 </>
               ) : (
                 <div className="w-full h-full bg-gray-300 flex items-center justify-center text-xs">
