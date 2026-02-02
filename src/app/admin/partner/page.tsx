@@ -142,7 +142,7 @@ export default function AdminPartners() {
                   <td className="px-4 py-2 border">
                       {partner.logo ? (
                         <img
-                          src={partner.logo.startsWith("http") ? partner.logo : `${process.env.NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/${partner.logo}`}
+                          src={partner.logo.startsWith("http") ? partner.logo : `${process.env.NEXT_PUBLIC_BASE_URL}/uploads1/partner_logos/${partner.logo}`}
                           alt={`${partner.project} logo`}
                           className="w-12 h-12 object-contain"
                         />
