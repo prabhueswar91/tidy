@@ -38,6 +38,7 @@ useEffect(() => {
   const [userId, setUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [sValue, setsValue] = useState("");
+  const [xpbalance, setxpbalance] = useState(0);
 
   useEffect(() => {
     if (!telegramId) {
@@ -72,10 +73,10 @@ useEffect(() => {
 
   const fetchUserPoints = async () => {
     try {
-      const res = await axiosInstance.get(`/points/user/${userId}`);
-
-      if (Array.isArray(res.data) && res.data.length > 0) {
-        setUserPoints(res.data[0]);
+      const {data:response} = await axiosInstance.get(`/points/user/${userId}`);
+      if (response) {
+        setUserPoints(response?.totalPoints);
+        getXPbalance(response?.walletAddress)
       }
     } catch (err) {
       toast.error("Error loading user points");
@@ -118,6 +119,19 @@ useEffect(() => {
     window.open(generateTelegramUrl(), '_blank', 'width=600,height=400');
   };
 
+  async function getXPbalance(addr:string){
+        try{
+          const { data } = await axiosInstance.post("/auth/get-xp-balance", {
+            walletAddress:addr,
+            telegramId: telegramId
+          });
+          const bal = data?.balance ? Number(parseFloat(data.balance).toFixed(4)) : 0;
+          setxpbalance(bal);
+        }catch(error: unknown){
+          
+        }
+    }
+
   return (
     <div className="relative bg-[#141318]/40 w-full min-h-screen flex justify-center text-[#FFFEEF] font-dm p-4 overflow-auto scrollbar-hide">
       <Image
@@ -134,24 +148,6 @@ useEffect(() => {
           <Image src={Close} alt="close" width={14} height={14} />
         </button>
 
-        {/* USER SCORE BAR */}
-        {/* <div className="bg-[#110E05] p-4 rounded-lg border border-[#362A02]">
-          <p className="text-center text-sm text-[#D2A100] font-semibold">
-            Your Stats
-          </p>
-          <div className="flex justify-between mt-2">
-            <span>Total Points: </span>
-            <span className="text-[#D2A100] font-bold">
-              {userPoints?.totalPoint || 0}
-            </span>
-          </div>
-          <div className="flex justify-between mt-1">
-            <span>Latest Earned: </span>
-            <span className="text-[#D2A100] font-bold">
-              {userPoints?.point || 0}
-            </span>
-          </div>
-        </div> */}
         {/* USER SUMMARY BAR */}
 <div className="w-full bg-[#14131899]/80 border border-[#333333] rounded-xl px-4 py-3 flex items-center justify-between">
   
@@ -183,7 +179,7 @@ useEffect(() => {
   <div className="text-right">
     <p className="text-[11px] text-[#FFFEEF99]">Total XP</p>
     <p className="text-sm font-semibold">
-      {userPoints?.totalPoint ?? 0}
+      {userPoints ?? 0}
     </p>
   </div>
 </div>
