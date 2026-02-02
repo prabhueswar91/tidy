@@ -406,7 +406,6 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                     type="text"
                     placeholder="ENTER RECEIVING WALLET..."
                     value={walletAddress}
-                    readOnly
                     className="w-full mt-8 px-4 py-3 bg-[#9292924D] border border-[#929292] rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-yellow-400 placeholder-[#CFCFCF] placeholder:text-xs"
                   />
                   <p className="mt-2 text-[11px]">
