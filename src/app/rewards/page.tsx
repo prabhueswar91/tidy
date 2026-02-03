@@ -16,6 +16,25 @@ import { useAppStore } from "../store/useAppStore";
 import {encryptData} from "./auth2/encrypt"
 import { User } from "lucide-react";
 
+type Community = {
+  id: number;
+  groupName: string;
+  groupLink: string;
+  joined: boolean;
+};
+
+type Booster = {
+  id: number;
+  label: string;
+  price: string;
+};
+
+type Requirements1 = {
+  communities: Community[];
+  boosters: Booster[];
+};
+
+
 export default function PendingRewards() {
   const router = useRouter();
   const { getUserInfo,userInfo } = UserContext();
@@ -34,6 +53,18 @@ export default function PendingRewards() {
   const [groupList, setgroupList] = useState([]);
   const [isCommunityModalOpen, setIsCommunityModalOpen] = useState(false);
   const [isFetch, setisFetch] = useState(false);
+  const [isRequirementModalOpen, setIsRequirementModalOpen] = useState(false);
+  const [requirements1, setRequirements1] = useState<Requirements1>({
+    communities: [],
+    boosters: []
+  });
+
+
+  const [reqLoading, setReqLoading] = useState(false);
+  const closeRequirementModal = () => {
+    setIsRequirementModalOpen(false);
+    //setRequirements(null);
+  };
 
   const itemsPerPage = 10;
 
@@ -64,9 +95,10 @@ export default function PendingRewards() {
   // }, []);
 useEffect(() => {
   if (!telegramId) {
-    console.warn("⏳ Waiting for telegramId...");
+    console.warn(" Waiting for telegramId...");
     return;
   }
+
 
   async function fetchPending() {
     try {
@@ -91,6 +123,32 @@ useEffect(() => {
 
   fetchPending();
 }, [telegramId]); // 👈 IMPORTANT
+async function getRequirementList() {
+  if (!telegramId) {
+    toast.error("Telegram not connected");
+    return;
+  }
+
+  setReqLoading(true);
+  try {
+    const { data } = await axiosInstance.get("/points/requirement-list");
+
+    if (data?.success) {
+      setRequirements1({
+        communities: data.community_list || [],
+        boosters: data.plans || []
+      });
+
+    } else {
+      toast.error("Failed to load requirements");
+    }
+  } catch (err) {
+    toast.error("Something went wrong");
+  } finally {
+    setIsRequirementModalOpen(true)
+    setReqLoading(false);
+  }
+}
 
   useEffect(() => {
     if(userInfo?.walletAddress){
@@ -242,6 +300,21 @@ useEffect(() => {
     </p>
   </div>
 </div>
+<div className="flex justify-center">
+ <button
+  onClick={getRequirementList}
+  disabled={reqLoading}
+  className={`px-6 py-2 rounded-full text-sm font-semibold
+  bg-gradient-to-r from-[#110E05] to-[#362A02]
+  border border-[#D2A100] text-[#FFFEEF]
+  hover:opacity-90 transition
+  ${reqLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+>
+  {reqLoading ? "Loading..." : "My Requirement"}
+</button>
+
+</div>
+
         <div className="bg-[#141318cc] backdrop-blur-sm rounded-lg pt-4">
           <h2 className="text-md font-bold mb-3 text-[#D2A100] text-center">
             Pending Rewards
@@ -374,6 +447,9 @@ useEffect(() => {
         </div>
       </div>
 
+
+
+
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h2 className="text-lg font-bold mb-3 text-center">Claim Reward</h2>
         <input
@@ -476,6 +552,117 @@ useEffect(() => {
     </button>
     </div>
     </Modal>
+<Modal
+  isOpen={isRequirementModalOpen}
+  onClose={() => closeRequirementModal()}
+>
+  {/* HEADER */}
+  <div className="text-center border-b border-[#362A02] pb-3 mb-4">
+    <h2 className="text-lg font-bold text-[#D2A100]">
+      My Requirements
+    </h2>
+  </div>
+
+  {/* ---------------- Communities ---------------- */}
+  <div className="mb-6">
+    <h3 className="text-sm font-semibold mb-3 text-[#FFFEEF]">
+      Telegram Communities
+    </h3>
+
+    <div className="space-y-3">
+      {requirements1 &&
+        requirements1.communities.length > 0 &&
+        requirements1.communities.map((item) => (
+          <div
+            key={item.id}
+            className="flex items-center justify-between
+            px-4 py-3 rounded-lg
+            bg-[#110E05] border border-[#362A02]"
+          >
+            <span className="text-sm text-[#FFFEEF]">
+              {item.groupName}
+            </span>
+
+            <a
+              href={item.groupLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs px-4 py-1.5 rounded-full
+              bg-gradient-to-r from-[#110E05] to-[#362A02]
+              border border-[#D2A100] text-white
+              hover:opacity-90 transition"
+            >
+              Join
+            </a>
+          </div>
+        ))}
+
+      <p className="text-xs text-[#FFFEEF99] text-center mt-2">
+        Join our Telegram community to start claiming rewards.
+      </p>
+
+      {requirements1.communities.length === 0 && (
+        <p className="text-xs text-gray-400 text-center">
+          No community requirement
+        </p>
+      )}
+    </div>
+  </div>
+
+  {/* ---------------- Boosters ---------------- */}
+  <div className="mb-6">
+    <h3 className="text-sm font-semibold mb-3 text-[#FFFEEF]">
+      Booster Services
+    </h3>
+
+    <div className="space-y-3">
+      {requirements1 &&
+        requirements1.boosters.length > 0 &&
+        requirements1.boosters.map((item) => (
+          <div
+            key={item.id}
+            className="flex items-center justify-between
+            px-4 py-3 rounded-lg
+            bg-[#110E05] border border-[#362A02]"
+          >
+            <span className="text-sm text-[#FFFEEF]">
+              {item.label}
+            </span>
+
+            <span className="text-xs px-3 py-1 rounded-full
+            bg-yellow-500 text-black font-medium">
+              {item.price} USDC
+            </span>
+          </div>
+        ))}
+
+      <p className="text-xs text-[#FFFEEF99] text-center mt-2">
+        Activate the booster service to allow unlimited Telegram users
+        to join your group.
+      </p>
+
+      {requirements1.boosters.length === 0 && (
+        <p className="text-xs text-gray-400 text-center">
+          No booster requirement
+        </p>
+      )}
+    </div>
+  </div>
+
+  {/* FOOTER */}
+  <div className="pt-4 border-t border-[#362A02] flex justify-center">
+    <button
+      onClick={closeRequirementModal}
+      className="px-8 py-2 rounded-full text-sm font-semibold
+      bg-gradient-to-r from-[#110E05] to-[#362A02]
+      border border-[#D2A100] text-white
+      hover:opacity-90 transition"
+    >
+      Close
+    </button>
+  </div>
+</Modal>
+
 
 
       <style jsx>{`
