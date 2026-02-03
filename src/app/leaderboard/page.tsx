@@ -305,7 +305,7 @@ useEffect(() => {
             className="text-white bg-gradient-to-r from-[#242424] to-[#525252] text-[16px] font-semibold"
             onClick={() => handleShare()}
           >
-            INVITE FRIENDS +250XP
+            INVITE FRIENDS +750XP
           </Button>
         </div>
       </div>

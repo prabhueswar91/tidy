@@ -260,12 +260,7 @@ async function getRequirementList() {
       />
 
       <div className="relative w-full max-w-3xl flex flex-col space-y-6">
-        <button
-          onClick={() => router.push("/")}
-          className="self-end mb-2 bg-[#000] border border-[#D2A100] hover:bg-gradient-to-r hover:from-[#362A02] hover:to-[#110E05] text-[#FFFEEF] p-2 rounded-full text-sm flex items-center justify-center"
-        >
-          <Image src={Close} alt="close icon" className="w-4 h-4" />
-        </button>
+       
 <div className="w-full bg-[#14131899]/80 border border-[#333333] rounded-xl px-4 py-3 flex items-center justify-between">
   
   {/* LEFT: Avatar + Name */}
@@ -310,7 +305,7 @@ async function getRequirementList() {
   hover:opacity-90 transition
   ${reqLoading ? "opacity-50 cursor-not-allowed" : ""}`}
 >
-  {reqLoading ? "Loading..." : "My Requirement"}
+  {reqLoading ? "Loading..." : "My reward requirements"}
 </button>
 
 </div>
@@ -559,7 +554,7 @@ async function getRequirementList() {
   {/* HEADER */}
   <div className="text-center border-b border-[#362A02] pb-3 mb-4">
     <h2 className="text-lg font-bold text-[#D2A100]">
-      My Requirements
+      My reward requirements
     </h2>
   </div>
 
@@ -604,52 +599,6 @@ async function getRequirementList() {
     </div>
   </div>
 
-  {/* ---------------- Boosters ---------------- */}
-  <div className="mb-6">
-    <h3 className="text-sm font-semibold mb-3 text-[#FFFEEF]">
-      Booster Services
-    </h3>
-
-    <div className="space-y-3">
-      {requirements1 &&
-        requirements1.boosters.length > 0 &&
-        requirements1.boosters.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center justify-between px-4 py-3 rounded-lg bg-[#110E05] border border-[#362A02]"
-          >
-            <span className="text-sm text-[#FFFEEF]">
-              {item.label}
-            </span>
-
-            <span className="text-xs px-3 py-1 rounded-full bg-yellow-500 text-black font-medium">
-              {item.price} USDC
-            </span>
-          </div>
-        ))}
-
-      <p className="text-xs text-[#FFFEEF99] text-center mt-2">
-        Activate the booster service to allow unlimited Telegram users
-        to join your group.
-      </p>
-
-      {requirements1.boosters.length === 0 && (
-        <p className="text-xs text-gray-400 text-center">
-          No booster requirement
-        </p>
-      )}
-    </div>
-  </div>
-
-  {/* FOOTER */}
-  <div className="pt-4 border-t border-[#362A02] flex justify-center">
-    <button
-      onClick={closeRequirementModal}
-      className="px-8 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-[#110E05] to-[#362A02] border border-[#D2A100] text-white hover:opacity-90 transition"
-    >
-      Close
-    </button>
-  </div>
 </Modal>
 
 

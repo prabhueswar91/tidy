@@ -44,7 +44,7 @@ export default function XP() {
             </li>
             <li>
               <span className="font-medium">Invite Friends</span> →
-              <span className="text-xs font-light"> 250 XP</span>
+              <span className="text-xs font-light"> 750 XP</span>
             </li>
             
           </ul>
