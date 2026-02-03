@@ -537,7 +537,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                         onClick={() => setInviteOpen(true)}
                         className="text-white font-semibold hover:text-yellow-300"
                       >
-                        INVITE A FRIEND
+                        INVITE FRIENDS +750XP
                       </button>
                       <p className="text-xs text-gray-400">
                         And win extra zen moments
