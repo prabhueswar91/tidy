@@ -47,7 +47,7 @@ export default function Header({ setIsModalOpen, checkPartner }: HeaderProps) {
   const [xpbalance, setxpbalance] = useState(0);
   const { getUserInfo } = UserContext();
   
-  // ---- Type guard to check ApiError ----
+  
 function isApiError(err: unknown): err is ApiError {
   return typeof err === "object" && err !== null && "response" in err;
 }
