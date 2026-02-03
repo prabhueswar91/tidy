@@ -575,9 +575,7 @@ async function getRequirementList() {
         requirements1.communities.map((item) => (
           <div
             key={item.id}
-            className="flex items-center justify-between
-            px-4 py-3 rounded-lg
-            bg-[#110E05] border border-[#362A02]"
+            className="flex items-center justify-between px-4 py-3 rounded-lg bg-[#110E05] border border-[#362A02]"
           >
             <span className="text-sm text-[#FFFEEF]">
               {item.groupName}
@@ -587,10 +585,7 @@ async function getRequirementList() {
               href={item.groupLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs px-4 py-1.5 rounded-full
-              bg-gradient-to-r from-[#110E05] to-[#362A02]
-              border border-[#D2A100] text-white
-              hover:opacity-90 transition"
+              className="text-xs px-4 py-1.5 rounded-full bg-gradient-to-r from-[#110E05] to-[#362A02] border border-[#D2A100] text-white hover:opacity-90 transition"
             >
               Join
             </a>
@@ -621,16 +616,13 @@ async function getRequirementList() {
         requirements1.boosters.map((item) => (
           <div
             key={item.id}
-            className="flex items-center justify-between
-            px-4 py-3 rounded-lg
-            bg-[#110E05] border border-[#362A02]"
+            className="flex items-center justify-between px-4 py-3 rounded-lg bg-[#110E05] border border-[#362A02]"
           >
             <span className="text-sm text-[#FFFEEF]">
               {item.label}
             </span>
 
-            <span className="text-xs px-3 py-1 rounded-full
-            bg-yellow-500 text-black font-medium">
+            <span className="text-xs px-3 py-1 rounded-full bg-yellow-500 text-black font-medium">
               {item.price} USDC
             </span>
           </div>
@@ -653,10 +645,7 @@ async function getRequirementList() {
   <div className="pt-4 border-t border-[#362A02] flex justify-center">
     <button
       onClick={closeRequirementModal}
-      className="px-8 py-2 rounded-full text-sm font-semibold
-      bg-gradient-to-r from-[#110E05] to-[#362A02]
-      border border-[#D2A100] text-white
-      hover:opacity-90 transition"
+      className="px-8 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-[#110E05] to-[#362A02] border border-[#D2A100] text-white hover:opacity-90 transition"
     >
       Close
     </button>
