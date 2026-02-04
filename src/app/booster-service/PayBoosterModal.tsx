@@ -8,6 +8,7 @@ import axiosInstance from "../utils/axiosInstance"; // adjust path if needed
 import { useWallet } from "../hooks/useWallet";
 import { encryptData } from "../rewards/auth2/encrypt";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export const ERC20_ABI = [
   "function decimals() view returns (uint8)",
@@ -29,10 +30,13 @@ export default function PayBoosterModal({
   isOpen: boolean;
   onClose: () => void;
   selectedPlan: BoosterPlan | null;
-  onSuccess?: () => void;
+  onSuccess: () => void;
 }) {
+  
   const { provider, address, isConnected, connect, logout, formatAddress } =
     useWallet();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   const router = useRouter();
   const [paying, setPaying] = useState(false);
   const [balLoading, setBalLoading] = useState(false);
@@ -160,6 +164,7 @@ export default function PayBoosterModal({
         price: String(selectedPlan.price),
         token: "USDC",
         initData: window?.Telegram?.WebApp?.initData,
+        partnerId:id
       });
 
       const res = await axiosInstance.post("/points/activate-booster", {
@@ -170,8 +175,8 @@ export default function PayBoosterModal({
         toast.success(
           "Booster request sent successfully. Please wait a moment while an admin reviews and approves it."
         );
-        onClose();
-        router.push(`/`);
+        onSuccess();
+        router.push(`/partner`);
       } else {
         toast.error(res.data?.error || "Failed to submit");
       }

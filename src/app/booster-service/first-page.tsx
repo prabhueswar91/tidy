@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Clock, DollarSign, UserCheck } from "lucide-react";
 import Logo from "../assets/Logo.png";
-
+import { useRouter } from "next/navigation";
 // theme constants unchanged...
 
  const pageBg =
@@ -31,6 +31,7 @@ export default function FirstPage({
   setIsToggleOn: (v: boolean) => void;
   onContinue: () => void;
 }) {
+  const router = useRouter();
   const features = [
     { icon: <Clock size={20} />, text: "Time activation" },
     // { icon: <DollarSign size={20} />, text: "Rewards paid in $tidy" },
@@ -67,49 +68,38 @@ export default function FirstPage({
               Telegram booster service
             </h2>
 
-          <button
-  onClick={() => setIsToggleOn(!isToggleOn)}
-  className="relative w-14 h-7 rounded-full p-[2px] bg-[#DCB11c]/10"
->
-  {/* Track */}
-  <div
-    className={`relative w-full h-full rounded-full
-      ${isToggleOn ? "bg-[#1b1b1b]" : "bg-[#FFFEEF]/20"}
-    `}
-  >
-    {/* ON text – LEFT side */}
-    {isToggleOn && (
-      <span
-        className="absolute left-2 top-1/2 -translate-y-1/2
-                   text-[14px] font-medium font-sans tracking-wide
-                   text-[#FFFEEF]"
-      >
-        On
-      </span>
-    )}
+                  <button
+          onClick={() => setIsToggleOn(!isToggleOn)}
+          className="relative w-14 h-7 rounded-full p-[2px] bg-[#DCB11c]/10"
+        >
+          {/* Track */}
+          <div
+            className={`relative w-full h-full rounded-full ${isToggleOn ? "bg-[#1b1b1b]" : "bg-[#FFFEEF]/20"}`}
+          >
+            {/* ON text – LEFT side */}
+            {isToggleOn && (
+              <span
+                className="absolute left-2 top-1/2 -translate-y-1/2 text-[14px] font-medium font-sans tracking-wide text-[#FFFEEF]"
+              >
+                On
+              </span>
+            )}
 
-    {/* OFF text – RIGHT side */}
-    {!isToggleOn && (
-      <span
-        className="absolute right-2 top-1/2 -translate-y-1/2
-                   text-[14px] font-medium font-sans tracking-wide
-                   text-[#FFFEEF]"
-      >
-        Off
-      </span>
-    )}
+            {/* OFF text – RIGHT side */}
+            {!isToggleOn && (
+              <span
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[14px] font-medium font-sans tracking-wide text-[#FFFEEF]"
+              >
+                Off
+              </span>
+            )}
 
-    {/* Knob */}
-    <div
-      className={`absolute top-0.5 w-[18px] h-[18px] rounded-full
-        bg-[#DCB11C]
-        shadow-[0_0_6px_rgba(220,177,28,0.6)]
-        transition-all duration-300
-        ${isToggleOn ? "right-0.5" : "left-0.5"}
-      `}
-    />
-  </div>
-</button>
+            {/* Knob */}
+            <div
+              className={`absolute top-0.5 w-[18px] h-[18px] rounded-full bg-[#DCB11C] shadow-[0_0_6px_rgba(220,177,28,0.6)] transition-all duration-300 ${isToggleOn ? "right-0.5" : "left-0.5"}`}
+            />
+          </div>
+        </button>
 
 
 
@@ -132,12 +122,18 @@ export default function FirstPage({
           </p>
         </div>
 
+        {isToggleOn?<button
+          onClick={()=>router.push("/partner")}
+          className={`w-full ${cta} text-[#FFFEEF] text-[18p] font-semibold py-4  rounded-full transition-all duration-300 shadow-lg border border-[#FFFEEF]/10`}
+        >
+          CONTINUE
+        </button>:
         <button
           onClick={onContinue}
           className={`w-full ${cta} text-[#FFFEEF] text-[18p] font-semibold py-4  rounded-full transition-all duration-300 shadow-lg border border-[#FFFEEF]/10`}
         >
-          CONTINUE
-        </button>
+          SUBMIT
+        </button>}
       </div>
     </div>
     </>

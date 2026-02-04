@@ -16,6 +16,7 @@ import Star from "../assets/star.svg";
 import JunglLogo from "../assets/jungl.webp";
 import toast from "react-hot-toast";
 import TidyLoader from "./TidyLoader";
+import { useUI } from "../context/closebtnContext";
 
 interface HomeProps {
   onStart: () => void;
@@ -31,6 +32,8 @@ interface Partner {
 export default function Home({ onStart }: HomeProps) {
 
   const searchParams = useSearchParams();
+  const { setShowClose } = useUI();
+
   const [loading, setLoading] = useState(false);
   const [showUpgrade, setshowUpgrade] = useState(false);
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -48,6 +51,7 @@ export default function Home({ onStart }: HomeProps) {
   }
 
   useEffect(() => {
+    setShowClose(true);
     const fetchPartners = async () => {
       try {
         const res = await axios.get(

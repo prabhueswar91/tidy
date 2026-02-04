@@ -21,6 +21,8 @@ interface Partner {
   adminIds?: number[];
   logo: string;
   url: string;
+  isContribute: string;
+  boosterId:number;
   createdAt: string;
 }
 
@@ -119,6 +121,9 @@ export default function AdminPartners() {
                 <th className="px-4 py-2 border">Channel ID</th>
                 <th className="px-4 py-2 border">Logo</th>
                 <th className="px-4 py-2 border">Website Link</th>
+                <th className="px-4 py-2 border">Contribute</th>
+                <th className="px-4 py-2 border">Booster</th>
+                <th className="px-4 py-2 border">Booster Id</th>
                 <th className="px-4 py-2 border">Approved</th>
                 <th className="px-4 py-2 border">Actions</th>
               </tr>
@@ -164,6 +169,9 @@ export default function AdminPartners() {
                         "-"
                       )}
                     </td>
+                    <td className="px-4 py-2 border">{partner.isContribute?"Yes":"No"}</td>
+                    <td className="px-4 py-2 border">{partner.boosterId>0?"Paid":"-"}</td>
+                    <td className="px-4 py-2 border">{partner.boosterId}</td>
                   <td className="px-4 py-2 border text-center">
                     <input
                       type="checkbox"

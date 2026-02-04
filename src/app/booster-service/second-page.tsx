@@ -1,6 +1,7 @@
 "use client";
 
 import { X, ChevronDown, Info } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import { Contract, parseUnits, formatUnits } from "ethers";
 import { toast } from "react-hot-toast";
@@ -28,6 +29,7 @@ export default function SecondPage({
   expandedSection,
   setExpandedSection,
   selectedPlan,
+  setshowApprove
 }: {
   onClose: () => void;
   plans: Plan[];
@@ -36,6 +38,7 @@ export default function SecondPage({
   expandedSection: string | null;
   setExpandedSection: (v: string | null) => void;
   selectedPlan: Plan | null;
+ setshowApprove: Dispatch<SetStateAction<boolean>>;
 }) {
 
 const { provider, address, isConnected, connect, logout, formatAddress } = useWallet();
@@ -62,6 +65,10 @@ const [balLoading, setBalLoading] = useState(false);
     "Rewards unlocked via tidyzen",
     "Traffic spread over time",
   ];
+
+  function closePopup(){
+      setshowApprove(true)
+  }
 
   return (
     <div className={"min-h-screen bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] text-[#FFFEEF] flex items-center justify-center p-4"}>
@@ -157,22 +164,20 @@ const [balLoading, setBalLoading] = useState(false);
           </div> */}
         </div>
 
-       <button
-  className="w-full bg-[linear-gradient(90deg,#110e05_0%,#362a02_100%)] font-open text-[18px]  text-[#FFFEEF] hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-[#D2A100] disabled:opacity-50"
-  disabled={!selectedPlan}
-  onClick={() => setIsModalOpen(true)}
->
-  {isConnected ? "PAY & ACTIVATE BOOSTER" : "CONNECT WALLET"}
-</button>
+      <button
+        className="w-full bg-[linear-gradient(90deg,#110e05_0%,#362a02_100%)] font-open text-[18px]  text-[#FFFEEF] hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-[#D2A100] disabled:opacity-50"
+        disabled={!selectedPlan}
+        onClick={() => setIsModalOpen(true)}
+      >
+        {isConnected ? "PAY & ACTIVATE BOOSTER" : "CONNECT WALLET"}
+      </button>
 
-<PayBoosterModal
-  isOpen={isModalOpen}
-  onClose={() => setIsModalOpen(false)}
-  selectedPlan={selectedPlan}
-/>
-
-
-
+      <PayBoosterModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        selectedPlan={selectedPlan}
+        onSuccess={() => closePopup()}
+      />
         <p className={`text-center text-[#FFFEEF] font-semibold font-sans text-[16px] ${textMuted}`}>
           Activation starts after approval
         </p>

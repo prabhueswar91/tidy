@@ -7,6 +7,8 @@ import { TelegramProvider } from "./context/TelegramContext";
 import { UserProvider } from "./context/UserContext";
 // import ErudaInit from "./components/ErudaInit";
 import CloseButton from "./components/ui/CloseButton";
+import { UIProvider } from "./context/closebtnContext";
+
 export default function ClientLayout({
   cookies,
   children,
@@ -16,7 +18,7 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
-
+console.log(children,'childrenchildren>>>>>>>>>>>>>')
   const toastOptions = {
     style: {
       background: "linear-gradient(135deg, #0B1925, #141318)",
@@ -61,8 +63,10 @@ export default function ClientLayout({
       <ContextProvider cookies={cookies}>
         <TelegramProvider>
           <UserProvider>
+            <UIProvider>
             <CloseButton />
           {children}
+          </UIProvider>
           <Toaster
             position="top-right"
             reverseOrder={false}

@@ -5,6 +5,7 @@ import axiosInstance from "../utils/axiosInstance";
 import TidyLoader from "../components/TidyLoader";
 import FirstPage from "./first-page";
 import SecondPage from "./second-page";
+import ApprovalStatus from "../components/approvalStatus";
 
 export type Plan = {
   id: number;
@@ -18,6 +19,7 @@ export default function TelegramBoosterUI() {
 
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [isToggleOn, setIsToggleOn] = useState(true);
+  const [showApprove, setshowApprove] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState<Plan[]>([]);
@@ -55,7 +57,8 @@ export default function TelegramBoosterUI() {
       setIsToggleOn={setIsToggleOn}
       onContinue={() => setShowBooster(true)}
     />
-  ) : (
+  ) :showApprove? 
+    <ApprovalStatus showApprove={showApprove}/>:(
     <SecondPage
       onClose={() => setShowBooster(false)}
       plans={list}
@@ -64,6 +67,7 @@ export default function TelegramBoosterUI() {
       expandedSection={expandedSection}
       setExpandedSection={setExpandedSection}
       selectedPlan={selectedPlan}
+      setshowApprove={setshowApprove}
     />
   );
 }

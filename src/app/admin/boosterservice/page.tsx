@@ -121,6 +121,7 @@ export default function AdminBoosterService() {
       <table className="w-full border text-sm">
         <thead className="bg-gray-200">
           <tr>
+            <th className="border p-2">Booster Id</th>
             <th className="border p-2">Username</th>
             <th className="border p-2">Group Name</th>
             <th className="border p-2">Group Id</th>
@@ -137,6 +138,7 @@ export default function AdminBoosterService() {
         <tbody>
           {list.map((b) => (
             <tr key={b.id}>
+              <td className="border p-2">{b.id ?? "-"}</td>
               <td className="border p-2">{b.username ?? "-"}</td>
               <td className="border p-2">{b.groupName ?? "-"}</td>
               <td className="border p-2">{b.groupId ?? "-"}</td>

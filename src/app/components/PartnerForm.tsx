@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Card2 from "../components/ui/Card2";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -14,6 +14,8 @@ import Dot from "../assets/dot.svg";
 import { useRouter } from "next/navigation";
 import TidyLoader from "./TidyLoader";
 import { toast } from "react-hot-toast";
+import axiosInstance from "../utils/axiosInstance";
+import ApprovalStatus from "../components/approvalStatus";
 
 export default function TokenForm() {
   const router = useRouter();
@@ -31,32 +33,50 @@ export default function TokenForm() {
   const [projectHandle, setProjectHandle] = useState("");
   const [baseToken, setBaseToken] = useState("");
   const [contactHandle, setContactHandle] = useState("");
-  const [submitted, setSubmitted] = useState((approved=="true" || approved=="false")?true:false);
+  const [submitted, setSubmitted] = useState(false);
+  const [showApprove, setshowApprove] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
-const [featured, setFeatured] = useState<"yes" | "no">("no");
+  const [featured, setFeatured] = useState<"yes" | "no">("no");
+
+  useEffect(() => {
+      fetchList();
+  }, []);
+
+  const fetchList = async () => {
+    try {
+      setLoading(true);
+      const { data:response } = await axiosInstance.post("/public/partner/check-approve-status",{telegramId});
+      if (response.isList) {
+          setSubmitted(true);
+          setshowApprove(response.isApprove);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const handleSubmit = async () => {
-    if (!telegramId || !channel_id) return;
+    if (!telegramId) return;
 
     
     if (!projectHandle.trim()) {
-      toast.error("Please enter your Project Telegram handle!");
+      toast.error("Please enter your project telegram handle!");
       return;
     }
 
-    // if (tokenEnabled && !baseToken.trim()) {
-    //   toast.error("Please enter your Base Token Contract Address!");
-    //   return;
-    // } else if (tokenEnabled && !ethers.isAddress(baseToken)) {
-    //   toast.error("Please enter a valid Token Contract Address!");
-    //   return;
-    // }
+    if (baseToken) {
+      if (!ethers.isAddress(baseToken)) {
+        toast.error("Please enter a valid token contract address!");
+        return;
+      } 
+    }
 
     if (!contactHandle.trim()) {
-      toast.error("Please enter your Contact Telegram handle!");
+      toast.error("Please enter your contact telegram handle!");
       return;
     }
 
@@ -70,34 +90,35 @@ const [featured, setFeatured] = useState<"yes" | "no">("no");
       return;
     }
 
-    setLoading(true);
+    setLoading1(true);
     try {
       const formData = new FormData();
       formData.append("project", projectHandle);
       formData.append("telegramId", telegramId);
-      formData.append("channelId", channel_id);
-      //formData.append("tokenAddress", tokenEnabled ? baseToken : "");
+      formData.append("channelId", channel_id || "");
+      formData.append("tokenAddress", baseToken);
       formData.append("contact", contactHandle);
       formData.append("duration", selectedUsage);
       formData.append("url", websiteUrl);
       formData.append("logo", logoFile);
       formData.append("data", decodeURIComponent(data || ""));
-formData.append("featured", featured);
+      formData.append("featured", featured);
 
-      const response = await axios.post(
+      const {data:response} = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"}/public/partner`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
 
-      console.log("✅ Partner created:", response.data);
-      setSubmitted(true);
-      toast.success("Application submitted successfully!");
+      console.log("✅ Partner created:", response);
+      let pId = response?.data.id;
+      //toast.success("Application submitted successfully!");
+      router.push(`/booster-service?id=${pId}`);
     } catch (error) {
       console.error("❌ Error creating partner:", error);
       toast.error("Failed to submit. Please try again!");
     } finally {
-      setLoading(false);
+      setLoading1(false);
     }
 };
 
@@ -134,7 +155,7 @@ formData.append("featured", featured);
             </div>
 
             <div className="relative w-full max-w-sm h-full max-h-[120vh] flex flex-col justify-center">
-              {!submitted && (
+              {/* {!submitted && (
                 <div
                   className={`absolute left-1/2 -translate-x-1/2 
                     px-4 py-2 rounded-full text-[10px] font-dm font-[600] 
@@ -147,7 +168,7 @@ formData.append("featured", featured);
                 >
                   {tokenEnabled ? "WITH TOKEN" : "WITHOUT TOKEN"}
                 </div>
-              )}
+              )} */}
 
               <div className="bg-[#141318cc] border border-[#333333] rounded px-6 py-8 shadow-[0_4px_30px_rgba(0,0,0,0.9)] flex flex-col gap-6 overflow-y-auto text-center">
                 {!submitted ? (
@@ -163,20 +184,20 @@ formData.append("featured", featured);
                       />
                     </label>
 
-                    {/* {tokenEnabled && (
-                      <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
-                        Enter your Base Token Contract Address
-                        <input
-                          type="text"
-                          value={baseToken}
-                          onChange={(e) => setBaseToken(e.target.value)}
-                          className="mt-1 p-2 rounded bg-[#1a1a1a] border border-[#333] text-[#FFFEEF] placeholder:text-[#888]"
-                          placeholder="0x..."
-                        />
-                      </label>
-                    )} */}
+                   
+                    <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
+                      Enter your Base Token Contract Address
+                      <input
+                        type="text"
+                        value={baseToken}
+                        onChange={(e) => setBaseToken(e.target.value)}
+                        className="mt-1 p-2 rounded bg-[#1a1a1a] border border-[#333] text-[#FFFEEF] placeholder:text-[#888]"
+                        placeholder="0x..."
+                      />
+                    </label>
+                    
 
-                    <div className="flex flex-col gap-2 my-3 text-left">
+                    {/* <div className="flex flex-col gap-2 my-3 text-left">
                       <span className="text-sm font-light text-[#FFFEEF]">
                         Select usage duration
                       </span>
@@ -202,38 +223,38 @@ formData.append("featured", featured);
                           </label>
                         ))}
                       </div>
-                    </div>
+                    </div> */}
                     <div className="flex flex-col gap-3 text-left mt-4">
-  <span className="text-sm font-light text-[#FFFEEF]">
-    Contribute $100 in your native token to be featured in our leaderboard competitions and get your logo on our front page
-  </span>
+                      <span className="text-sm font-light text-[#FFFEEF]">
+                        Contribute $100 in your native token to be featured in our leaderboard competitions and get your logo on our front page
+                      </span>
 
-  <div className="flex items-center gap-6">
-    <label className="flex items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="featured"
-        value="yes"
-        checked={featured === "yes"}
-        onChange={() => setFeatured("yes")}
-        className="accent-yellow-400"
-      />
-      <span className="text-sm font-light">Yes</span>
-    </label>
+                      <div className="flex items-center gap-6">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="featured"
+                            value="yes"
+                            checked={featured === "yes"}
+                            onChange={() => setFeatured("yes")}
+                            className="accent-yellow-400"
+                          />
+                          <span className="text-sm font-light">Yes</span>
+                        </label>
 
-    <label className="flex items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="featured"
-        value="no"
-        checked={featured === "no"}
-        onChange={() => setFeatured("no")}
-        className="accent-yellow-400"
-      />
-      <span className="text-sm font-light">No</span>
-    </label>
-  </div>
-</div>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="featured"
+                            value="no"
+                            checked={featured === "no"}
+                            onChange={() => setFeatured("no")}
+                            className="accent-yellow-400"
+                          />
+                          <span className="text-sm font-light">No</span>
+                        </label>
+                      </div>
+                    </div>
 
                     <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
                       Enter your contact telegram handle
@@ -272,31 +293,15 @@ formData.append("featured", featured);
 
                   </>
                 ) : (
-                  <div className="flex flex-col items-center">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-4 h-4 relative">
-                        <Image
-                          src={Dot}
-                          alt="dot"
-                          fill
-                          style={{ objectFit: "contain" }}
-                        />
-                      </div>
-                      <h3 className="text-xl font-semibold text-[#FFFEEF]">
-                        {approved=="true"?"Approved":"Pending"}
-                      </h3>
-                    </div>
-                    <p className="text-sm font-light text-[#FFFEEF] mt-6 text-center">
-                      {approved=="true"?"Experience the TidyZen moment and earn exciting rewards!":"Thank you for your application, we will be in touch via your telegram to complete your setup."}
-                    </p>
-                  </div>
-                )}
+                 <ApprovalStatus showApprove={showApprove}/>
+                )
+                }
               </div>
 
               <div className="w-full mt-4">
                 {!submitted ? (
-                  <Button onClick={handleSubmit} disabled={loading} className="bg-[linear-gradient(90deg,#242424_0%,#525252_100%)]">
-                    CONTINUE TO OUR TELEGRAM BOOSTER SERVICE
+                  <Button onClick={handleSubmit} disabled={loading1} className="bg-[linear-gradient(90deg,#242424_0%,#525252_100%)]">
+                    {loading1?"Processing":"CONTINUE TO OUR TELEGRAM BOOSTER SERVICE"}
                   </Button>
                 ) : (
                   <Button onClick={handleReset}>START AGAIN</Button>
