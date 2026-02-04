@@ -185,16 +185,22 @@ export default function TokenForm() {
                     </label>
 
                    
-                    <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
-                      Enter your Token or NFT address
-                      <input
-                        type="text"
-                        value={baseToken}
-                        onChange={(e) => setBaseToken(e.target.value)}
-                        className="mt-1 p-2 rounded bg-[#1a1a1a] border border-[#333] text-[#FFFEEF] placeholder:text-[#888]"
-                        placeholder="0x..."
-                      />
-                    </label>
+                  <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
+                    Enter your Token or NFT address
+
+                    <span className="text-xs text-[#888] mt-1">
+                      (Optional — skip this if your project doesn’t have a token or NFT yet.)
+                    </span>
+
+                    <input
+                      type="text"
+                      value={baseToken}
+                      onChange={(e) => setBaseToken(e.target.value)}
+                      className="mt-2 p-2 rounded bg-[#1a1a1a] border border-[#333] text-[#FFFEEF] placeholder:text-[#888]"
+                      placeholder="0x..."
+                    />
+                  </label>
+
                     
 
                     {/* <div className="flex flex-col gap-2 my-3 text-left">
