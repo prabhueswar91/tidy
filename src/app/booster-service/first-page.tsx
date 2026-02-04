@@ -123,13 +123,13 @@ export default function FirstPage({
         </div>
 
         {isToggleOn?<button
-          onClick={()=>router.push("/partner")}
+          onClick={onContinue}
           className={`w-full ${cta} text-[#FFFEEF] text-[18p] font-semibold py-4  rounded-full transition-all duration-300 shadow-lg border border-[#FFFEEF]/10`}
         >
           CONTINUE
         </button>:
         <button
-          onClick={onContinue}
+           onClick={()=>router.push("/partner")}
           className={`w-full ${cta} text-[#FFFEEF] text-[18p] font-semibold py-4  rounded-full transition-all duration-300 shadow-lg border border-[#FFFEEF]/10`}
         >
           SUBMIT
