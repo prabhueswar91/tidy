@@ -18,7 +18,7 @@ export default function TelegramBoosterUI() {
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
 
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
-  const [isToggleOn, setIsToggleOn] = useState(true);
+  const [isToggleOn, setIsToggleOn] = useState(false);
   const [showApprove, setshowApprove] = useState(false);
 
   const [loading, setLoading] = useState(false);

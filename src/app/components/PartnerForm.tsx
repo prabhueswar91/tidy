@@ -186,7 +186,7 @@ export default function TokenForm() {
 
                    
                     <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
-                      Enter your Base Token Contract Address
+                      Enter your Token or NFT address
                       <input
                         type="text"
                         value={baseToken}

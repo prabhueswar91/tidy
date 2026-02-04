@@ -59,7 +59,7 @@ export default function FirstPage({
            <div className="h-0 w-12 p-[2px] rounded-lg 
             bg-[linear-gradient(90deg,#DCB11C_0%,rgba(118,95,15,0)_100%)]"></div>
           </div>
-          <p className="text-[13px] text-[#FFFEEF] font-normal font-sans">Get TidyZen users to join your Telegrampowered by $TIDY & XP incentives</p>
+          <p className="text-[13px] text-[#FFFEEF] font-normal font-sans">Get TidyZen users to join your Telegram powered by $TIDY & XP incentives</p>
         </div>
 
         <div className={`${cardBg} p-6 mb-6`}>
