@@ -2,11 +2,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUI } from "../../context/closebtnContext";
+import { usePathname } from "next/navigation";
 
 export default function CloseButton() {
   const router = useRouter();
   const { showClose,setShowLogin } = useUI();
   const [visible, setVisible] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -19,8 +21,11 @@ export default function CloseButton() {
   if (showClose || !visible) return null;
 
   function navRoute(){
-    setShowLogin(false)
-    router.back()
+    if(pathname !="/rewards"){
+      setShowLogin(false)
+    }
+    
+    router.push("/")
   }
 
   return (
