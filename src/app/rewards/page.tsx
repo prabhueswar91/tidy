@@ -258,8 +258,14 @@ async function getRequirementList() {
         className="absolute inset-0 w-full h-full object-cover -z-10"
         priority
       />
-
-      <div className="relative w-full max-w-3xl flex flex-col space-y-6">
+<div className="relative w-full max-w-3xl flex flex-col space-y-4">
+        <button
+          onClick={() => router.push("/")}
+          className="self-end bg-black border-2 border-[#8C6C00] p-2 rounded-full"
+        >
+          <Image src={Close} alt="close" width={14} height={14} />
+        </button>
+     
        
 <div className="w-full bg-[#14131899]/80 border border-[#333333] rounded-xl px-4 py-3 flex items-center justify-between">
   
