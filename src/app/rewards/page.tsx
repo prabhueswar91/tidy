@@ -58,7 +58,7 @@ export default function PendingRewards() {
     communities: [],
     boosters: []
   });
-
+  const [xpbalance, setxpbalance] = useState(0);
 
   const [reqLoading, setReqLoading] = useState(false);
   const closeRequirementModal = () => {
@@ -153,8 +153,22 @@ async function getRequirementList() {
   useEffect(() => {
     if(userInfo?.walletAddress){
         setWalletAddress(userInfo?.walletAddress)
+        getXPbalance(userInfo?.walletAddress)
     }
   }, [userInfo?.walletAddress]);
+
+  async function getXPbalance(addr:string){
+        try{
+          const { data } = await axiosInstance.post("/auth/get-xp-balance", {
+            walletAddress:addr,
+            telegramId: telegramId
+          });
+          const bal = data?.balance ? Number(parseFloat(data.balance).toFixed(4)) : 0;
+          setxpbalance(bal);
+        }catch(error: unknown){
+          
+        }
+    }
 
   if (loading) return <TidyLoader />;
 
@@ -297,7 +311,7 @@ async function getRequirementList() {
   <div className="text-right">
     <p className="text-[11px] text-[#FFFEEF99]">Total XP</p>
     <p className="text-sm font-semibold">
-      {userPoints?.totalPoint ?? 0}
+      {xpbalance ?? 0}
     </p>
   </div>
 </div>
