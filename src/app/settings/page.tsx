@@ -39,6 +39,8 @@ const [points, setPoints] = useState<any>(null);
   const [solAddress, setsolAddress] = useState("");
   const [bnbAddress, setbnbAddress] = useState("");
   const [xpbalance, setxpbalance] = useState(0);
+  const [weekPoints, setweekPoints] = useState(0);
+  const [totalPoints, settotalPointss] = useState(0);
 
   useEffect(() => {
     if (!userInfo?.id) return;
@@ -47,7 +49,8 @@ const [points, setPoints] = useState<any>(null);
       setLoading(true);
       try {
         const res = await axiosInstance.get(`/points/user/${userInfo.id}/weekly`);
-        setPoints(res.data);
+        setweekPoints(res.data?.weeklyPoints);
+        settotalPointss(res.data?.totalPoints);
         setbaseAddress(res.data?.walletAddress)
         getXPbalance(res.data?.walletAddress)
         setbnbAddress(res.data?.bnbAddress)
@@ -184,12 +187,12 @@ useEffect(() => {
                     {points?.total ?? 0}
                   </span>
                 </p> */}
-                <p className="text-[#FFFEEF99] text-xs font-light">
-  Total DUST{" "}
-  <span className="text-[#FFFEEF] font-medium text-sm">
-    {points?.total ?? 0}
-  </span>
-</p>
+              <p className="text-[#FFFEEF99] text-xs font-light">
+                Total DUST{" "}
+                <span className="text-[#FFFEEF] font-medium text-sm">
+                  {totalPoints ?? 0}
+                </span>
+              </p>
 
               </div>
 
@@ -205,11 +208,14 @@ useEffect(() => {
                 </p>
               </div> */}
               <div className="flex items-center justify-between">
-  <p className="text-[#FFFEEF99] text-sm">DUST Balance</p>
-  <p className="font-semibold text-[#FFFEEF]">
-    {points?.point ?? 0} DUST
-  </p>
-</div>
+                <p className="text-[#FFFEEF99] text-sm">DUST Balance</p>
+                <p className="font-semibold text-[#FFFEEF]">
+                  <span className="text-[#FFFEEF99] font-light text-xs">
+                    Weekly{" "}
+                  </span>
+                  +{weekPoints ?? 0} DUST
+                </p>
+            </div>
 
                <div className="flex items-center justify-between">
                 <p className="text-[#FFFEEF99] text-sm">XP Balance</p>
