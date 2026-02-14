@@ -178,17 +178,24 @@ useEffect(() => {
 
                 </div>
 
-                <p className="text-[#FFFEEF99] text-xs font-light">
+                {/* <p className="text-[#FFFEEF99] text-xs font-light">
                   Total XP{" "}
                   <span className="text-[#FFFEEF] font-medium text-sm">
                     {points?.total ?? 0}
                   </span>
-                </p>
+                </p> */}
+                <p className="text-[#FFFEEF99] text-xs font-light">
+  Total DUST{" "}
+  <span className="text-[#FFFEEF] font-medium text-sm">
+    {points?.total ?? 0}
+  </span>
+</p>
+
               </div>
 
               <div className="my-3 border-t border-[#333333]" />
 
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <p className="text-[#FFFEEF99] text-sm">REWARDS</p>
                 <p className="font-semibold">
                   <span className="text-[#FFFEEF99] font-light text-xs">
@@ -196,7 +203,14 @@ useEffect(() => {
                   </span>
                   +{points?.point ?? 0}
                 </p>
-              </div>
+              </div> */}
+              <div className="flex items-center justify-between">
+  <p className="text-[#FFFEEF99] text-sm">DUST Balance</p>
+  <p className="font-semibold text-[#FFFEEF]">
+    {points?.point ?? 0} DUST
+  </p>
+</div>
+
                <div className="flex items-center justify-between">
                 <p className="text-[#FFFEEF99] text-sm">XP Balance</p>
                 <p className="font-semibold">

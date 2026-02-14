@@ -142,7 +142,7 @@ useEffect(() => {
 
       <div className="relative w-full max-w-3xl flex flex-col space-y-4">
         <button
-          onClick={() => router.push("/")}
+          onClick={() => router.back()}
           className="self-end bg-black border-2 border-[#8C6C00] p-2 rounded-full"
         >
           <Image src={Close} alt="close" width={14} height={14} />

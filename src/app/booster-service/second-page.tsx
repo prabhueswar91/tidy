@@ -55,8 +55,7 @@ const [balLoading, setBalLoading] = useState(false);
 
 
   const includes = [
-    "Tidyzen users must join your telegram to qualify for $TIDY, claims, xp rewards and xp boosts",
-    "Rewards unlocked via TidyZen",
+    "TidyZen users must join your Telegram to qualify for $TIDY claims, XP rewards and XP boosts",
     "User growth spread out over time",
   ];
 
@@ -81,7 +80,7 @@ const [balLoading, setBalLoading] = useState(false);
         </button>
 
         <h1 className="text-[26px] font-semibold text-[#FFFEEF]  font-open mb-6 text-center">
-          Activate telegram booster
+          Activate Telegram Booster
         </h1>
 
         <div className={`bg-[#141318]/40 backdrop-blur-md rounded-2xl border-2 border-[#333333] shadow-2xl p-5 mb-6`}>
@@ -122,14 +121,25 @@ const [balLoading, setBalLoading] = useState(false);
             </h3>
             <div className="p-[2px] rounded-full mb-2
             bg-[linear-gradient(90deg,rgba(126,126,126,0.3)_0%,rgba(126,126,126,0.8)_50%,rgba(126,126,126,0.3)_100%)]" />
-            <ul className="space-y-2">
+            {/* <ul className="space-y-2">
               {includes.map((item, index) => (
                 <li key={index} className={`flex items-start gap-2 font-medium font-sans text-[16px] ${textMuted}`}>
                   <span className="text-[#D3D3C6]  mt-0.5">•</span>
                   <span className="flex-1 text-[#D3D3C6] text-[12px] font-medium">{item}</span>
                 </li>
               ))}
-            </ul>
+            </ul> */}
+            <ul className="space-y-2 list-disc pl-5">
+  {includes.map((item, index) => (
+    <li
+      key={index}
+      className="text-[#D3D3C6] text-[12px] font-medium font-sans"
+    >
+      {item}
+    </li>
+  ))}
+</ul>
+
           </div>
 
           {/* <div className="mt-6">
@@ -169,7 +179,7 @@ const [balLoading, setBalLoading] = useState(false);
         disabled={!selectedPlan}
         onClick={() => setIsModalOpen(true)}
       >
-        {isConnected ? "PAY & ACTIVATE BOOSTER" : "CONNECT WALLET"}
+        {isConnected ? "PAY & ACTIVATE BOOSTER" : "APPLY NOW"}
       </button>
 
       <PayBoosterModal
@@ -179,7 +189,7 @@ const [balLoading, setBalLoading] = useState(false);
         onSuccess={() => closePopup()}
       />
         <p className={`text-center text-[#FFFEEF] font-semibold font-sans text-[16px] ${textMuted}`}>
-          Activation starts after approval
+          Activation starts after approval and payment
         </p>
       </div>
 

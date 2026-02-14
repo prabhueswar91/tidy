@@ -260,7 +260,7 @@ async function getRequirementList() {
       />
 <div className="relative w-full max-w-3xl flex flex-col space-y-4">
         <button
-          onClick={() => router.push("/")}
+          onClick={() => router.back()}
           className="self-end bg-black border-2 border-[#8C6C00] p-2 rounded-full"
         >
           <Image src={Close} alt="close" width={14} height={14} />
@@ -594,7 +594,7 @@ async function getRequirementList() {
         ))}
 
       <p className="text-xs text-[#FFFEEF99] text-center mt-2">
-        Join our Telegram community to start claiming rewards.
+        Join our Telegram communities to qualify for claiming $TIDY and getting XP rewards.
       </p>
 
       {requirements1.communities.length === 0 && (
