@@ -1,20 +1,23 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Image from "next/image";
 import Close from "./assets/close.svg";
+import { useUI } from "./context/closebtnContext";
 
 export default function GlobalCloseButton() {
   const router = useRouter();
-  const pathname = usePathname();
-if (pathname === "/loading") return null;
-  // 🔥 Hide Telegram default back button
+  const { showClose } = useUI();
+
   useEffect(() => {
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.BackButton.hide();
     }
   }, []);
+
+  // ❌ If showClose is false → don't render
+  if (!showClose) return null;
 
   return (
     <button

@@ -51,7 +51,7 @@ export default function Home({ onStart }: HomeProps) {
   }
 
   useEffect(() => {
-    setShowClose(true);
+    setShowClose(false);
     const fetchPartners = async () => {
       try {
         const res = await axios.get(
