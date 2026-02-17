@@ -285,7 +285,7 @@ useEffect(() => {
                       </td>
 
                       <td className="px-3 py-3 text-[#D2A100] font-bold">
-                        {user.totalPoint ?? user.point ?? 0}
+                        {user.totalPoint ?? user.point ?? 0} DUST
                       </td>
                     </tr>
                   ))}
