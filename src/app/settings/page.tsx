@@ -49,6 +49,7 @@ const [points, setPoints] = useState<any>(null);
       setLoading(true);
       try {
         const res = await axiosInstance.get(`/points/user/${userInfo.id}/weekly`);
+        console.log("API Response:", res.data);
         setweekPoints(res.data?.weeklyPoints);
         settotalPointss(res.data?.totalPoints);
         setbaseAddress(res.data?.walletAddress)
@@ -62,6 +63,7 @@ const [points, setPoints] = useState<any>(null);
     };
 
     fetchPoints();
+   
   }, [userInfo]);
 
     async function getXPbalance(addr:string){
@@ -187,12 +189,13 @@ useEffect(() => {
                     {points?.total ?? 0}
                   </span>
                 </p> */}
-              <p className="text-[#FFFEEF99] text-xs font-light">
-                Total DUST{" "}
-                <span className="text-[#FFFEEF] font-medium text-sm">
-                  {totalPoints ?? 0}
-                </span>
-              </p>
+             <p className="text-[#FFFEEF99] text-xs font-light">
+  Total DUST{" "}
+  <span className="text-[#FFFEEF] font-semibold text-sm">
+    {totalPoints ?? 0} DUST
+  </span>
+</p>
+
 
               </div>
 
@@ -214,7 +217,7 @@ useEffect(() => {
                     Weekly{" "}
                   </span>
                   +{weekPoints ?? 0} DUST
-                </p>
+                                 </p>
             </div>
 
                <div className="flex items-center justify-between">

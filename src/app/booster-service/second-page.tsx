@@ -11,8 +11,10 @@ import { useWallet } from "../hooks/useWallet";
 import {encryptData} from "../rewards/auth2/encrypt"
 import Modal from "../components/ui/Modal";
 import PayBoosterModal from "./PayBoosterModal";
+import { useRouter } from "next/navigation";
 
 const textMuted = "text-[#FFFEEF]";
+
 
 export const ERC20_ABI = [
   "function decimals() view returns (uint8)",
@@ -42,7 +44,7 @@ export default function SecondPage({
 }) {
 
 const { provider, address, isConnected, connect, logout, formatAddress } = useWallet();
-
+const router = useRouter();
   const [paying, setPaying] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 const [usdcBalance, setUsdcBalance] = useState<string>("0");
@@ -177,7 +179,14 @@ const [balLoading, setBalLoading] = useState(false);
       <button
         className="w-full bg-[linear-gradient(90deg,#110e05_0%,#362a02_100%)] font-open text-[18px]  text-[#FFFEEF] hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-[#D2A100] disabled:opacity-50"
         disabled={!selectedPlan}
-        onClick={() => setIsModalOpen(true)}
+        // onClick={() => setIsModalOpen(true)}
+        onClick={() => {
+    if (!isConnected) {
+      router.push("/partner");  // 👈 redirect here
+    } else {
+      setIsModalOpen(true);     // open payment modal
+    }
+  }}
       >
         {isConnected ? "PAY & ACTIVATE BOOSTER" : "APPLY NOW"}
       </button>
