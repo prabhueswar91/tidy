@@ -43,12 +43,24 @@ export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       // ⚠️ DEV fallback only
+      // if (process.env.NODE_ENV !== "production") {
+      //   console.warn("⚠️ Using static Telegram ID (DEV mode)");
+      //   setTelegramId(STATIC_TELEGRAM_ID);
+      //   setUserData(null);
+      //   setHash(null);
+      // }
       if (process.env.NODE_ENV !== "production") {
-        console.warn("⚠️ Using static Telegram ID (DEV mode)");
-        setTelegramId(STATIC_TELEGRAM_ID);
-        setUserData(null);
-        setHash(null);
-      }
+      console.warn("⚠️ DEV MODE: Using static Telegram user");
+
+      setTelegramId(STATIC_TELEGRAM_ID);
+      setUserData({
+        id: STATIC_TELEGRAM_ID,
+        first_name: "Sandeep",
+        username: "dev_user",
+      });
+      setHash("dev_static_hash");
+      return;
+    }
     };
 
     getTelegramUser();

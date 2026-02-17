@@ -6,9 +6,9 @@ import ContextProvider from "./context";
 import { TelegramProvider } from "./context/TelegramContext";
 import { UserProvider } from "./context/UserContext";
 // import ErudaInit from "./components/ErudaInit";
-import CloseButton from "./components/ui/CloseButton";
+// import CloseButton from "./components/ui/CloseButton";
 import { UIProvider } from "./context/closebtnContext";
-
+import GlobalCloseButton from "./GlobalCloseButton";
 export default function ClientLayout({
   cookies,
   children,
@@ -64,7 +64,8 @@ console.log(children,'childrenchildren>>>>>>>>>>>>>')
         <TelegramProvider>
           <UserProvider>
             <UIProvider>
-            <CloseButton />
+            
+            <GlobalCloseButton />
           {children}
           </UIProvider>
           <Toaster
