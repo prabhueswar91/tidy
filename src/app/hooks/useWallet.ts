@@ -8,6 +8,13 @@ import { useAppKit } from "@reown/appkit/react";
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 import { BrowserProvider, Eip1193Provider } from "ethers";
 
+export const isTelegramMobile = () => {
+  if (typeof window === "undefined") return false
+  const ua = navigator.userAgent.toLowerCase()
+  return ua.includes("telegram") && /android|iphone|ipad/i.test(ua)
+}
+
+
 export function useWallet() {
   const { disconnect } = useDisconnect();
   const { open } = useAppKit();
@@ -29,10 +36,15 @@ export function useWallet() {
   onError: (err) => {
     console.log(err);
 
-    // Retry with modal fallback on payload error
+    if (isTelegramMobile()) {
+      open({ view: "Connect" }); // fallback to modal
+      return;
+    }
+
     if (err?.message?.includes("Failed to publish")) {
       open({ view: "Connect" });
     }
+
   },
 });
 

@@ -19,21 +19,26 @@ const metadata = {
   url: 'https://test.bloxio.co/',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
-createAppKit({
+
+const isTg = typeof window !== "undefined" &&
+  navigator.userAgent.toLowerCase().includes("telegram")
+
+ createAppKit({
   adapters: [wagmiAdapter, bitcoinAdapter],
   projectId,
   networks: [baseSepolia, bitcoin],
   defaultNetwork: baseSepolia,
-  metadata: metadata,
+  metadata,
   features: {
     analytics: false,
     email: false,
     socials: false,
   },
-  enableWalletConnect: true,
+  enableWalletConnect: !isTg,  // 🔥 disable inside telegram
   enableInjected: true,
   enableCoinbase: false,
 })
+
 
 function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
   const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies)
