@@ -3,7 +3,7 @@
 import { wagmiAdapter, projectId,networks, bitcoinAdapter } from '../config/wagmiConfig'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react'
-import { baseSepolia, bitcoin } from '@reown/appkit/networks'
+import { baseSepolia, bitcoin,base } from '@reown/appkit/networks'
 import React, { type ReactNode } from 'react'
 import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
 
@@ -16,29 +16,19 @@ if (!projectId) {
 const metadata = {
   name: 'TIDYZEN',
   description: 'TIDYZEN',
-  url: 'https://test.bloxio.co/',
+  url: 'https://tidy-mocha.vercel.app/',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
-
-const isTg = typeof window !== "undefined" &&
-  navigator.userAgent.toLowerCase().includes("telegram")
-
- createAppKit({
+createAppKit({
   adapters: [wagmiAdapter, bitcoinAdapter],
   projectId,
-  networks: [baseSepolia, bitcoin],
-  defaultNetwork: baseSepolia,
-  metadata,
+  networks: [base, bitcoin],
+  defaultNetwork: base,
+  metadata: metadata,
   features: {
-    analytics: false,
-    email: false,
-    socials: false,
+    analytics: true
   },
-  enableWalletConnect: !isTg,  // 🔥 disable inside telegram
-  enableInjected: true,
-  enableCoinbase: false,
 })
-
 
 function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
   const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies)
