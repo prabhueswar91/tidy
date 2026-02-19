@@ -3,11 +3,14 @@
 import { useState, useMemo } from "react";
 import { useAppKitWallet } from "@reown/appkit-wallet-button/react";
 import { useDisconnect } from "@reown/appkit/react";
+import { useAppKit } from "@reown/appkit/react"; 
+
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 import { BrowserProvider, Eip1193Provider } from "ethers";
 
 export function useWallet() {
   const { disconnect } = useDisconnect();
+  const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const { walletProvider } = useAppKitProvider<Eip1193Provider>("eip155");
@@ -18,14 +21,21 @@ export function useWallet() {
   );
 
   const { connect, isReady } = useAppKitWallet({
-    namespace: "eip155",
-    onSuccess: (addr) => {
-      console.log(addr)
-      //alert("sucesss"),
-      setIsWalletOpen(false);
-    },
-    onError: (err) => console.log(err),
-  });
+  namespace: "eip155",
+  onSuccess: (addr) => {
+    console.log(addr);
+    setIsWalletOpen(false);
+  },
+  onError: (err) => {
+    console.log(err);
+
+    // Retry with modal fallback on payload error
+    if (err?.message?.includes("Failed to publish")) {
+      open({ view: "Connect" });
+    }
+  },
+});
+
 
   const logout = () => disconnect();
 

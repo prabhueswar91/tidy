@@ -26,8 +26,13 @@ createAppKit({
   defaultNetwork: baseSepolia,
   metadata: metadata,
   features: {
-    analytics: true
+    analytics: false,
+    email: false,
+    socials: false,
   },
+  enableWalletConnect: true,
+  enableInjected: true,
+  enableCoinbase: false,
 })
 
 function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
