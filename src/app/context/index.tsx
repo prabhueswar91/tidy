@@ -16,7 +16,7 @@ if (!projectId) {
 const metadata = {
   name: 'TIDYZEN',
   description: 'TIDYZEN',
-  url: 'http://t.me/TidycoinBot',
+  url: 'https://tidy-mocha.vercel.app/?startapp=myapp',
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
 createAppKit({
