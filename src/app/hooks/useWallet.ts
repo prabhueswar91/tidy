@@ -3,21 +3,11 @@
 import { useState, useMemo } from "react";
 import { useAppKitWallet } from "@reown/appkit-wallet-button/react";
 import { useDisconnect } from "@reown/appkit/react";
-import { useAppKit } from "@reown/appkit/react"; 
-
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 import { BrowserProvider, Eip1193Provider } from "ethers";
 
-export const isTelegramMobile = () => {
-  if (typeof window === "undefined") return false
-  const ua = navigator.userAgent.toLowerCase()
-  return ua.includes("telegram") && /android|iphone|ipad/i.test(ua)
-}
-
-
 export function useWallet() {
   const { disconnect } = useDisconnect();
-  const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const { walletProvider } = useAppKitProvider<Eip1193Provider>("eip155");
@@ -28,26 +18,14 @@ export function useWallet() {
   );
 
   const { connect, isReady } = useAppKitWallet({
-  namespace: "eip155",
-  onSuccess: (addr) => {
-    console.log(addr);
-    setIsWalletOpen(false);
-  },
-  onError: (err) => {
-    console.log(err);
-
-    if (isTelegramMobile()) {
-      open({ view: "Connect" }); // fallback to modal
-      return;
-    }
-
-    if (err?.message?.includes("Failed to publish")) {
-      open({ view: "Connect" });
-    }
-
-  },
-});
-
+    namespace: "eip155",
+    onSuccess: (addr) => {
+      console.log(addr)
+      //alert("sucesss"),
+      setIsWalletOpen(false);
+    },
+    onError: (err) => console.log(err),
+  });
 
   const logout = () => disconnect();
 

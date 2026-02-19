@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import ContextProvider from "./context";
 import { TelegramProvider } from "./context/TelegramContext";
 import { UserProvider } from "./context/UserContext";
-import ErudaInit from "./components/ErudaInit";
+// import ErudaInit from "./components/ErudaInit";
 // import CloseButton from "./components/ui/CloseButton";
 import { UIProvider } from "./context/closebtnContext";
 import GlobalCloseButton from "./GlobalCloseButton";
@@ -77,7 +77,7 @@ console.log(children,'childrenchildren>>>>>>>>>>>>>')
           </UserProvider>
         </TelegramProvider>
       </ContextProvider>
-      <ErudaInit />
+      {/* <ErudaInit /> */}
     </>
   );
 }
