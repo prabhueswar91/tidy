@@ -277,9 +277,9 @@ export default function PrizeReveal({ duration }: { duration: number }) {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] font-dm text-[#FFFEEF] md:px-4">
       <Card3>
         <div className="w-full flex flex-col items-center px-4 gap-6 sm:gap-8">
-          <StakeButton />
+          {/* <StakeButton /> */}
           {!isCompleted ? (
-            <div className="w-full max-w-md bg-[#14131899] border-2 border-[#333333] rounded-xl px-2 sm:px-6 py-8 text-center backdrop-blur-md shadow-[0_0_20.9px_0_#000000]">
+            <div className="w-full max-w-md bg-[#14131899] border-2 border-[#333333] rounded-xl mt-8 px-2 sm:px-6 py-8 text-center backdrop-blur-md shadow-[0_0_20.9px_0_#000000]">
               <div className="absolute inset-0 before:block before:absolute before:inset-0 before:bg-[url('/spingreenbg.png')] before:bg-cover before:bg-center before:opacity-80"></div>
               <div className="mx-auto w-[244px] min-h-[260px] h-40 md:h-60 relative">
                 <div className="w-full h-full">
@@ -544,7 +544,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
                       </p>
                     </div>
                     {/* Modal */}
-                    <Invite />
+                    {/* <Invite /> */}
                   </div>
                 </div>
               </motion.div>
@@ -661,7 +661,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
             JOIN JUNGL'S DISCORD
         </Button>
       </div> )}
-        <Invite />
+        {/* <Invite /> */}
       </Card3>
 
       <Modal

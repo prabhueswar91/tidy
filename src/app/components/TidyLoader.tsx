@@ -39,7 +39,7 @@ export default function TidyLoader() {
       />
 
       <div className="flex flex-col items-center justify-center text-center px-4">
-        <div className="flex justify-center mb-8">
+        {/* <div className="flex justify-center mb-8">
           <motion.div
             className="w-16 h-16 rounded-full bg-gradient-to-r from-yellow-400 to-green-400 flex items-center justify-center text-2xl shadow-lg"
             animate={{ rotateY: [0, 360] }}
@@ -47,8 +47,25 @@ export default function TidyLoader() {
           >
             ₮
           </motion.div>
-        </div>
+        </div> */}
+       <motion.div
+  className="relative mb-8"
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.6, ease: "easeOut" }}
+>
 
+          <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-20 rounded-full"></div>
+
+          <video
+            src="/animations/tidycoin.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-40 md:w-52 relative z-10 drop-shadow-[0_0_30px_rgba(255,215,0,0.5)]"
+          />
+        </motion.div>
         <motion.h1
           className="text-white text-xl font-bold tracking-widest flex flex-wrap justify-center"
           variants={containerVariants}

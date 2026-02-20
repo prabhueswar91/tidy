@@ -12,6 +12,11 @@ import { toast } from "react-hot-toast";
 interface PartnerProps {
   onContinue?: () => void;
 }
+async function delay() {
+  return new Promise((resolve) => setTimeout(resolve, 4000));
+}
+
+
 
 export default function Partner({ onContinue }: PartnerProps) {
   const [selected, setSelected] = useState("");

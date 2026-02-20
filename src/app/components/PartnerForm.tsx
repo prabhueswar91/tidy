@@ -1,6 +1,6 @@
 "use client";
 
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Card2 from "../components/ui/Card2";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -27,8 +27,9 @@ export default function TokenForm() {
   const group_name = searchParams.get("group_name");
   const channel_id = searchParams.get("channel_id");
   //const channel_id = -4976454003;
+  const [showTooltip, setShowTooltip] = useState(false);
 
-  
+
   const [selectedUsage, setSelectedUsage] = useState("1month");
   const [projectHandle, setProjectHandle] = useState("");
   const [baseToken, setBaseToken] = useState("");
@@ -40,18 +41,31 @@ export default function TokenForm() {
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [featured, setFeatured] = useState<"yes" | "no">("no");
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowTooltip(false);
+    };
+
+    if (showTooltip) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [showTooltip]);
 
   useEffect(() => {
-      fetchList();
+    fetchList();
   }, []);
 
   const fetchList = async () => {
     try {
       setLoading(true);
-      const { data:response } = await axiosInstance.post("/public/partner/check-approve-status",{telegramId});
+      const { data: response } = await axiosInstance.post("/public/partner/check-approve-status", { telegramId });
       if (response.isList) {
-          setSubmitted(true);
-          setshowApprove(response.isApprove);
+        setSubmitted(true);
+        setshowApprove(response.isApprove);
       }
     } finally {
       setLoading(false);
@@ -62,7 +76,7 @@ export default function TokenForm() {
   const handleSubmit = async () => {
     if (!telegramId) return;
 
-    
+
     if (!projectHandle.trim()) {
       toast.error("Please enter your project telegram handle!");
       return;
@@ -72,7 +86,7 @@ export default function TokenForm() {
       if (!ethers.isAddress(baseToken)) {
         toast.error("Please enter a valid token contract address!");
         return;
-      } 
+      }
     }
 
     if (!contactHandle.trim()) {
@@ -104,7 +118,7 @@ export default function TokenForm() {
       formData.append("data", decodeURIComponent(data || ""));
       formData.append("featured", featured);
 
-      const {data:response} = await axios.post(
+      const { data: response } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"}/public/partner`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
@@ -120,16 +134,16 @@ export default function TokenForm() {
     } finally {
       setLoading1(false);
     }
-};
+  };
 
 
   const handleReset = () => {
-    if(group_name){
+    if (group_name) {
       router.push(`/?group_name=${group_name}&approved=${approved}`);
-    }else{
-       router.push(`/`);
+    } else {
+      router.push(`/`);
     }
-    
+
   };
 
   return (
@@ -184,24 +198,24 @@ export default function TokenForm() {
                       />
                     </label>
 
-                   
-                  <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
-                    Enter your Token or NFT address
 
-                    <span className="text-xs text-[#888] mt-1">
-                      (Optional — skip this if your project doesn’t have a token or NFT yet.)
-                    </span>
+                    <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left">
+                      Enter your Token or NFT address
 
-                    <input
-                      type="text"
-                      value={baseToken}
-                      onChange={(e) => setBaseToken(e.target.value)}
-                      className="mt-2 p-2 rounded bg-[#1a1a1a] border border-[#333] text-[#FFFEEF] placeholder:text-[#888]"
-                      placeholder="0x..."
-                    />
-                  </label>
+                      <span className="text-xs text-[#888] mt-1">
+                        (Optional — skip this if your project doesn’t have a token or NFT yet.)
+                      </span>
 
-                    
+                      <input
+                        type="text"
+                        value={baseToken}
+                        onChange={(e) => setBaseToken(e.target.value)}
+                        className="mt-2 p-2 rounded bg-[#1a1a1a] border border-[#333] text-[#FFFEEF] placeholder:text-[#888]"
+                        placeholder="0x..."
+                      />
+                    </label>
+
+
 
                     {/* <div className="flex flex-col gap-2 my-3 text-left">
                       <span className="text-sm font-light text-[#FFFEEF]">
@@ -276,7 +290,7 @@ export default function TokenForm() {
                       This is how we will get in touch with you.
                     </p>
 
-                <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left mt-3">
+                    {/* <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left mt-3">
                   Enter your project website url
                   <input
                     type="url"
@@ -285,21 +299,65 @@ export default function TokenForm() {
                     className="mt-1 p-2 rounded bg-[#1a1a1a] border border-[#333] text-[#FFFEEF] placeholder:text-[#888]"
                     placeholder="https://yourproject.com"
                   />
-                </label>
+                </label> */}
+                    <div className="flex flex-col text-sm font-light text-[#FFFEEF] text-left mt-4">
 
-                <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left mt-3">
-                  Upload your project logo (PNG or JPG)
-                  <input
-                    type="file"
-                    accept="image/png, image/jpeg"
-                    onChange={(e) => setLogoFile(e.target.files ? e.target.files[0] : null)}
-                    className="mt-1 text-xs text-[#FFFEEF]"
-                  />
-                </label>
+                      <div className="flex items-center gap-2 relative">
+                        <span>Project Website URL</span>
+
+                        {/* ICON WRAPPER */}
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowTooltip((prev) => !prev);
+                            }}
+                            className="text-yellow-400 text-xs focus:outline-none"
+                          >
+                            ⓘ
+                          </button>
+
+                          {/* TOOLTIP */}
+                          {showTooltip && (
+                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-64 p-3 text-xs text-white bg-[#1a1a1a] border border-[#333] rounded-lg shadow-[0_10px_25px_rgba(0,0,0,0.5)] z-50 text-center animate-fadeIn">
+
+                              Please include <span className="text-yellow-400">http://</span> or{" "}
+                              <span className="text-yellow-400">https://</span><br />
+                              Example: https://yourproject.com
+
+                              {/* Arrow */}
+                              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#1a1a1a] rotate-45 border-l border-b border-[#333]"></div>
+                            </div>
+                          )}
+
+                        </div>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={websiteUrl}
+                        onChange={(e) => setWebsiteUrl(e.target.value)}
+                        className="mt-2 p-2 rounded bg-[#1a1a1a] border border-[#333] text-[#FFFEEF] placeholder:text-[#666]  transition"
+                        placeholder="https://yourproject.com"
+                      />
+                    </div>
+
+
+
+                    <label className="flex flex-col text-sm font-light text-[#FFFEEF] text-left mt-3">
+                      Upload your project logo (PNG or JPG)
+                      <input
+                        type="file"
+                        accept="image/png, image/jpeg"
+                        onChange={(e) => setLogoFile(e.target.files ? e.target.files[0] : null)}
+                        className="mt-1 text-xs text-[#FFFEEF]"
+                      />
+                    </label>
 
                   </>
                 ) : (
-                 <ApprovalStatus showApprove={showApprove}/>
+                  <ApprovalStatus showApprove={showApprove} />
                 )
                 }
               </div>
@@ -307,7 +365,7 @@ export default function TokenForm() {
               <div className="w-full mt-4">
                 {!submitted ? (
                   <Button onClick={handleSubmit} disabled={loading1} className="bg-[linear-gradient(90deg,#242424_0%,#525252_100%)]">
-                    {loading1?"Processing":"CONTINUE TO OUR TELEGRAM BOOSTER SERVICE"}
+                    {loading1 ? "Processing" : "CONTINUE TO OUR TELEGRAM BOOSTER SERVICE"}
                   </Button>
                 ) : (
                   <Button onClick={handleReset}>START AGAIN</Button>
