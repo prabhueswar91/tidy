@@ -75,27 +75,27 @@ function isApiError(err: unknown): err is ApiError {
       }
   }
 
-  async function connectWallet(){
-    await close();
-    await logout();
-    await new Promise(resolve => setTimeout(resolve, 200));
+  // async function connectWallet(){
+  //   await close();
+  //   await logout();
+  //   await new Promise(resolve => setTimeout(resolve, 200));
+  //   await open();
+  // }
+async function connectWallet() {
+  try {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile && !window.ethereum) {
+      window.location.href =
+        "https://metamask.app.link/dapp/" + window.location.host;
+      return;
+    }
+
     await open();
+  } catch (error) {
+    console.error("Wallet connection failed:", error);
   }
-// async function connectWallet() {
-//   try {
-//     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-//     if (isMobile && !window.ethereum) {
-//       window.location.href =
-//         "https://metamask.app.link/dapp/" + window.location.host;
-//       return;
-//     }
-
-//     await open();
-//   } catch (error) {
-//     console.error("Wallet connection failed:", error);
-//   }
-// }
+}
 
   async function payNow(){
 
@@ -229,8 +229,8 @@ function isApiError(err: unknown): err is ApiError {
             borderColor="#797979"
             fromColor="#EBB457"
             toColor="#efefef"
-            onClick={() => connect("metamask")}
-            // onClick={connectWallet}
+            // onClick={() => connect("metamask")}
+            onClick={connectWallet}
           >
             Connect MetaMask
           </Button>
