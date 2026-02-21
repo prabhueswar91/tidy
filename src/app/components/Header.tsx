@@ -84,29 +84,16 @@ function isApiError(err: unknown): err is ApiError {
 async function connectWallet() {
   try {
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isInAppBrowser = isTelegramWebView || 
-      /FBAN|FBAV|Instagram|Line|WhatsApp/i.test(navigator.userAgent);
 
-    // Inside Telegram or other in-app browsers — open in external browser
-    if (isInAppBrowser) {
-      const externalUrl = `https://metamask.app.link/dapp/${window.location.host}${window.location.pathname}`;
-      window.open(externalUrl, "_blank");
-      return;
-    }
-
-    // On mobile without injected wallet — use WalletConnect deep link via AppKit
     if (isMobile && !window.ethereum) {
-      await open({ view: "Connect" });
+      window.location.href =
+        "https://metamask.app.link/dapp/" + window.location.host;
       return;
     }
 
     await open();
   } catch (error) {
     console.error("Wallet connection failed:", error);
-    toast.error("Failed to open wallet. Please try again.", {
-      id: "wallet-error",
-      duration: 4000,
-    });
   }
 }
 
