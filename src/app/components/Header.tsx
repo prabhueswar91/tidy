@@ -82,19 +82,21 @@ function isApiError(err: unknown): err is ApiError {
   //   await open();
   // }
 async function connectWallet() {
-  try {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const isTelegramWebView = /Telegram/i.test(navigator.userAgent);
 
-    if (isMobile && !window.ethereum) {
-      window.location.href =
-        "https://metamask.app.link/dapp/" + window.location.host;
-      return;
-    }
-
-    await open();
-  } catch (error) {
-    console.error("Wallet connection failed:", error);
+  if (isTelegramWebView) {
+    // Force WalletConnect modal with QR — don't deep link
+    await open({ view: "Connect" }); // AppKit will show QR code
+    return;
   }
+
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile && !window.ethereum) {
+    await open({ view: "Connect" });
+    return;
+  }
+
+  await open();
 }
 
   async function payNow(){
