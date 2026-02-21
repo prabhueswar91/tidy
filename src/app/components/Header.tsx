@@ -82,15 +82,25 @@ function isApiError(err: unknown): err is ApiError {
   //   await open();
   // }
 async function connectWallet() {
-  toast.success(`Successfully purchased the`, {
-      id: "123",
-      duration: 3000,
-      icon: '✅'
-  });
   try {
-    await open({ view: "Connect" });
+    // Method 1: dispatch event directly on the appkit element
+    const modal = document.querySelector('appkit-modal') as any;
+    if (modal) {
+      modal.open({ view: 'Connect' });
+      return;
+    }
+
+    // Method 2: use the global appkit instance
+    const appkit = (window as any).__appkit__;
+    if (appkit) {
+      appkit.open({ view: 'Connect' });
+      return;
+    }
+
+    // Method 3: fallback
+    await open({ view: 'Connect' });
+
   } catch (error) {
-    console.error("Wallet connection failed:", error);
     toast.error(String(error));
   }
 }
