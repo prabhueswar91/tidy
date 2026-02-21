@@ -82,21 +82,13 @@ function isApiError(err: unknown): err is ApiError {
   //   await open();
   // }
 async function connectWallet() {
-  const isTelegramWebView = /Telegram/i.test(navigator.userAgent);
-
-  if (isTelegramWebView) {
-    // Force WalletConnect modal with QR — don't deep link
-    await open({ view: "Connect" }); // AppKit will show QR code
-    return;
-  }
-
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (isMobile && !window.ethereum) {
+  toast("connectWallet called");
+  try {
     await open({ view: "Connect" });
-    return;
+  } catch (error) {
+    console.error("Wallet connection failed:", error);
+    toast.error(String(error));
   }
-
-  await open();
 }
 
   async function payNow(){
