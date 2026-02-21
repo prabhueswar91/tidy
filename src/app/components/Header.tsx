@@ -82,7 +82,11 @@ function isApiError(err: unknown): err is ApiError {
   //   await open();
   // }
 async function connectWallet() {
-  toast("connectWallet called");
+  toast.success(`Successfully purchased the`, {
+      id: "123",
+      duration: 3000,
+      icon: '✅'
+  });
   try {
     await open({ view: "Connect" });
   } catch (error) {
@@ -212,7 +216,7 @@ async function connectWallet() {
         </div>
       ) : (
         <Button className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]" onClick={() => connectWallet()}>
-          Connect Wallet
+          Connect Wallett
         </Button>
       )}
 
