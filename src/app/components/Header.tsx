@@ -42,11 +42,12 @@ export default function Header({ setIsModalOpen, checkPartner }: HeaderProps) {
 
   const { setWalletAddress, selectedTier, amount, setTelegramId } = useAppStore();
   const { telegramId } = useTelegram();
-  const { open, close } = useAppKit();
+ const { open } = useAppKit();
   const [loader, setloader] = useState(false);
   const [xpbalance, setxpbalance] = useState(0);
   const { getUserInfo } = UserContext();
-  
+  const appkit = useAppKit();
+console.log("APPKIT OBJECT:", appkit);
   // ---- Type guard to check ApiError ----
 function isApiError(err: unknown): err is ApiError {
   return typeof err === "object" && err !== null && "response" in err;
@@ -81,30 +82,28 @@ function isApiError(err: unknown): err is ApiError {
   //   await new Promise(resolve => setTimeout(resolve, 200));
   //   await open();
   // }
+// async function connectWallet() {
+//   try {
+//     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+//     if (isMobile && !window.ethereum) {
+//       window.location.href =
+//         "https://metamask.app.link/dapp/" + window.location.host;
+//       return;
+//     }
+
+    
+//   } catch (error) {
+//     console.error("Wallet connection failed:", error);
+//   }
+// }
 async function connectWallet() {
   try {
-    // Method 1: dispatch event directly on the appkit element
-    const modal = document.querySelector('appkit-modal') as any;
-    if (modal) {
-      modal.open({ view: 'Connect' });
-      return;
-    }
-
-    // Method 2: use the global appkit instance
-    const appkit = (window as any).__appkit__;
-    if (appkit) {
-      appkit.open({ view: 'Connect' });
-      return;
-    }
-
-    // Method 3: fallback
-    await open({ view: 'Connect' });
-
-  } catch (error) {
-    toast.error(String(error));
+    await open()
+  } catch (err) {
+    console.error('Wallet connection failed:', err)
   }
 }
-
   async function payNow(){
 
     if (!isConnected || !address) {
@@ -226,7 +225,7 @@ async function connectWallet() {
         </div>
       ) : (
         <Button className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]" onClick={() => connectWallet()}>
-          Connect Wallett
+          Connect Wallet
         </Button>
       )}
 
