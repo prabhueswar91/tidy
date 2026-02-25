@@ -60,7 +60,7 @@ console.log(children,'childrenchildren>>>>>>>>>>>>>')
 
   return (
     <>
-      <ContextProvider cookies={cookies}>
+      <ContextProvider >
         <TelegramProvider>
           <UserProvider>
             <UIProvider>

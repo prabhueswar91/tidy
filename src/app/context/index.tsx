@@ -1,11 +1,10 @@
 'use client'
 
-import React, { type ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
 import { baseSepolia, bitcoin } from '@reown/appkit/networks'
-
 import {
   wagmiAdapter,
   bitcoinAdapter,
@@ -15,7 +14,6 @@ import {
 
 const queryClient = new QueryClient()
 
-// ✅ Initialize AppKit ONLY ONCE
 createAppKit({
   adapters: [wagmiAdapter, bitcoinAdapter],
   projectId,
@@ -27,19 +25,10 @@ createAppKit({
     url: 'https://test.bloxio.co/',
     icons: ['https://avatars.githubusercontent.com/u/179229932']
   },
-
-  // 🔥 Show MetaMask first
-  featuredWalletIds: ['metamask'],
-allWallets: 'HIDE',
-
-  // 🔥 IMPORTANT
-  enableInjected: true,
-  features: {
-    analytics: true
-  }
+  featuredWalletIds: ['metamask']
 })
 
-function ContextProvider({ children }: { children: ReactNode }) {
+export default function ContextProvider({ children }: { children: ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -48,5 +37,3 @@ function ContextProvider({ children }: { children: ReactNode }) {
     </WagmiProvider>
   )
 }
-
-export default ContextProvider
