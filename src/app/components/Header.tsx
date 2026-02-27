@@ -53,15 +53,30 @@ function isApiError(err: unknown): err is ApiError {
   return typeof err === "object" && err !== null && "response" in err;
 }
 
+  // useEffect(() => {
+  //   if (isConnected && address) {
+  //     setWalletAddress(address);
+  //     getXPbalance(address);
+  //     //handleSignIn(address);
+  //   } else {
+  //     setWalletAddress(null);
+  //   }
+  // }, [isConnected, address, setWalletAddress]);
   useEffect(() => {
-    if (isConnected && address) {
-      setWalletAddress(address);
-      getXPbalance(address);
-      //handleSignIn(address);
-    } else {
-      setWalletAddress(null);
+  if (isConnected && address) {
+    setWalletAddress(address);
+    getXPbalance(address);
+
+    // ✅ Force Telegram to regain focus
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
     }
-  }, [isConnected, address, setWalletAddress]);
+
+  } else {
+    setWalletAddress(null);
+  }
+}, [isConnected, address]);
 
   async function getXPbalance(addr:any){
       try{
