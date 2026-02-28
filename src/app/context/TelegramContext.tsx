@@ -29,6 +29,7 @@ export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const tgHash = tg.initDataUnsafe?.hash;
 
         if (tgUser && tgHash) {
+          alert("jjjjjjjjjjjjjjjjj")
           setTelegramId(tgUser.id.toString());
           setUserData(tgUser);
           setHash(tgHash);
