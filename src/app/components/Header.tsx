@@ -192,10 +192,9 @@ function isApiError(err: unknown): err is ApiError {
     <div>
       {isConnected ? (
         <div>
-          <span>{formatAddress(address || "")}==={chainId}</span>
+          <span>{formatAddress(address || "")}</span>
            <div className="text-[#FFFEEF] text-sm font-dm">
             Balance: <span className="font-semibold">{xpbalance} XP</span>
-            chainId: <span className="font-semibold">{chainId}</span>
           </div>
           <Button className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]" onClick={() => payNow()} disabled={loader}>
             {loader?"Processing":"PAY NOW"}
