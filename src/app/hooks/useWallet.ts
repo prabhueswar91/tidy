@@ -48,8 +48,9 @@ export function useWallet() {
 
   // ── Connect ──────────────────────────────────────────────────────────────
   const connect = useCallback(async () => {
+    alert(isMobile)
     if (isMobile) {
-      alert("mobile")
+      
       const universalProvider: UniversalProvider = await initWalletConnect();
       const addr = await connectWallet1(universalProvider);
       if (addr) {
