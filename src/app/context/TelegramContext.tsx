@@ -17,33 +17,53 @@ const TelegramContext = createContext<TelegramContextType>({
 export const useTelegram = () => useContext(TelegramContext);
 
 export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+
   const [telegramId, setTelegramId] = useState<string | null>(null);
   const [userdata, setUserData] = useState<any | null>(null);
   const [hash, setHash] = useState<string | null>(null);
 
   useEffect(() => {
-    const getTelegramUser = () => {
-      if (typeof window !== "undefined" && window.Telegram?.WebApp) {
+
+    let retries = 0;
+    const maxRetries = 20;
+
+    const checkTelegram = () => {
+
+      if (window.Telegram?.WebApp) {
+
         const tg = window.Telegram.WebApp;
+
+        tg.ready(); // VERY IMPORTANT
+
         const tgUser = tg.initDataUnsafe?.user;
         const tgHash = tg.initDataUnsafe?.hash;
 
-        if (tgUser && tgHash) {
-          alert("jjjjjjjjjjjjjjjjj")
+        if (tgUser?.id) {
+
+          console.log("Telegram user found:", tgUser);
+
           setTelegramId(tgUser.id.toString());
           setUserData(tgUser);
-          setHash(tgHash);
-        } else {
-          console.warn("⚠️ Telegram WebApp exists, but user or hash not ready yet");
+          setHash(tgHash ?? null);
+
+          return;
+
         }
-      } else {
-        console.warn("⚠️ Telegram WebApp not found");
+
       }
+
+      retries++;
+
+      if (retries < maxRetries) {
+        setTimeout(checkTelegram, 300);
+      } else {
+        console.warn("Telegram WebApp not available after retries");
+      }
+
     };
 
-    getTelegramUser();
-    const timer = setTimeout(getTelegramUser, 500);
-    return () => clearTimeout(timer);
+    checkTelegram();
+
   }, []);
 
   return (
