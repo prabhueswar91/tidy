@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { useAppKitWallet } from "@reown/appkit-wallet-button/react";
-import { useDisconnect } from "@reown/appkit/react";
+import { useDisconnect, useAppKit } from "@reown/appkit/react";
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 import { BrowserProvider, Eip1193Provider } from "ethers";
 import UniversalProvider from "@walletconnect/universal-provider";
@@ -19,17 +18,12 @@ export function useWallet() {
   const { disconnect: appKitDisconnect } = useDisconnect();
   const { address: appKitAddress, isConnected: appKitConnected } = useAppKitAccount();
   const { walletProvider: appKitWalletProvider } = useAppKitProvider<Eip1193Provider>("eip155");
+  const { open: appKitOpen } = useAppKit();
 
   const appKitProvider = useMemo(
     () => (appKitWalletProvider ? new BrowserProvider(appKitWalletProvider) : null),
     [appKitWalletProvider]
   );
-
-  const { connect: appKitConnect, isReady } = useAppKitWallet({
-    namespace: "eip155",
-    onSuccess: () => setIsWalletOpen(false),
-    onError: (err) => console.error(err),
-  });
 
   // ── WalletConnect Universal Provider (mobile) ───────────────────────────
   const [wcAddress, setWcAddress] = useState<string | null>(null);
@@ -64,9 +58,10 @@ export function useWallet() {
         setWcConnected(true);
       }
     } else {
-      appKitConnect("eip155");
+      // Desktop: open Reown AppKit modal
+      await appKitOpen();
     }
-  }, [isMobile, appKitConnect]);
+  }, [isMobile, appKitOpen]);
 
   // ── Disconnect ───────────────────────────────────────────────────────────
   const logout = useCallback(async () => {
@@ -90,7 +85,6 @@ export function useWallet() {
     isConnected,     // ✅ unified
     connect,         // ✅ unified
     logout,          // ✅ unified
-    isReady,
     isWalletOpen,
     setIsWalletOpen,
     formatAddress,

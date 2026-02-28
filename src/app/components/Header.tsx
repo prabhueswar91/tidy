@@ -34,7 +34,6 @@ export default function Header({ setIsModalOpen, checkPartner }: HeaderProps) {
     isWalletOpen,
     setIsWalletOpen,
     formatAddress,
-    isReady,
     provider
   } = useWallet();
 

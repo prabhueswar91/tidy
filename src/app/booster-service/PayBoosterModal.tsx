@@ -97,7 +97,7 @@ export default function PayBoosterModal({
 
       if (!isConnected || !address) {
         toast("Connect wallet first");
-        await connect("metamask");
+        await connect();
         return;
       }
 
@@ -252,7 +252,7 @@ export default function PayBoosterModal({
             <button
               className="mt-3 w-full bg-[linear-gradient(90deg,#242424_0%,#525252_100%)] hover:opacity-90 text-[#FFFEEF] font-semibold py-3 rounded-full border border-[#FFFEEF]/10"
               onClick={async () => {
-                await connect("metamask");
+                await connect();
                 setTimeout(() => loadUsdcBalance(), 600);
               }}
             >
