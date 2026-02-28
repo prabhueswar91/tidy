@@ -10,7 +10,8 @@ import axiosInstance from "../utils/axiosInstance";
 import { useTelegram } from "../context/TelegramContext";
 import { UserContext } from "../context/UserContext";
 import { useAppKit } from '@reown/appkit/react';
-import { connectWallet1 } from './walletConnect'
+import { initWalletConnect, connectWallet1 } from "./walletConnect"
+
 
 
 interface ApiError {
@@ -40,6 +41,11 @@ export default function Header({ setIsModalOpen, checkPartner }: HeaderProps) {
   } = useWallet();
 
   const isTelegramWebView = /Telegram/i.test(navigator.userAgent);
+
+  useEffect(() => {
+    initWalletConnect()
+  }, [])
+
 
   const { setWalletAddress, selectedTier, amount, setTelegramId } = useAppStore();
   const { telegramId } = useTelegram();

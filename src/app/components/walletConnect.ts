@@ -1,42 +1,73 @@
 "use client"
 
-import { createAppKit } from '@reown/appkit/core'
-import { mainnet } from '@reown/appkit/networks'
+import UniversalProvider from "@walletconnect/universal-provider"
+import { WalletConnectModal } from "@walletconnect/modal"
 
-let appKit: any = null
+let provider: UniversalProvider | null = null
+let modal: WalletConnectModal | null = null
 
-export function getAppKit() {
-  if (!appKit) {
-    appKit = createAppKit({
-      projectId: 'b01f86bb575d8820ed3e4337491b9685',
-      networks: [mainnet],
-      manualWCControl: true
-    })
-  }
-  return appKit
+const projectId = "YOUR_PROJECT_ID"
+
+export async function initWalletConnect() {
+
+  provider = await UniversalProvider.init({
+    projectId,
+    metadata: {
+      name: "My Website",
+      description: "WalletConnect Example",
+      url: window.location.origin,
+      icons: ["https://avatars.githubusercontent.com/u/37784886"]
+    }
+  })
+
+  modal = new WalletConnectModal({
+    projectId,
+    themeMode: "dark"
+  })
+
+  // Listen for URI and open modal
+  provider.on("display_uri", (uri: string) => {
+    modal?.openModal({ uri })
+  })
+
+  // Close modal when connected
+  provider.on("connect", () => {
+    modal?.closeModal()
+  })
 }
 
-export async function connectWallet1() {
-  const modal = getAppKit()
-  alert('welcome')
-  // IMPORTANT: explicitly open modal
-  modal.open()
+export async function connectWallet1(): Promise<string> {
 
-  try {
-    const session = await modal.connect()
+  if (!provider) throw new Error("Provider not initialized")
 
-    modal.close()
+  const session = await provider.connect({
 
-    const accounts = session.namespaces.eip155.accounts
+    optionalNamespaces: {
 
-    const address = accounts[0].split(':')[2]
+      eip155: {
+        methods: [
+          "eth_sendTransaction",
+          "eth_signTransaction",
+          "eth_sign",
+          "personal_sign",
+          "eth_signTypedData"
+        ],
 
-    return address
+        chains: ["eip155:1"],
 
-  } catch (err) {
-    modal.close()
-    alert('errr')
-    alert(err)
-    throw err
-  }
+        events: [
+          "chainChanged",
+          "accountsChanged"
+        ]
+      }
+
+    }
+
+  })
+
+  const accounts = session?.namespaces.eip155.accounts
+
+  const address = accounts[0].split(":")[2]
+
+  return address
 }
