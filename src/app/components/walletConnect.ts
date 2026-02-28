@@ -23,7 +23,7 @@ export async function connectWallet1() {
   try {
     // open QR / wallet modal
     modal.open()
-
+    alert("hiiiiiiiiiii")
     await provider.connect({
       optionalNamespaces: {
         eip155: {
