@@ -10,7 +10,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { useTelegram } from "../context/TelegramContext";
 import { UserContext } from "../context/UserContext";
 import { useAppKit } from '@reown/appkit/react';
-import { initWalletConnect, connectWallet1 } from "./walletConnect"
+import { initWalletConnect, connectWallet1,disconnectWallet } from "./walletConnect"
 
 
 
@@ -52,6 +52,7 @@ export default function Header({ setIsModalOpen, checkPartner }: HeaderProps) {
  const { open } = useAppKit();
   const [loader, setloader] = useState(false);
   const [xpbalance, setxpbalance] = useState(0);
+  const [connAddr, setconnAddr] = useState("");
   const { getUserInfo } = UserContext();
   const appkit = useAppKit();
 console.log("APPKIT OBJECT:", appkit);
@@ -64,6 +65,8 @@ async function handleConnect() {
   try {
     const address = await connectWallet1()
     console.log("Connected:", address)
+    setconnAddr(address)
+    setWalletAddress(address)
   } catch (err) {
     console.error(err)
   }
@@ -262,8 +265,12 @@ async function connectWallet() {
         </Button>
       )}
 
-      <Button onClick={handleConnect}>
+<Button onClick={handleConnect}>
   Connect Walletaaaaa
+</Button>
+
+<Button onClick={disconnectWallet}>
+  disconnect {connAddr}
 </Button>
 
       <Modal isOpen={isWalletOpen} onClose={() => setIsWalletOpen(false)}>

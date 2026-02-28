@@ -74,3 +74,10 @@ export async function connectWallet1(): Promise<string> {
 
   return address
 }
+
+export async function disconnectWallet() {
+
+  if (!provider) return
+
+  await provider.disconnect()
+}
