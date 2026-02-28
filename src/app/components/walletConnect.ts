@@ -6,7 +6,7 @@ import { WalletConnectModal } from "@walletconnect/modal"
 let provider: UniversalProvider | null = null
 let modal: WalletConnectModal | null = null
 
-const projectId = "YOUR_PROJECT_ID"
+const projectId = "b01f86bb575d8820ed3e4337491b9685"
 
 export async function initWalletConnect() {
 
@@ -66,8 +66,11 @@ export async function connectWallet1(): Promise<string> {
   })
 
   const accounts = session?.namespaces.eip155.accounts
-
-  const address = accounts[0].split(":")[2]
+  let address=""
+  if(accounts && accounts[0]){
+    address = accounts[0].split(":")[2]
+  }
+  
 
   return address
 }
