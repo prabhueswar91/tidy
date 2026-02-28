@@ -250,7 +250,7 @@ async function connectWallet() {
           className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]"
           onClick={connect}
         >
-          Connect Wallet
+          Connect Walletaaa
         </Button>
         </div>
       </Modal>
