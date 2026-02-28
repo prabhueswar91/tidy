@@ -10,8 +10,6 @@ import axiosInstance from "../utils/axiosInstance";
 import { useTelegram } from "../context/TelegramContext";
 import { UserContext } from "../context/UserContext";
 import { useAppKit } from '@reown/appkit/react';
-import { initWalletConnect, connectWallet1,disconnectWallet } from "./walletConnect"
-
 
 
 interface ApiError {
@@ -42,17 +40,11 @@ export default function Header({ setIsModalOpen, checkPartner }: HeaderProps) {
 
   const isTelegramWebView = /Telegram/i.test(navigator.userAgent);
 
-  useEffect(() => {
-    initWalletConnect()
-  }, [])
-
-
   const { setWalletAddress, selectedTier, amount, setTelegramId } = useAppStore();
   const { telegramId } = useTelegram();
  const { open } = useAppKit();
   const [loader, setloader] = useState(false);
   const [xpbalance, setxpbalance] = useState(0);
-  const [connAddr, setconnAddr] = useState("");
   const { getUserInfo } = UserContext();
   const appkit = useAppKit();
 console.log("APPKIT OBJECT:", appkit);
@@ -60,19 +52,6 @@ console.log("APPKIT OBJECT:", appkit);
 function isApiError(err: unknown): err is ApiError {
   return typeof err === "object" && err !== null && "response" in err;
 }
-
-async function handleConnect() {
-  try {
-    const address = await connectWallet1()
-    console.log("Connected:", address)
-    setconnAddr(address)
-    setWalletAddress(address)
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-
 
   // useEffect(() => {
   //   if (isConnected && address) {
@@ -265,26 +244,15 @@ async function connectWallet() {
         </Button>
       )}
 
-<Button onClick={handleConnect}>
-  Connect Walletaaaaa
-</Button>
-
-<Button onClick={disconnectWallet}>
-  disconnect {connAddr}
-</Button>
-
       <Modal isOpen={isWalletOpen} onClose={() => setIsWalletOpen(false)}>
         <h2>Connect Wallet</h2>
         <div>
-          <Button
-            borderColor="#797979"
-            fromColor="#EBB457"
-            toColor="#efefef"
-            // onClick={() => connect("metamask")}
-            onClick={connectWallet}
-          >
-            Connect MetaMask
-          </Button>
+         <Button
+          className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]"
+          onClick={connect}
+        >
+          Connect Wallet
+        </Button>
         </div>
       </Modal>
     </div>

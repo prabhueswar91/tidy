@@ -1,44 +1,96 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useAppKitWallet } from "@reown/appkit-wallet-button/react";
 import { useDisconnect } from "@reown/appkit/react";
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 import { BrowserProvider, Eip1193Provider } from "ethers";
+import UniversalProvider from "@walletconnect/universal-provider";
+import { initWalletConnect, connectWallet1, disconnectWallet } from "../components/walletConnect";
+
+/** Returns true if the current device is mobile */
+function isMobileDevice(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
 
 export function useWallet() {
-  const { disconnect } = useDisconnect();
-  const { address, isConnected } = useAppKitAccount();
-  const [isWalletOpen, setIsWalletOpen] = useState(false);
-  const { walletProvider } = useAppKitProvider<Eip1193Provider>("eip155");
+  // ── Reown AppKit (desktop) ──────────────────────────────────────────────
+  const { disconnect: appKitDisconnect } = useDisconnect();
+  const { address: appKitAddress, isConnected: appKitConnected } = useAppKitAccount();
+  const { walletProvider: appKitWalletProvider } = useAppKitProvider<Eip1193Provider>("eip155");
 
-  const provider = useMemo(
-    () => (walletProvider ? new BrowserProvider(walletProvider) : null),
-    [walletProvider]
+  const appKitProvider = useMemo(
+    () => (appKitWalletProvider ? new BrowserProvider(appKitWalletProvider) : null),
+    [appKitWalletProvider]
   );
 
-  const { connect, isReady } = useAppKitWallet({
+  const { connect: appKitConnect, isReady } = useAppKitWallet({
     namespace: "eip155",
-    onSuccess: (addr) => {
-      console.log(addr)
-      //alert("sucesss"),
-      setIsWalletOpen(false);
-    },
-    onError: (err) => console.log(err),
+    onSuccess: () => setIsWalletOpen(false),
+    onError: (err) => console.error(err),
   });
 
-  const logout = () => disconnect();
+  // ── WalletConnect Universal Provider (mobile) ───────────────────────────
+  const [wcAddress, setWcAddress] = useState<string | null>(null);
+  const [wcConnected, setWcConnected] = useState(false);
+  const [wcProvider, setWcProvider] = useState<BrowserProvider | null>(null);
 
+  // ── Shared UI state ─────────────────────────────────────────────────────
+  const [isWalletOpen, setIsWalletOpen] = useState(false);
+
+  const isMobile = isMobileDevice();
+
+  // ── Unified values ───────────────────────────────────────────────────────
+  const address = isMobile ? wcAddress : appKitAddress;
+  const isConnected = isMobile ? wcConnected : appKitConnected;
+
+  /**
+   * Unified provider:
+   *  - Mobile  → BrowserProvider wrapping the WalletConnect UniversalProvider
+   *  - Desktop → BrowserProvider wrapping the Reown AppKit provider
+   */
+  const provider = isMobile ? wcProvider : appKitProvider;
+
+  // ── Connect ──────────────────────────────────────────────────────────────
+  const connect = useCallback(async () => {
+    if (isMobile) {
+      const universalProvider: UniversalProvider = await initWalletConnect();
+      const addr = await connectWallet1(universalProvider);
+      if (addr) {
+        const bp = new BrowserProvider(universalProvider as unknown as Eip1193Provider);
+        setWcProvider(bp);
+        setWcAddress(addr);
+        setWcConnected(true);
+      }
+    } else {
+      appKitConnect("eip155");
+    }
+  }, [isMobile, appKitConnect]);
+
+  // ── Disconnect ───────────────────────────────────────────────────────────
+  const logout = useCallback(async () => {
+    if (isMobile) {
+      await disconnectWallet();
+      setWcAddress(null);
+      setWcConnected(false);
+      setWcProvider(null);
+    } else {
+      appKitDisconnect();
+    }
+  }, [isMobile, appKitDisconnect]);
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
   const formatAddress = (addr: string) =>
     addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
 
   return {
-    provider,
-    address,
-    isConnected,
-    connect,
+    provider,        // ✅ unified — works for both WC and AppKit
+    address,         // ✅ unified
+    isConnected,     // ✅ unified
+    connect,         // ✅ unified
+    logout,          // ✅ unified
     isReady,
-    logout,
     isWalletOpen,
     setIsWalletOpen,
     formatAddress,

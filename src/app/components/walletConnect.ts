@@ -8,7 +8,9 @@ let modal: WalletConnectModal | null = null
 
 const projectId = "b01f86bb575d8820ed3e4337491b9685"
 
-export async function initWalletConnect() {
+/** Initialises (once) and returns the UniversalProvider instance */
+export async function initWalletConnect(): Promise<UniversalProvider> {
+  if (provider) return provider          // reuse if already initialised
 
   provider = await UniversalProvider.init({
     projectId,
@@ -16,68 +18,58 @@ export async function initWalletConnect() {
       name: "My Website",
       description: "WalletConnect Example",
       url: window.location.origin,
-      icons: ["https://avatars.githubusercontent.com/u/37784886"]
-    }
+      icons: ["https://avatars.githubusercontent.com/u/37784886"],
+    },
   })
 
   modal = new WalletConnectModal({
     projectId,
-    themeMode: "dark"
+    themeMode: "dark",
   })
 
-  // Listen for URI and open modal
   provider.on("display_uri", (uri: string) => {
     modal?.openModal({ uri })
   })
 
-  // Close modal when connected
   provider.on("connect", () => {
     modal?.closeModal()
   })
+
+  return provider
 }
 
-export async function connectWallet1(): Promise<string> {
-
-  if (!provider) throw new Error("Provider not initialized")
-
-  const session = await provider.connect({
-
+/**
+ * Opens the WalletConnect modal and resolves with the connected address.
+ * Accepts the UniversalProvider returned from initWalletConnect().
+ */
+export async function connectWallet1(wcProvider: UniversalProvider): Promise<string> {
+  const session = await wcProvider.connect({
     optionalNamespaces: {
-
       eip155: {
         methods: [
           "eth_sendTransaction",
           "eth_signTransaction",
           "eth_sign",
           "personal_sign",
-          "eth_signTypedData"
+          "eth_signTypedData",
         ],
-
         chains: ["eip155:1"],
-
-        events: [
-          "chainChanged",
-          "accountsChanged"
-        ]
-      }
-
-    }
-
+        events: ["chainChanged", "accountsChanged"],
+      },
+    },
   })
 
   const accounts = session?.namespaces.eip155.accounts
-  let address=""
-  if(accounts && accounts[0]){
+  let address = ""
+  if (accounts && accounts[0]) {
     address = accounts[0].split(":")[2]
   }
-  
 
   return address
 }
 
-export async function disconnectWallet() {
-
+export async function disconnectWallet(): Promise<void> {
   if (!provider) return
-
   await provider.disconnect()
+  provider = null   // reset so initWalletConnect re-creates on next connect
 }
