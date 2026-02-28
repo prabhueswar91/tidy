@@ -238,8 +238,8 @@ async function connectWallet() {
           <Button onClick={logout}>Disconnect</Button>
         </div>
       ) : (
-        <Button className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]" onClick={() => connectWallet()}>
-          Connect Wallet
+        <Button className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]" onClick={connect}>
+          Connect Walletpppp
         </Button>
       )}
 
