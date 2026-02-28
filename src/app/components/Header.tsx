@@ -10,6 +10,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { useTelegram } from "../context/TelegramContext";
 import { UserContext } from "../context/UserContext";
 import { useAppKit } from '@reown/appkit/react';
+import { connectWallet1 } from './walletConnect'
 
 
 interface ApiError {
@@ -52,6 +53,17 @@ console.log("APPKIT OBJECT:", appkit);
 function isApiError(err: unknown): err is ApiError {
   return typeof err === "object" && err !== null && "response" in err;
 }
+
+async function handleConnect() {
+  try {
+    const address = await connectWallet()
+    console.log("Connected:", address)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+
 
   // useEffect(() => {
   //   if (isConnected && address) {
@@ -243,6 +255,10 @@ async function connectWallet() {
           Connect Wallet
         </Button>
       )}
+
+      <Button onClick={handleConnect}>
+  Connect Walletaaaaa
+</Button>
 
       <Modal isOpen={isWalletOpen} onClose={() => setIsWalletOpen(false)}>
         <h2>Connect Wallet</h2>
