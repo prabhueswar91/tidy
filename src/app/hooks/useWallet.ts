@@ -46,8 +46,11 @@ export function useWallet() {
       const universalProvider: UniversalProvider = await initWalletConnect();
       const addr = await mobileConect(universalProvider);
       if (addr) {
+        const CHAIN_ID = process.env.CHAIN_ID!;
+        alert(CHAIN_ID)
         const bp = new BrowserProvider(universalProvider as unknown as Eip1193Provider);
         const network = await bp.getNetwork();
+        alert(network.chainId)
         setWcProvider(bp);
         setWcAddress(addr);
         setWcConnected(true);
