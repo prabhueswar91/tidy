@@ -1,4 +1,7 @@
 "use client";
+
+import { useState } from "react";
+import { useAppStore } from "../store/useAppStore";
 import { useTelegram } from "../context/TelegramContext";
 
 export default function Invite() {
@@ -28,10 +31,10 @@ export default function Invite() {
           letterSpacing: "-0.03em",
         }}
       >
-       INVITE FRIENDS +750XP
+       INVITE A FRIEND
       </button>
       <p className=" text-xs text-white-600">
-        And earn extra Zen moments plus XP
+        And Win Extra Zen Moments
       </p>
     </div>
     </>

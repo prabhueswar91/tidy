@@ -1,39 +1,44 @@
 'use client'
 
-import React, { ReactNode } from 'react'
+import { wagmiAdapter, projectId,networks } from '../config/wagmiConfig'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WagmiProvider } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
-import { baseSepolia, bitcoin } from '@reown/appkit/networks'
-import {
-  wagmiAdapter,
-  bitcoinAdapter,
-  projectId,
-  config
-} from '../config/wagmiConfig'
+import { base } from '@reown/appkit/networks'
+import React, { type ReactNode } from 'react'
+import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
 
 const queryClient = new QueryClient()
 
+if (!projectId) {
+  throw new Error('Project ID is not defined')
+}
+
+const metadata = {
+  name: 'TIDYCOIN',
+  description: 'TIDYCOIN',
+  url: 'https://test.bloxio.co/',
+  icons: ['https://avatars.githubusercontent.com/u/179229932']
+}
+console.log(projectId,'projectIdprojectIdprojectId')
 createAppKit({
-  adapters: [wagmiAdapter, bitcoinAdapter],
+  adapters: [wagmiAdapter],
   projectId,
-  networks: [baseSepolia, bitcoin],
-  defaultNetwork: baseSepolia,
-  metadata: {
-    name: 'TIDYZEN',
-    description: 'TIDYZEN',
-    url: window?.location?.origin,
-    icons: ['https://avatars.githubusercontent.com/u/179229932']
+  networks: [networks[0]],
+  defaultNetwork: base,
+  metadata: metadata,
+  features: {
+    analytics: true
   },
-  featuredWalletIds: ['metamask']
 })
 
-export default function ContextProvider({ children }: { children: ReactNode }) {
+function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
+  const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies)
+
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+    <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   )
 }
+
+export default ContextProvider

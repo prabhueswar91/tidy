@@ -7,20 +7,6 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
-// const axiosInstance = axios.create({
-//   baseURL: "https://tidyzen.tidyonchain.com/api",
-//   timeout: 30000,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
-// const axiosInstance = axios.create({
-//   baseURL: "https://test.bloxio.co/api",
-//   timeout: 30000,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
 
 axiosInstance.interceptors.request.use(
   (config) => {
