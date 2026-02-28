@@ -11,9 +11,9 @@ export default function GlobalCloseButton() {
   const { showClose } = useUI();
 
   useEffect(() => {
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.BackButton.hide();
-    }
+    // if (window.Telegram?.WebApp) {
+    //   window.Telegram.WebApp.BackButton.hide();
+    // }
   }, []);
 
   // ❌ If showClose is false → don't render
