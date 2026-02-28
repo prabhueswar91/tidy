@@ -56,7 +56,7 @@ function isApiError(err: unknown): err is ApiError {
 
 async function handleConnect() {
   try {
-    const address = await connectWallet()
+    const address = await connectWallet1()
     console.log("Connected:", address)
   } catch (err) {
     console.error(err)
