@@ -7,7 +7,8 @@ let provider: UniversalProvider | null = null
 let modal: WalletConnectModal | null = null
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
-const CHAIN_ID = process.env.CHAIN_ID!;
+//const CHAIN_ID = process.env.CHAIN_ID!;
+const CHAIN_ID = 84532;
 
 export async function initWalletConnect(): Promise<UniversalProvider> {
   if (provider) return provider
@@ -39,6 +40,7 @@ export async function initWalletConnect(): Promise<UniversalProvider> {
 }
 
 export async function mobileConect(wcProvider: UniversalProvider): Promise<string> {
+  alert(CHAIN_ID)
   const session = await wcProvider.connect({
     optionalNamespaces: {
       eip155: {
