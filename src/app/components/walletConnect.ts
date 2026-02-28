@@ -6,18 +6,18 @@ import { WalletConnectModal } from "@walletconnect/modal"
 let provider: UniversalProvider | null = null
 let modal: WalletConnectModal | null = null
 
-const projectId = "b01f86bb575d8820ed3e4337491b9685"
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
+const CHAIN_ID = process.env.CHAIN_ID!;
 
-/** Initialises (once) and returns the UniversalProvider instance */
 export async function initWalletConnect(): Promise<UniversalProvider> {
-  if (provider) return provider          // reuse if already initialised
+  if (provider) return provider
 
   provider = await UniversalProvider.init({
     projectId,
     metadata: {
-      name: "My Website",
-      description: "WalletConnect Example",
-      url: window.location.origin,
+      name: "TIDYZEN",
+      description: "TIDYZEN",
+      url: window?.location?.origin,
       icons: ["https://avatars.githubusercontent.com/u/37784886"],
     },
   })
@@ -38,11 +38,7 @@ export async function initWalletConnect(): Promise<UniversalProvider> {
   return provider
 }
 
-/**
- * Opens the WalletConnect modal and resolves with the connected address.
- * Accepts the UniversalProvider returned from initWalletConnect().
- */
-export async function connectWallet1(wcProvider: UniversalProvider): Promise<string> {
+export async function mobileConect(wcProvider: UniversalProvider): Promise<string> {
   const session = await wcProvider.connect({
     optionalNamespaces: {
       eip155: {
@@ -53,7 +49,7 @@ export async function connectWallet1(wcProvider: UniversalProvider): Promise<str
           "personal_sign",
           "eth_signTypedData",
         ],
-        chains: ["eip155:1"],
+        chains: [`eip155:${CHAIN_ID}`],
         events: ["chainChanged", "accountsChanged"],
       },
     },
@@ -71,5 +67,5 @@ export async function connectWallet1(wcProvider: UniversalProvider): Promise<str
 export async function disconnectWallet(): Promise<void> {
   if (!provider) return
   await provider.disconnect()
-  provider = null   // reset so initWalletConnect re-creates on next connect
+  provider = null
 }
