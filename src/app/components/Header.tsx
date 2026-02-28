@@ -8,6 +8,7 @@ import { useWallet } from "../hooks/useWallet";
 import { useAppStore } from "../store/useAppStore";
 import axiosInstance from "../utils/axiosInstance";
 import { useTelegram } from "../context/TelegramContext";
+import { UserContext } from "../context/UserContext";
 import { useAppKit } from '@reown/appkit/react';
 
 
@@ -19,7 +20,12 @@ interface ApiError {
   };
 }
 
-export default function Header() {
+interface HeaderProps {
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  checkPartner: () => Promise<void>;
+}
+
+export default function Header({ setIsModalOpen, checkPartner }: HeaderProps) {
   const {
     address,
     isConnected,
@@ -28,49 +34,72 @@ export default function Header() {
     isWalletOpen,
     setIsWalletOpen,
     formatAddress,
-    isReady,
     provider,
+    chainId
   } = useWallet();
 
   const isTelegramWebView = /Telegram/i.test(navigator.userAgent);
 
   const { setWalletAddress, selectedTier, amount, setTelegramId } = useAppStore();
-  //const [telegramId, setLocalTelegramId] = useState<unknown>(null);
   const { telegramId } = useTelegram();
-  const { open } = useAppKit();
+ const { open } = useAppKit();
+  const [loader, setloader] = useState(false);
+  const [xpbalance, setxpbalance] = useState(0);
+  const { getUserInfo } = UserContext();
+  const appkit = useAppKit();
+console.log("APPKIT OBJECT:", appkit);
+  // ---- Type guard to check ApiError ----
+function isApiError(err: unknown): err is ApiError {
+  return typeof err === "object" && err !== null && "response" in err;
+}
 
-  // useEffect(() => {
-  //   const getTelegramUser = () => {
-  //     if (
-  //       typeof window !== "undefined" &&
-  //       window.Telegram &&
-  //       window.Telegram.WebApp
-  //     ) {
-  //       const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
-  //       if (tgUser) {
-  //         setLocalTelegramId(tgUser.id);  
-  //       setTelegramId(tgUser.id.toString());
-  //       } else {
-  //         console.warn("⚠️ Telegram WebApp exists, but user not ready yet");
-  //       }
-  //     } else {
-  //       console.warn("⚠️ Telegram WebApp not found");
-  //     }
-  //   };
+  useEffect(() => {
+  if (isConnected && address) {
+    setWalletAddress(address);
+    getXPbalance(address);
 
-  //   getTelegramUser();
-  //   const timer = setTimeout(getTelegramUser, 500);
+    // ✅ Force Telegram to regain focus
+    // if (window.Telegram?.WebApp) {
+    //   window.Telegram.WebApp.ready();
+    //   window.Telegram.WebApp.expand();
+    // }
 
-  //   return () => clearTimeout(timer);
-  // }, []);
+  } else {
+    setWalletAddress(null);
+  }
+}, [isConnected, address]);
 
-  const handleSignIn = useCallback(
-    async (walletAddress: string) => {
-      try {
+  async function getXPbalance(addr:any){
+      try{
+        const { data } = await axiosInstance.post("/auth/get-xp-balance", {
+          walletAddress:addr,
+          telegramId: telegramId
+        });
+        const bal = data && data.balance? data.balance:0;
+        setxpbalance(bal);
+      }catch(error: unknown){
+        
+      }
+  }
+
+  async function payNow(){
+
+    if (!isConnected || !address) {
+      toast.error("Please connect wallet and continue", {
+        id: "123",
+        duration: 5000,
+        icon: "❌",
+      });
+      return;
+    }
+
+    setloader(true)
+
+    try {
         console.log("telegramId", telegramId);
 
         const { data } = await axiosInstance.post("/auth/nonce", {
-          address: walletAddress,
+          address,
           telegram: telegramId,
           tier: selectedTier
         });
@@ -92,16 +121,18 @@ export default function Header() {
         const signature = await signer.signMessage(signmessage);
         
         const verifyRes = await axiosInstance.post("/auth/verify", {
-          address: walletAddress,
+          address,
           signature,
           tier: selectedTier,
           amount,
           telegram: telegramId,
+          initData:window?.Telegram?.WebApp?.initData
           //telegram: 6195798879,
         });
 
         const { token,message } = verifyRes.data;
         if (token) {
+          
           localStorage.setItem("token", token);
           console.log("✅ Signed in successfully:", { selectedTier, amount });
           if(message=="Verified, XP deducted, and tier updated"){
@@ -110,14 +141,21 @@ export default function Header() {
                 duration: 3000,
                 icon: '✅'
             });
+            
           }
+          getUserInfo()
+          setloader(false);
+          setIsModalOpen(false);
+          await checkPartner();
+          
         }else{
-          logout()
+         // logout()
           toast.error("Insufficient XP balance.", {
               id: "123",
               duration: 5000,
               icon: '❌'
           })
+          setloader(false)
         }
       }catch (error: unknown) {
           console.error("❌ Error caught:", error);
@@ -144,32 +182,10 @@ export default function Header() {
             icon: "❌",
           });
 
-          logout();
+          setloader(false)
+
+          //logout();
       }
-    },
-    [telegramId, provider, selectedTier, amount]
-  );
-
-  // ---- Type guard to check ApiError ----
-function isApiError(err: unknown): err is ApiError {
-  return typeof err === "object" && err !== null && "response" in err;
-}
-
-  useEffect(() => {
-    if (isConnected && address) {
-      setWalletAddress(address);
-      handleSignIn(address);
-    } else {
-      setWalletAddress(null);
-    }
-  }, [isConnected, address, setWalletAddress, handleSignIn]);
-
-  function connectWallet(){
-    logout();
-    setTimeout(function(){
-        open();
-    },200)
-    
   }
 
   return (
@@ -177,23 +193,16 @@ function isApiError(err: unknown): err is ApiError {
       {isConnected ? (
         <div>
           <span>{formatAddress(address || "")}</span>
+           <div className="text-[#FFFEEF] text-sm font-dm">
+            Balance: <span className="font-semibold">{xpbalance} XP</span>
+          </div>
+          <Button className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]" onClick={() => payNow()} disabled={loader}>
+            {loader?"Processing":"PAY NOW"}
+          </Button>
           <Button onClick={logout}>Disconnect</Button>
         </div>
       ) : (
-        <Button
-          borderColor="#EBB457"
-          fromColor="#efefef"
-          toColor="#797979"
-          // onClick={() => {
-          //  // if (isTelegramWebView) {
-          //     //alert("Please open in a browser to connect your wallet.");
-          //    // window.open("https://test.bloxio.co/", "_blank");
-          //   //} else {
-          //     open(); // AppKit modal
-          //  // }
-          // }}
-         onClick={() => connectWallet()}
-        >
+        <Button className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]" onClick={connect}>
           Connect Wallet
         </Button>
       )}
@@ -201,32 +210,12 @@ function isApiError(err: unknown): err is ApiError {
       <Modal isOpen={isWalletOpen} onClose={() => setIsWalletOpen(false)}>
         <h2>Connect Wallet</h2>
         <div>
-          <Button
-            borderColor="#797979"
-            fromColor="#EBB457"
-            toColor="#efefef"
-            onClick={() => connect("metamask")}
-          >
-            Connect MetaMask
-          </Button>
-          {/* <Button
-            borderColor="#797979"
-            fromColor="#EBB457"
-            toColor="#efefef"
-            onClick={() => connect("coinbase")}
-          >
-           Coin Base
-          </Button>
-          <Button
-            borderColor="#797979"
-            fromColor="#EBB457"
-            toColor="#efefef"
-            onClick={() => connect("phantom")}
-          >
-            Phantom
-          </Button>
-          <appkit-button /> */}
-          
+         <Button
+          className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]"
+          onClick={connect}
+        >
+          Connect Wallet
+        </Button>
         </div>
       </Modal>
     </div>

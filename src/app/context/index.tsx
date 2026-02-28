@@ -1,44 +1,39 @@
 'use client'
 
-import { wagmiAdapter, projectId,networks } from '../config/wagmiConfig'
+import React, { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { WagmiProvider } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
-import { base } from '@reown/appkit/networks'
-import React, { type ReactNode } from 'react'
-import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
+import { baseSepolia, bitcoin } from '@reown/appkit/networks'
+import {
+  wagmiAdapter,
+  bitcoinAdapter,
+  projectId,
+  config
+} from '../config/wagmiConfig'
 
 const queryClient = new QueryClient()
 
-if (!projectId) {
-  throw new Error('Project ID is not defined')
-}
-
-const metadata = {
-  name: 'TIDYCOIN',
-  description: 'TIDYCOIN',
-  url: 'https://test.bloxio.co/',
-  icons: ['https://avatars.githubusercontent.com/u/179229932']
-}
-console.log(projectId,'projectIdprojectIdprojectId')
 createAppKit({
-  adapters: [wagmiAdapter],
+  adapters: [wagmiAdapter, bitcoinAdapter],
   projectId,
-  networks: [networks[0]],
-  defaultNetwork: base,
-  metadata: metadata,
-  features: {
-    analytics: true
+  networks: [baseSepolia, bitcoin],
+  defaultNetwork: baseSepolia,
+  metadata: {
+    name: 'TIDYZEN',
+    description: 'TIDYZEN',
+    url: window?.location?.origin,
+    icons: ['https://avatars.githubusercontent.com/u/179229932']
   },
+  featuredWalletIds: ['metamask']
 })
 
-function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
-  const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies)
-
+export default function ContextProvider({ children }: { children: ReactNode }) {
   return (
-    <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
     </WagmiProvider>
   )
 }
-
-export default ContextProvider
