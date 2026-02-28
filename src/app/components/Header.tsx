@@ -34,7 +34,8 @@ export default function Header({ setIsModalOpen, checkPartner }: HeaderProps) {
     isWalletOpen,
     setIsWalletOpen,
     formatAddress,
-    provider
+    provider,
+    chainId
   } = useWallet();
 
   const isTelegramWebView = /Telegram/i.test(navigator.userAgent);
@@ -52,15 +53,6 @@ function isApiError(err: unknown): err is ApiError {
   return typeof err === "object" && err !== null && "response" in err;
 }
 
-  // useEffect(() => {
-  //   if (isConnected && address) {
-  //     setWalletAddress(address);
-  //     getXPbalance(address);
-  //     //handleSignIn(address);
-  //   } else {
-  //     setWalletAddress(null);
-  //   }
-  // }, [isConnected, address, setWalletAddress]);
   useEffect(() => {
   if (isConnected && address) {
     setWalletAddress(address);
@@ -90,34 +82,6 @@ function isApiError(err: unknown): err is ApiError {
       }
   }
 
-  // async function connectWallet(){
-  //   await close();
-  //   await logout();
-  //   await new Promise(resolve => setTimeout(resolve, 200));
-  //   await open();
-  // }
-// async function connectWallet() {
-//   try {
-//     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-//     if (isMobile && !window.ethereum) {
-//       window.location.href =
-//         "https://metamask.app.link/dapp/" + window.location.host;
-//       return;
-//     }
-
-    
-//   } catch (error) {
-//     console.error("Wallet connection failed:", error);
-//   }
-// }
-async function connectWallet() {
-  try {
-    await open()
-  } catch (err) {
-    console.error('Wallet connection failed:', err)
-  }
-}
   async function payNow(){
 
     if (!isConnected || !address) {
@@ -239,7 +203,7 @@ async function connectWallet() {
         </div>
       ) : (
         <Button className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]" onClick={connect}>
-          Connect Walletpppp
+          Connect Wallet==={chainId}
         </Button>
       )}
 
@@ -250,7 +214,7 @@ async function connectWallet() {
           className="text-[#43411D] uppercase font-bold bg-[#FFFEEF]"
           onClick={connect}
         >
-          Connect Walletaaa
+          Connect Wallet
         </Button>
         </div>
       </Modal>

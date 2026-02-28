@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { useDisconnect, useAppKit } from "@reown/appkit/react";
+import { useState, useMemo, useCallback,useEffect } from "react";
+import { useDisconnect, useAppKit,useAppKitNetwork } from "@reown/appkit/react";
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 import { BrowserProvider, Eip1193Provider } from "ethers";
 import UniversalProvider from "@walletconnect/universal-provider";
@@ -22,13 +22,14 @@ export function useWallet() {
     () => (appKitWalletProvider ? new BrowserProvider(appKitWalletProvider) : null),
     [appKitWalletProvider]
   );
-
+  const { caipNetwork } = useAppKitNetwork();
+  const appKitChainId = caipNetwork?.id ?? null;
   const [wcAddress, setWcAddress] = useState<string | null>(null);
   const [wcConnected, setWcConnected] = useState(false);
   const [wcProvider, setWcProvider] = useState<BrowserProvider | null>(null);
 
   const [isWalletOpen, setIsWalletOpen] = useState(false);
-
+   const [wcChainId, setWcChainId] = useState<number | null>(null);
   const isMobile = isMobileDevice();
 
   const address = isMobile ? wcAddress : appKitAddress;
@@ -36,22 +37,35 @@ export function useWallet() {
 
   const provider = isMobile ? wcProvider : appKitProvider;
 
+  const chainId: number | null = isMobile ? wcChainId : (appKitChainId ? Number(appKitChainId) : null);
+
   const connect = useCallback(async () => {
-    alert(window?.location?.origin)
+   
     if (isMobile) {
       
       const universalProvider: UniversalProvider = await initWalletConnect();
       const addr = await mobileConect(universalProvider);
       if (addr) {
         const bp = new BrowserProvider(universalProvider as unknown as Eip1193Provider);
+        const network = await bp.getNetwork();
         setWcProvider(bp);
         setWcAddress(addr);
         setWcConnected(true);
+        setWcChainId(Number(network.chainId));
       }
     } else {
       await appKitOpen();
     }
   }, [isMobile, appKitOpen]);
+
+
+  useEffect(() => {
+    if (isMobile && wcProvider) {
+      wcProvider.getNetwork().then((network) => {
+        setWcChainId(Number(network.chainId));
+      }).catch(() => setWcChainId(null));
+    }
+  }, [isMobile, wcProvider]);
 
   const logout = useCallback(async () => {
     if (isMobile) {
@@ -71,6 +85,7 @@ export function useWallet() {
     provider,
     address,
     isConnected,
+    chainId,
     connect,
     logout,
     isWalletOpen,

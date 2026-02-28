@@ -22,7 +22,7 @@ createAppKit({
   metadata: {
     name: 'TIDYZEN',
     description: 'TIDYZEN',
-    url: 'https://test.bloxio.co/',
+    url: window?.location?.origin,
     icons: ['https://avatars.githubusercontent.com/u/179229932']
   },
   featuredWalletIds: ['metamask']
