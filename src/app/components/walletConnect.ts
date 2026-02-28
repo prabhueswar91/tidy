@@ -10,6 +10,15 @@ const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
 //const CHAIN_ID = process.env.CHAIN_ID!;
 const CHAIN_ID = 84532;
 
+const BASE_SEPOLIA_CONFIG = {
+  chainId: `0x${CHAIN_ID.toString(16)}`, // "0x14a34"
+  chainName: "Base Sepolia",
+  nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+  rpcUrls: ["https://sepolia.base.org"],
+  blockExplorerUrls: ["https://sepolia.basescan.org"],
+};
+
+
 export async function initWalletConnect(): Promise<UniversalProvider> {
   if (provider) return provider
 
@@ -39,8 +48,36 @@ export async function initWalletConnect(): Promise<UniversalProvider> {
   return provider
 }
 
+async function switchToBaseSepolia(wcProvider: UniversalProvider): Promise<void> {
+  const hexChainId = BASE_SEPOLIA_CONFIG.chainId;
+
+  try {
+    // Try switching first — works if wallet already has Base Sepolia
+    await wcProvider.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: hexChainId }],
+    });
+  } catch (switchError: any) {
+    // 4902 = chain not added to wallet yet
+    if (switchError?.code === 4902 || switchError?.message?.includes("wallet_addEthereumChain")) {
+      await wcProvider.request({
+        method: "wallet_addEthereumChain",
+        params: [BASE_SEPOLIA_CONFIG],
+      });
+      // Switch again after adding
+      await wcProvider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: hexChainId }],
+      });
+    } else {
+      throw switchError;
+    }
+  }
+}
+
+
 export async function mobileConect(wcProvider: UniversalProvider): Promise<string> {
-  alert(CHAIN_ID)
+  //alert(CHAIN_ID)
   const session = await wcProvider.connect({
     optionalNamespaces: {
       eip155: {
@@ -50,6 +87,8 @@ export async function mobileConect(wcProvider: UniversalProvider): Promise<strin
           "eth_sign",
           "personal_sign",
           "eth_signTypedData",
+          "wallet_switchEthereumChain",
+          "wallet_addEthereumChain",
         ],
         chains: [`eip155:${CHAIN_ID}`],
         events: ["chainChanged", "accountsChanged"],
@@ -62,6 +101,8 @@ export async function mobileConect(wcProvider: UniversalProvider): Promise<strin
   if (accounts && accounts[0]) {
     address = accounts[0].split(":")[2]
   }
+  await switchToBaseSepolia(wcProvider);
+
 
   return address
 }
