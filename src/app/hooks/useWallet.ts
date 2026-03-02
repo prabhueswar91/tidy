@@ -71,6 +71,7 @@ export function useWallet() {
   }, [isMobile, wcProvider]);
 
   const logout = useCallback(async () => {
+    alert('logut')
     if (isMobile) {
       await disconnectWallet();
       setWcAddress(null);
