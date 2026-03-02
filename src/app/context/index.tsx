@@ -14,6 +14,8 @@ import {
 
 const queryClient = new QueryClient()
 
+console.log(window,'windowwindowwindow11111111')
+
 createAppKit({
   adapters: [wagmiAdapter, bitcoinAdapter],
   projectId,
@@ -25,7 +27,8 @@ createAppKit({
     url: window?.location?.origin,
     icons: ['https://avatars.githubusercontent.com/u/179229932']
   },
-  featuredWalletIds: ['metamask']
+  featuredWalletIds: ['metamask'],
+  allowUnsupportedChain: true
 })
 
 export default function ContextProvider({ children }: { children: ReactNode }) {
