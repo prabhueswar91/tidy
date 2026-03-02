@@ -94,11 +94,12 @@ function isApiError(err: unknown): err is ApiError {
     }
 
     if(amount && amount>xpbalance){
-          toast.error("Insufficient balance", {
+          toast.error("Insufficient XP balance", {
             id: "12345",
             duration: 5000,
             icon: "❌",
           });
+          return;
     }
 
     setloader(true)
