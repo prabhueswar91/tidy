@@ -108,20 +108,19 @@ export default function PayBoosterModal({
 
       setPaying(true);
 
-      const code = await provider.getCode(USDC_ADDRESS);
-      if (!code || code === "0x") {
-        toast.error("Token contract not found on this network.");
-        return;
-      }
+      // const code = await provider.getCode(USDC_ADDRESS);
+      // if (!code || code === "0x") {
+      //   toast.error("Token contract not found on this network.");
+      //   return;
+      // }
 
       const signer = await provider.getSigner();
       const token = new Contract(USDC_ADDRESS, ERC20_ABI, signer);
 
-      let d = await token.decimals();
-     
+      let d = Number(await token.decimals());
       setDecimals(d);
 
-      const amount = parseUnits(String(selectedPlan.price), d);
+      const amount = parseUnits(String(selectedPlan.price), Number(d));
 
       const tokenBal = await token.balanceOf(address);
       if (tokenBal < amount) {

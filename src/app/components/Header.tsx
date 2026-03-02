@@ -148,7 +148,7 @@ function isApiError(err: unknown): err is ApiError {
           if(message=="Verified, XP deducted, and tier updated"){
             toast.success(`Successfully purchased the ${selectedTier?.toUpperCase()} package.`, {
                 id: "123",
-                duration: 3000,
+                duration: 5000,
                 icon: '✅'
             });
             
