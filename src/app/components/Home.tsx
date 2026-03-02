@@ -87,17 +87,17 @@ export default function Home({ onStart }: HomeProps) {
   async function navPartner(){
      console.log(channelId,telegramId,"navPartner")
     if(!telegramId) {
-      //toast.error("Telegram ID not found");
-      //console.log("id not found")
-      //return;
+      toast.error("Telegram ID not found");
+      console.log("id not found")
+      return;
     }
-    toast.error(window.Telegram?.WebApp);
-    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
-        const tg = window.Telegram.WebApp;
-        const tgUser = tg.initDataUnsafe?.user;
-        toast.error(tgUser);
-    }
-    toast.error(telegramId);
+    //toast.error(window.Telegram?.WebApp);
+    // if (typeof window !== "undefined" && window.Telegram?.WebApp) {
+    //     const tg = window.Telegram.WebApp;
+    //     const tgUser = tg.initDataUnsafe?.user;
+    //     toast.error(tgUser);
+    // }
+    // toast.error(telegramId);
     const res = await axiosInstance.post("/reward/check-partner",{channel_id:channelId,telegramId});
     const approved = res?.data?.approved ? "true" : "false";
     const isGroup = res?.data?.isGroup ?? false;

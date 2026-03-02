@@ -59,10 +59,10 @@ function isApiError(err: unknown): err is ApiError {
     getXPbalance(address);
 
     // ✅ Force Telegram to regain focus
-    // if (window.Telegram?.WebApp) {
-    //   window.Telegram.WebApp.ready();
-    //   window.Telegram.WebApp.expand();
-    // }
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
 
   } else {
     setWalletAddress(null);
@@ -192,7 +192,7 @@ function isApiError(err: unknown): err is ApiError {
     <div>
       {isConnected ? (
         <div>
-          <span>{formatAddress(address || "")}</span>
+          <span>{formatAddress(address || "")}===----{chainId}</span>
            <div className="text-[#FFFEEF] text-sm font-dm">
             Balance: <span className="font-semibold">{xpbalance} XP</span>
           </div>
