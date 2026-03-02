@@ -145,6 +145,7 @@ export default function PayBoosterModal({
       const readProvider = new JsonRpcProvider(BASE_SEPOLIA_RPC);
       const nativeBal = await readProvider.getBalance(address);
       alert(nativeBal)
+      alert(gasCost)
       if (nativeBal < gasCost) {
         toast.error(
           `Insufficient gas fee. Need ~${formatUnits(gasCost, 18)} ETH`
