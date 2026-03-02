@@ -20,8 +20,9 @@ const readProvider = new JsonRpcProvider(BASE_SEPOLIA_RPC);
 
 export type BoosterPlan = { id: number; label: string; price: number };
 
- const USDC_ADDRESS = process.env.NEXT_PUBLIC_USDC_ADDRESS as string;
+const USDC_ADDRESS = process.env.NEXT_PUBLIC_USDC_ADDRESS as string;
 const ADMIN_WALLET = process.env.NEXT_PUBLIC_ADMIN_WALLET as string;
+const CHAIN_ID = process.env.CHAIN_ID as string;
 
 export default function PayBoosterModal({
   isOpen,
@@ -46,39 +47,31 @@ export default function PayBoosterModal({
   const [decimals, setDecimals] = useState(6);
 
   const loadUsdcBalance = async () => {
-    try {
-      if (!provider || !address) return;
+  try {
+    if (!address) return;
 
-      setBalLoading(true);
+    setBalLoading(true);
 
-      // Check token contract exists on this chain (prevents decimals() -> 0x)
-      const code = await provider.getCode(USDC_ADDRESS);
-      if (!code || code === "0x") {
-        setUsdcBalance("0");
-        toast.error("Token contract not found on this network.");
-        return;
-      }
+    const token = new Contract(
+      USDC_ADDRESS,
+      ERC20_ABI,
+      readProvider
+    );
 
-      const signer = await provider.getSigner();
-      const token = new Contract(USDC_ADDRESS, ERC20_ABI, signer);
+    let d = Number(await token.decimals());
+    setDecimals(d);
 
-      let d = 6;
-      try {
-        d = Number(await token.decimals());
-        if (!Number.isFinite(d) || d <= 0 || d > 36) d = 6;
-      } catch {
-        d = 6;
-      }
-      setDecimals(d);
+    const bal = await token.balanceOf(address);
 
-      const bal = await token.balanceOf(address);
-      setUsdcBalance(formatUnits(bal, d));
-    } catch {
-      setUsdcBalance("0");
-    } finally {
-      setBalLoading(false);
-    }
-  };
+    setUsdcBalance(formatUnits(bal, d));
+
+  } catch (err) {
+    console.error(err);
+    setUsdcBalance("0");
+  } finally {
+    setBalLoading(false);
+  }
+};
 
   useEffect(() => {
     if (isOpen && isConnected) loadUsdcBalance();
@@ -103,6 +96,11 @@ export default function PayBoosterModal({
       return;
     }
 
+    // if(Number(CHAIN_ID) !=chainId){
+    //   toast.error("Please switch to base network");
+    //   return;
+    // }
+
     setPaying(true);
 
     // 🔥 FAST READS (RPC)
@@ -112,7 +110,7 @@ export default function PayBoosterModal({
       readProvider
     );
 
-    const d = 6; // USDC always 6 — avoid RPC call
+    let d = Number(await readToken.decimals());
     const amount = parseUnits(String(selectedPlan.price), d);
 
     const tokenBal = await readToken.balanceOf(address);
