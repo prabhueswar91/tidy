@@ -144,12 +144,18 @@ export default function PayBoosterModal({
 
     toast.success("Transaction submitted");
 
-    const receipt = await tx.wait();
+    const receipt = await readProvider.waitForTransaction(tx.hash);
+
+    //const receipt = await tx.wait();
+
+     toast.success("Transaction submitted222");
 
     if (!receipt || receipt.status !== 1) {
       toast.error("Transaction failed");
       return;
     }
+
+    toast.success(tx.hash);
 
     // backend logic unchanged
     const payload = encryptData({
