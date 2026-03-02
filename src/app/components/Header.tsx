@@ -93,6 +93,14 @@ function isApiError(err: unknown): err is ApiError {
       return;
     }
 
+    if(amount && amount>xpbalance){
+          toast.error("Insufficient balance", {
+            id: "12345",
+            duration: 5000,
+            icon: "❌",
+          });
+    }
+
     setloader(true)
 
     try {
@@ -101,7 +109,8 @@ function isApiError(err: unknown): err is ApiError {
         const { data } = await axiosInstance.post("/auth/nonce", {
           address,
           telegram: telegramId,
-          tier: selectedTier
+          tier: selectedTier,
+          amount
         });
         const nonce = data.nonce;
         const isPay = data.isPay;

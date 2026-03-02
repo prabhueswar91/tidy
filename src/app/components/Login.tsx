@@ -380,7 +380,7 @@ const handleProfileClick = () => {
                 borderColor: tier.color,
               }}
               //disabled={tier.amount > 0 ? disabled : false}
-              disabled={!isApproved && isGroupUser && tier.name!="BRONZE"?true:false}
+              //disabled={!isApproved && isGroupUser && tier.name!="BRONZE"?true:false}
               id="testttttt"
             >
               <span className="uppercase tracking-widest font-medium">{tier.name}</span>

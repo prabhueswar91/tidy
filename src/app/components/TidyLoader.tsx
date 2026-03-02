@@ -57,12 +57,9 @@ export default function TidyLoader() {
 
           <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-20 rounded-full"></div>
 
-          <video
-            src="/animations/tidycoin.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
+          <img
+            src="/animations/TidyCoinLoader.gif"
+            alt="Background Card"
             className="w-40 md:w-52 relative z-10 drop-shadow-[0_0_30px_rgba(255,215,0,0.5)]"
           />
         </motion.div>
