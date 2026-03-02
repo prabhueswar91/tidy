@@ -148,7 +148,7 @@ export default function PayBoosterModal({
 
     //const receipt = await tx.wait();
 
-     toast.success("Transaction submitted222");
+     //toast.success("Transaction submitted222");
 
     if (!receipt || receipt.status !== 1) {
       toast.error("Transaction failed");
