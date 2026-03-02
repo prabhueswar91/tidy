@@ -28,10 +28,9 @@ export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
   const getTelegramUser = () => {
-    console.log(window.Telegram,'2222222222222222222222222222B')
     if (typeof window !== "undefined" && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
-      tg.ready(); // ← ADD THIS, tells Telegram the app is ready
+      tg.ready();
       
       const tgUser = tg.initDataUnsafe?.user;
       const tgHash = tg.initDataUnsafe?.hash;
@@ -46,16 +45,12 @@ export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({
     return false;
   };
 
-  // Try immediately
   if (!getTelegramUser()) {
-    // Retry with increasing delays
     const t1 = setTimeout(getTelegramUser, 500);
     const t2 = setTimeout(getTelegramUser, 1000);
-    const t3 = setTimeout(getTelegramUser, 2000);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
-      clearTimeout(t3);
     };
   }
 }, []);
