@@ -136,7 +136,7 @@ export default function PayBoosterModal({
       ERC20_ABI,
       signer
     );
-    alert("transfer")
+    //alert("transfer")
     const tx = await writeToken.transfer(
       ADMIN_WALLET,
       amount
