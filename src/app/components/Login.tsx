@@ -401,7 +401,7 @@ const handleProfileClick = () => {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className="flex flex-col gap-4">
           <div className="text-base font-dm font-[500] my-6 text-center uppercase">
-            Connect Wallet to Pay
+            Connect Wallet to Pay======{isConnected}
           </div>
 
           {selectedTier && (

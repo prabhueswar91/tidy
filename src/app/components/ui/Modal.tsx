@@ -16,6 +16,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
       <div className=" bg-[#141318] border-2 border-[#333333] text-white rounded-xl shadow-lg w-full max-w-md p-6 relative m-8">
         <button
           onClick={onClose}
+          id="testtttttttttttt"
           className="absolute top-3 right-3 text-gray-400 hover:text-white text-lg"
         >
           ✕
