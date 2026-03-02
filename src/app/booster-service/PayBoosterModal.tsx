@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Contract, parseUnits, formatUnits } from "ethers";
+import { Contract, parseUnits, formatUnits, JsonRpcProvider } from "ethers";
 import { toast } from "react-hot-toast";
 import Modal from "../components/ui/Modal"; // adjust path if needed
 import axiosInstance from "../utils/axiosInstance"; // adjust path if needed
@@ -15,6 +15,7 @@ export const ERC20_ABI = [
   "function balanceOf(address owner) view returns (uint256)",
   "function transfer(address to, uint256 value) returns (bool)",
 ];
+const BASE_SEPOLIA_RPC = "https://sepolia.base.org";
 
 export type BoosterPlan = { id: number; label: string; price: number };
 
@@ -140,10 +141,12 @@ export default function PayBoosterModal({
 
       const gasCost = (gasLimit * gasPrice * BigInt(12)) / BigInt(10);
 
-      const nativeBal = await provider.getBalance(address);
+      //const nativeBal = await provider.getBalance(address);
+      const readProvider = new JsonRpcProvider(BASE_SEPOLIA_RPC);
+      const nativeBal = await readProvider.getBalance(address);
       if (nativeBal < gasCost) {
         toast.error(
-          `Insufficient gas fee. Need ~${formatUnits(gasCost, 18)} native token`
+          `Insufficient gas fee. Need ~${formatUnits(gasCost, 18)} ETH`
         );
         return;
       }
