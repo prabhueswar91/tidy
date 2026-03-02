@@ -57,11 +57,20 @@ export default function TidyLoader() {
 
           <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-20 rounded-full"></div>
 
-          <img
-            src="/animations/TidyCoinLoader.gif"
-            alt="Background Card"
-            className="w-40 md:w-52 relative z-10 drop-shadow-[0_0_30px_rgba(255,215,0,0.5)]"
-          />
+          <motion.img
+  src="/animations/tidycoin.png"
+  className="w-40 md:w-52 relative z-10 drop-shadow-[0_0_30px_rgba(255,215,0,0.5)]"
+  animate={{ rotateY: 360 }}
+  transition={{
+    repeat: Infinity,
+    duration: 1.6,
+    ease: "linear",
+  }}
+  style={{
+    transformStyle: "preserve-3d",
+    background: "transparent",
+  }}
+/>
         </motion.div>
         <motion.h1
           className="text-white text-xl font-bold tracking-widest flex flex-wrap justify-center"

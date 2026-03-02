@@ -15,7 +15,7 @@ export const ERC20_ABI = [
   "function balanceOf(address owner) view returns (uint256)",
   "function transfer(address to, uint256 value) returns (bool)",
 ];
-const BASE_SEPOLIA_RPC = "https://sepolia.base.org";
+const BASE_SEPOLIA_RPC = process.env.BASE_RPC;
 const readProvider = new JsonRpcProvider(BASE_SEPOLIA_RPC);
 
 export type BoosterPlan = { id: number; label: string; price: number };
@@ -155,7 +155,7 @@ export default function PayBoosterModal({
       return;
     }
 
-    toast.success(tx.hash);
+    //toast.success(tx.hash);
 
     // backend logic unchanged
     const payload = encryptData({
