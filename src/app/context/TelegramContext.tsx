@@ -28,6 +28,7 @@ export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const getTelegramUser = () => {
+      console.log(window.Telegram,'2222222222222222222222222222B')
       // ✅ Telegram WebApp available
       if (typeof window !== "undefined" && window.Telegram?.WebApp) {
         const tg = window.Telegram.WebApp;
@@ -66,7 +67,7 @@ export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({
     getTelegramUser();
 
     // 🔁 Retry once (Telegram init delay fix)
-    const timer = setTimeout(getTelegramUser, 500);
+    const timer = setTimeout(getTelegramUser, 1000);
     return () => clearTimeout(timer);
   }, []);
 
