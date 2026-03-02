@@ -41,7 +41,9 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-         <script src="https://telegram.org/js/telegram-web-app.js" />
+        <Script
+          src="https://telegram.org/js/telegram-web-app.js"
+        />
       </head>
       <body className="antialiased" suppressHydrationWarning>
         <ClientLayout cookies={cookies}>{children}</ClientLayout>

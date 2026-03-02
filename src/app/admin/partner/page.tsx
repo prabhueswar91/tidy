@@ -91,6 +91,22 @@ export default function AdminPartners() {
   }
   };
 
+ async function handleDelete(item: any) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this partner?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await axiosInstance.post("/admin/delete-partner", { id: item.id });
+      toast.success("Successfully deleted!");
+      fetchPartners();
+    } catch (err) {
+      toast.error("Failed to delete.");
+    }
+}
+
   return (
     <div className="p-4 bg-gray-50 rounded-md shadow-md">
       <div className="flex justify-between items-center mb-4">
@@ -182,14 +198,23 @@ export default function AdminPartners() {
                       className="cursor-pointer w-5 h-5"
                     />
                   </td>
-                  <td className="px-4 py-2 border">
+                 <td className="px-4 py-2 border">
+                  <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(partner)}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition"
                     >
                       Edit
                     </button>
-                  </td>
+
+                    <button
+                      onClick={() => handleDelete(partner)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
                 </tr>
               ))}
             </tbody>
