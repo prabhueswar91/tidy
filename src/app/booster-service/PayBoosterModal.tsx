@@ -114,7 +114,7 @@ export default function PayBoosterModal({
       //   toast.error("Token contract not found on this network.");
       //   return;
       // }
-      alert("1111111111111111A")
+      alert("1111111111111111D")
       alert(chainId)
       const signer = await provider.getSigner();
       const token = new Contract(USDC_ADDRESS, ERC20_ABI, signer);
