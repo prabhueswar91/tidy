@@ -114,11 +114,11 @@ export default function PayBoosterModal({
       //   toast.error("Token contract not found on this network.");
       //   return;
       // }
-      alert("1111111111111111D")
+      
       alert(chainId)
       const signer = await provider.getSigner();
       const token = new Contract(USDC_ADDRESS, ERC20_ABI, signer);
-      alert("1111111111111111B")
+      
       let d = Number(await token.decimals());
       setDecimals(d);
 
@@ -144,13 +144,14 @@ export default function PayBoosterModal({
       //const nativeBal = await provider.getBalance(address);
       const readProvider = new JsonRpcProvider(BASE_SEPOLIA_RPC);
       const nativeBal = await readProvider.getBalance(address);
+      alert(nativeBal)
       if (nativeBal < gasCost) {
         toast.error(
           `Insufficient gas fee. Need ~${formatUnits(gasCost, 18)} ETH`
         );
         return;
       }
-
+      alert("transfer")
       const tx = await token.transfer(ADMIN_WALLET, amount);
       toast.success("Transaction submitted");
 
