@@ -16,6 +16,7 @@ export const ERC20_ABI = [
   "function transfer(address to, uint256 value) returns (bool)",
 ];
 const BASE_SEPOLIA_RPC = "https://sepolia.base.org";
+const readProvider = new JsonRpcProvider(BASE_SEPOLIA_RPC);
 
 export type BoosterPlan = { id: number; label: string; price: number };
 
@@ -84,118 +85,111 @@ export default function PayBoosterModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, isConnected]);
 
-  const payAndActivate = async () => {
-    try {
-      if (!selectedPlan) {
-        toast.error("Please select a plan");
-        return;
-      }
-
-      if (!USDC_ADDRESS) {
-        toast.error("Please try again later");
-        return;
-      }
-
-      if (!isConnected || !address) {
-        toast("Connect wallet first");
-        await connect();
-        return;
-      }
-
-      if (!provider) {
-        toast.error("Wallet provider not available");
-        return;
-      }
-
-      setPaying(true);
-
-      // const code = await provider.getCode(USDC_ADDRESS);
-      // if (!code || code === "0x") {
-      //   toast.error("Token contract not found on this network.");
-      //   return;
-      // }
-      
-      alert(chainId)
-      const signer = await provider.getSigner();
-      const token = new Contract(USDC_ADDRESS, ERC20_ABI, signer);
-      
-      let d = Number(await token.decimals());
-      setDecimals(d);
-
-      const amount = parseUnits(String(selectedPlan.price), Number(d));
-
-      const tokenBal = await token.balanceOf(address);
-      if (tokenBal < amount) {
-        toast.error(`Insufficient USDC. Balance: ${formatUnits(tokenBal, d)}`);
-        return;
-      }
-
-      const gasLimit = await token.transfer.estimateGas(ADMIN_WALLET, amount);
-       alert(gasLimit)
-      const feeData = await provider.getFeeData();
-      const gasPrice = feeData.maxFeePerGas ?? feeData.gasPrice ?? null;
-      alert(gasPrice)
-
-      if (!gasPrice) {
-        toast.error("Unable to fetch gas price");
-        return;
-      }
-
-      const gasCost = (gasLimit * gasPrice * BigInt(12)) / BigInt(10);
-
-      //const nativeBal = await provider.getBalance(address);
-      const readProvider = new JsonRpcProvider(BASE_SEPOLIA_RPC);
-      const nativeBal = await readProvider.getBalance(address);
-      alert(nativeBal)
-      alert(gasCost)
-      if (nativeBal < gasCost) {
-        toast.error(
-          `Insufficient gas fee. Need ~${formatUnits(gasCost, 18)} ETH`
-        );
-        return;
-      }
-      alert("transfer")
-      const tx = await token.transfer(ADMIN_WALLET, amount);
-      toast.success("Transaction submitted");
-
-      const receipt = await tx.wait();
-      if (!receipt || receipt.status !== 1) {
-        toast.error("Transaction failed");
-        return;
-      }
-
-      const payload = encryptData({
-        subscriptionId: selectedPlan.id,
-        txHash: tx.hash,
-        walletAddress: address,
-        price: String(selectedPlan.price),
-        token: "USDC",
-        initData: window?.Telegram?.WebApp?.initData,
-        partnerId:id
-      });
-
-      const res = await axiosInstance.post("/points/activate-booster", {
-        data: payload,
-      });
-
-      if (res.data?.status) {
-        toast.success(
-          "Booster request sent successfully. Please wait a moment while an admin reviews and approves it."
-        );
-        onSuccess();
-        router.push(`/partner`);
-      } else {
-        toast.error(res.data?.error || "Failed to submit");
-      }
-    } catch (err: any) {
-      console.error(err);
-      toast.error(
-        err?.shortMessage || err?.reason || err?.message || "Payment failed"
-      );
-    } finally {
-      setPaying(false);
+ const payAndActivate = async () => {
+  try {
+    if (!selectedPlan) {
+      toast.error("Please select a plan");
+      return;
     }
-  };
+
+    if (!USDC_ADDRESS) {
+      toast.error("Configuration error");
+      return;
+    }
+
+    if (!isConnected || !address || !provider) {
+      toast("Connect wallet first");
+      await connect();
+      return;
+    }
+
+    setPaying(true);
+
+    // 🔥 FAST READS (RPC)
+    const readToken = new Contract(
+      USDC_ADDRESS,
+      ERC20_ABI,
+      readProvider
+    );
+
+    const d = 6; // USDC always 6 — avoid RPC call
+    const amount = parseUnits(String(selectedPlan.price), d);
+
+    const tokenBal = await readToken.balanceOf(address);
+
+    if (tokenBal < amount) {
+      toast.error(
+        `Insufficient USDC. Balance: ${formatUnits(tokenBal, d)}`
+      );
+      return;
+    }
+
+    const nativeBal = await readProvider.getBalance(address);
+
+    if (nativeBal <= 0) {
+      toast.error("Insufficient ETH for gas");
+      return;
+    }
+
+    // 🔥 WRITE ONLY THROUGH WALLETCONNECT
+    const signer = await provider.getSigner();
+    const writeToken = new Contract(
+      USDC_ADDRESS,
+      ERC20_ABI,
+      signer
+    );
+    alert("transfer")
+    const tx = await writeToken.transfer(
+      ADMIN_WALLET,
+      amount
+    );
+
+    toast.success("Transaction submitted");
+
+    const receipt = await tx.wait();
+
+    if (!receipt || receipt.status !== 1) {
+      toast.error("Transaction failed");
+      return;
+    }
+
+    // backend logic unchanged
+    const payload = encryptData({
+      subscriptionId: selectedPlan.id,
+      txHash: tx.hash,
+      walletAddress: address,
+      price: String(selectedPlan.price),
+      token: "USDC",
+      initData: window?.Telegram?.WebApp?.initData,
+      partnerId: id,
+    });
+
+    const res = await axiosInstance.post(
+      "/points/activate-booster",
+      { data: payload }
+    );
+
+    if (res.data?.status) {
+      toast.success(
+        "Booster request sent successfully."
+      );
+      onSuccess();
+      router.push(`/partner`);
+    } else {
+      toast.error(res.data?.error || "Failed to submit");
+    }
+  } catch (err: any) {
+    console.error(err);
+    toast.error(
+      err?.shortMessage ||
+        err?.reason ||
+        err?.message ||
+        "Payment failed"
+    );
+  } finally {
+    setPaying(false);
+  }
+};
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
