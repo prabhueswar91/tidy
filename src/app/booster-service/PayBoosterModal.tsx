@@ -33,7 +33,7 @@ export default function PayBoosterModal({
   onSuccess: () => void;
 }) {
   
-  const { provider, address, isConnected, connect, logout, formatAddress } =
+  const { provider, address, isConnected, connect, logout, formatAddress,chainId } =
     useWallet();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
@@ -113,10 +113,11 @@ export default function PayBoosterModal({
       //   toast.error("Token contract not found on this network.");
       //   return;
       // }
-
+      alert("1111111111111111A")
+      alert(chainId)
       const signer = await provider.getSigner();
       const token = new Contract(USDC_ADDRESS, ERC20_ABI, signer);
-
+      alert("1111111111111111B")
       let d = Number(await token.decimals());
       setDecimals(d);
 
