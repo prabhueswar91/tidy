@@ -131,8 +131,10 @@ export default function PayBoosterModal({
       }
 
       const gasLimit = await token.transfer.estimateGas(ADMIN_WALLET, amount);
+       alert(gasLimit)
       const feeData = await provider.getFeeData();
       const gasPrice = feeData.maxFeePerGas ?? feeData.gasPrice ?? null;
+      alert(gasPrice)
 
       if (!gasPrice) {
         toast.error("Unable to fetch gas price");
