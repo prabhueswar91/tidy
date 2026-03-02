@@ -59,10 +59,7 @@ function isApiError(err: unknown): err is ApiError {
     getXPbalance(address);
 
     // ✅ Force Telegram to regain focus
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.ready();
-      window.Telegram.WebApp.expand();
-    }
+    
 
   } else {
     setWalletAddress(null);
