@@ -27,49 +27,38 @@ export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({
   const [hash, setHash] = useState<string | null>(null);
 
   useEffect(() => {
-    const getTelegramUser = () => {
-      console.log(window.Telegram,'2222222222222222222222222222B')
-      // ✅ Telegram WebApp available
-      if (typeof window !== "undefined" && window.Telegram?.WebApp) {
-        const tg = window.Telegram.WebApp;
-        const tgUser = tg.initDataUnsafe?.user;
-        const tgHash = tg.initDataUnsafe?.hash;
+  const getTelegramUser = () => {
+    console.log(window.Telegram,'2222222222222222222222222222B')
+    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+      tg.ready(); // ← ADD THIS, tells Telegram the app is ready
+      
+      const tgUser = tg.initDataUnsafe?.user;
+      const tgHash = tg.initDataUnsafe?.hash;
 
-        if (tgUser?.id && tgHash) {
-          setTelegramId(tgUser.id.toString());
-          setUserData(tgUser);
-          setHash(tgHash);
-          return;
-        }
+      if (tgUser?.id && tgHash) {
+        setTelegramId(tgUser.id.toString());
+        setUserData(tgUser);
+        setHash(tgHash);
+        return true;
       }
-
-      // ⚠️ DEV fallback only
-      // if (process.env.NODE_ENV !== "production") {
-      //   console.warn("⚠️ Using static Telegram ID (DEV mode)");
-      //   setTelegramId(STATIC_TELEGRAM_ID);
-      //   setUserData(null);
-      //   setHash(null);
-      // }
-      if (process.env.NODE_ENV !== "production") {
-      console.warn("⚠️ DEV MODE: Using static Telegram user");
-
-      setTelegramId(STATIC_TELEGRAM_ID);
-      setUserData({
-        id: STATIC_TELEGRAM_ID,
-        first_name: "Sandeep",
-        username: "dev_user",
-      });
-      setHash("dev_static_hash");
-      return;
     }
+    return false;
+  };
+
+  // Try immediately
+  if (!getTelegramUser()) {
+    // Retry with increasing delays
+    const t1 = setTimeout(getTelegramUser, 500);
+    const t2 = setTimeout(getTelegramUser, 1000);
+    const t3 = setTimeout(getTelegramUser, 2000);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
     };
-
-    getTelegramUser();
-
-    // 🔁 Retry once (Telegram init delay fix)
-    const timer = setTimeout(getTelegramUser, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  }
+}, []);
 
   return (
     <TelegramContext.Provider value={{ telegramId, userdata, hash }}>
