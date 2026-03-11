@@ -71,7 +71,7 @@ export default function TelegramBoosterUI() {
   //   />
   // );
 if (showApprove) {
-  return <ApprovalStatus  />;
+  return <ApprovalStatus  showApprove={showApprove}/>;
 }
 
 if (!showBooster) {
