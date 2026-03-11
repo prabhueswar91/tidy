@@ -3,7 +3,11 @@
 import Image from "next/image";
 import Dot from "../assets/dot.svg";
 
-export default function ApprovalStatus() {
+export default function ApprovalStatus({
+  showApprove,
+}: {
+  showApprove: boolean;
+}) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center px-6 text-[#FFFEEF]">
       
@@ -17,10 +21,14 @@ export default function ApprovalStatus() {
         </h3>
       </div>
 
+      {showApprove?<p className="text-sm font-light max-w-md">
+        Experience the TidyZen moment and 
+        earn exciting rewards! 
+      </p>:
       <p className="text-sm font-light max-w-md">
         Thank you for applying!  
         we are processing your application.  
-      </p>
+      </p>}
 
     </div>
   );
