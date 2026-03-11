@@ -164,7 +164,7 @@ const saveLeaderboardDates = async () => {
       <input
         type="date"
         value={weeklyStart}
-        min={new Date().toISOString().split("T")[0]}
+        //min={new Date().toISOString().split("T")[0]}
         onChange={(e) => setWeeklyStart(e.target.value)}
         className="border px-2 py-1 rounded"
       />
@@ -175,7 +175,7 @@ const saveLeaderboardDates = async () => {
       <input
         type="date"
         value={monthlyStart}
-        min={new Date().toISOString().split("T")[0]}
+        //min={new Date().toISOString().split("T")[0]}
         onChange={(e) => setMonthlyStart(e.target.value)}
         className="border px-2 py-1 rounded"
       />
