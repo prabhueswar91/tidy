@@ -211,7 +211,6 @@ async function getRequirementList() {
       if (res.data?.status) {
         toast.success("Reward claimed successfully!");
 
-        // Update UI immediately
         setRewards((prev) =>
           prev.map((r) =>
             r.id === selectedReward.id ? { ...r, isClaim: true } : r
@@ -219,6 +218,13 @@ async function getRequirementList() {
         );
         getUserInfo();
         setIsModalOpen(false);
+        
+        setTimeout(function(){
+          if(userInfo?.walletAddress){
+            getXPbalance(userInfo?.walletAddress)
+          }
+        },1000);
+        
       } else if(res?.data?.error) {
         toast.error(res?.data?.error);
       }else{
