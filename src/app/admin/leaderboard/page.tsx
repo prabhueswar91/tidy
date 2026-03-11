@@ -25,8 +25,9 @@ export default function AdminLeaderList() {
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
   const [isExport, setisExport] = useState(false);
-const [weeklyStart, setWeeklyStart] = useState("");
-const [monthlyStart, setMonthlyStart] = useState("");
+  const [weeklyStart, setWeeklyStart] = useState("");
+  const [monthlyStart, setMonthlyStart] = useState("");
+  const [loading1, setLoading1] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -55,6 +56,22 @@ const [monthlyStart, setMonthlyStart] = useState("");
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const {data:response} = await axiosInstance.get("/admin/get-settings");
+      if (response?.settings?.weeklyStartDate) {
+        setWeeklyStart(response.settings.weeklyStartDate.split("T")[0]);
+      }
+
+      if (response?.settings?.monthlyStartDate) {
+        setMonthlyStart(response.settings.monthlyStartDate.split("T")[0]);
+      }
+    } catch (err: any) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const exportCSV = async () => {
     try {
       setisExport(true)
@@ -76,6 +93,10 @@ const [monthlyStart, setMonthlyStart] = useState("");
   };
 
   useEffect(() => {
+    fetchSettings()
+  }, []);
+
+   useEffect(() => {
     fetchUsers();
   }, [page, limit]);
 
@@ -112,6 +133,7 @@ const [monthlyStart, setMonthlyStart] = useState("");
     }
   }
 const saveLeaderboardDates = async () => {
+  setLoading1(true);
   try {
     const res = await axiosInstance.post("/admin/settings", {
       weekly_start_date: weeklyStart,
@@ -125,6 +147,8 @@ const saveLeaderboardDates = async () => {
     }
   } catch {
     toast.error("Server error");
+  }finally{
+    setLoading1(false);
   }
 };
   return (
@@ -140,6 +164,7 @@ const saveLeaderboardDates = async () => {
       <input
         type="date"
         value={weeklyStart}
+        min={new Date().toISOString().split("T")[0]}
         onChange={(e) => setWeeklyStart(e.target.value)}
         className="border px-2 py-1 rounded"
       />
@@ -150,6 +175,7 @@ const saveLeaderboardDates = async () => {
       <input
         type="date"
         value={monthlyStart}
+        min={new Date().toISOString().split("T")[0]}
         onChange={(e) => setMonthlyStart(e.target.value)}
         className="border px-2 py-1 rounded"
       />
@@ -157,9 +183,10 @@ const saveLeaderboardDates = async () => {
 
     <button
       onClick={saveLeaderboardDates}
+      disabled={loading1}
       className="px-4 py-2 bg-blue-600 text-white rounded"
     >
-      Save Dates
+     {loading1?"Updating...":"Update"}
     </button>
   </div>
 </div>

@@ -14,8 +14,6 @@ import {
 
 const queryClient = new QueryClient()
 
-console.log(window,'windowwindowwindow11111111')
-
 createAppKit({
   adapters: [wagmiAdapter, bitcoinAdapter],
   projectId,
