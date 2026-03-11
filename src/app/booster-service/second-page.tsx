@@ -68,9 +68,22 @@ const [balLoading, setBalLoading] = useState(false);
   ];
 
   function closePopup(){
-      setshowApprove(true)
-  }
+  setshowApprove(true)
+}
 
+const applyForBooster = async () => {
+  try {
+    await axiosInstance.post("/booster/apply", {
+      plan_id: selectedPlan?.id,
+      
+    });
+
+    setshowApprove(true);
+  } catch (error) {
+    console.error("Application failed:", error);
+    toast.error("Failed to submit application");
+  }
+};
   return (
     <div className={"min-h-screen bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] text-[#FFFEEF] flex items-center justify-center p-4"}>
       <div className="w-full max-w-md relative">
@@ -176,7 +189,7 @@ const [balLoading, setBalLoading] = useState(false);
           </div> */}
         </div>
 
-      <button
+      {/* <button
         className="w-full bg-[linear-gradient(90deg,#110e05_0%,#362a02_100%)] font-open text-[18px]  text-[#FFFEEF] hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-[#D2A100] disabled:opacity-50"
         disabled={!selectedPlan}
         onClick={() => setIsModalOpen(true)}
@@ -189,16 +202,24 @@ const [balLoading, setBalLoading] = useState(false);
       // }}
       >
         {isConnected ? "PAY & ACTIVATE BOOSTER" : "APPLY NOW"}
-      </button>
-
-      <PayBoosterModal
+      </button> */}
+<button
+  className="w-full bg-[linear-gradient(90deg,#110e05_0%,#362a02_100%)] font-open text-[18px] text-[#FFFEEF] hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-[#D2A100] disabled:opacity-50"
+  disabled={!selectedPlan}
+  // onClick={() => setshowApprove(true)}
+  onClick={applyForBooster}
+>
+  APPLY NOW
+</button>
+      {/* <PayBoosterModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         selectedPlan={selectedPlan}
         onSuccess={() => closePopup()}
-      />
+      /> */}
         <p className={`text-center text-[#FFFEEF] font-semibold font-sans text-[16px] ${textMuted}`}>
-          Activation starts after approval and payment
+          {/* Activation starts after approval and payment */}
+          Application will be reviewed before activation.
         </p>
       </div>
 

@@ -25,6 +25,8 @@ export default function AdminLeaderList() {
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
   const [isExport, setisExport] = useState(false);
+const [weeklyStart, setWeeklyStart] = useState("");
+const [monthlyStart, setMonthlyStart] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -109,11 +111,58 @@ export default function AdminLeaderList() {
       setLoading(false);
     }
   }
+const saveLeaderboardDates = async () => {
+  try {
+    const res = await axiosInstance.post("/admin/settings", {
+      weekly_start_date: weeklyStart,
+      monthly_start_date: monthlyStart,
+    });
 
+    if (res.data.success) {
+      toast.success("Leaderboard settings updated");
+    } else {
+      toast.error("Failed to save settings");
+    }
+  } catch {
+    toast.error("Server error");
+  }
+};
   return (
     <div className="p-4 bg-gray-50 rounded-md shadow-md">
+      
       <h2 className="text-xl font-bold mb-4">Leaderboard List</h2>
+<div className="border p-4 rounded mb-4 bg-white">
+  <h3 className="font-semibold mb-3">Leaderboard Settings</h3>
 
+  <div className="flex gap-3 flex-wrap">
+    <div>
+      <label className="block text-sm">Weekly Start Date</label>
+      <input
+        type="date"
+        value={weeklyStart}
+        onChange={(e) => setWeeklyStart(e.target.value)}
+        className="border px-2 py-1 rounded"
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm">Monthly Start Date</label>
+      <input
+        type="date"
+        value={monthlyStart}
+        onChange={(e) => setMonthlyStart(e.target.value)}
+        className="border px-2 py-1 rounded"
+      />
+    </div>
+
+    <button
+      onClick={saveLeaderboardDates}
+      className="px-4 py-2 bg-blue-600 text-white rounded"
+    >
+      Save Dates
+    </button>
+  </div>
+</div>
       <div className="flex flex-wrap gap-3 mb-4">
         <input
           type="date"

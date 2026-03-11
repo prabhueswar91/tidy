@@ -17,7 +17,7 @@ import JunglLogo from "../assets/jungl.webp";
 import toast from "react-hot-toast";
 import TidyLoader from "./TidyLoader";
 import { useUI } from "../context/closebtnContext";
-
+import { APP_NAME, APP_VERSION } from "@/lib/version";
 interface HomeProps {
   onStart: () => void;
 }
@@ -235,7 +235,13 @@ export default function Home({ onStart }: HomeProps) {
         >
           BOOSTER SERVICE
         </button>}
-        <div className="text-xs mt-4 font-open">Powered by JunglCorp & TidyCoin</div>
+        <div className="text-xs mt-4 font-open text-center">
+  Powered by JunglCorp & TidyCoin
+</div>
+
+<div className="text-[11px] text-gray-400 opacity-70 text-center mt-1">
+  {APP_NAME} v{APP_VERSION}
+</div>
       </motion.div>
     </motion.div>
   );

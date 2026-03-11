@@ -51,23 +51,49 @@ export default function TelegramBoosterUI() {
 
   if (loading) return <TidyLoader />;
 
-  return !showBooster ? (
+  // return !showBooster ? (
+  //   <FirstPage
+  //     isToggleOn={isToggleOn}
+  //     setIsToggleOn={setIsToggleOn}
+  //     onContinue={() => setShowBooster(true)}
+  //   />
+  // ) :showApprove? 
+  //   <ApprovalStatus showApprove={showApprove}/>:(
+  //   <SecondPage
+  //     onClose={() => setShowBooster(false)}
+  //     plans={list}
+  //     selectedPlanId={selectedPlanId}
+  //     setSelectedPlanId={setSelectedPlanId}
+  //     expandedSection={expandedSection}
+  //     setExpandedSection={setExpandedSection}
+  //     selectedPlan={selectedPlan}
+  //     setshowApprove={setshowApprove}
+  //   />
+  // );
+if (showApprove) {
+  return <ApprovalStatus  />;
+}
+
+if (!showBooster) {
+  return (
     <FirstPage
       isToggleOn={isToggleOn}
       setIsToggleOn={setIsToggleOn}
       onContinue={() => setShowBooster(true)}
     />
-  ) :showApprove? 
-    <ApprovalStatus showApprove={showApprove}/>:(
-    <SecondPage
-      onClose={() => setShowBooster(false)}
-      plans={list}
-      selectedPlanId={selectedPlanId}
-      setSelectedPlanId={setSelectedPlanId}
-      expandedSection={expandedSection}
-      setExpandedSection={setExpandedSection}
-      selectedPlan={selectedPlan}
-      setshowApprove={setshowApprove}
-    />
   );
+}
+
+return (
+  <SecondPage
+    onClose={() => setShowBooster(false)}
+    plans={list}
+    selectedPlanId={selectedPlanId}
+    setSelectedPlanId={setSelectedPlanId}
+    expandedSection={expandedSection}
+    setExpandedSection={setExpandedSection}
+    selectedPlan={selectedPlan}
+    setshowApprove={setshowApprove}
+  />
+);
 }

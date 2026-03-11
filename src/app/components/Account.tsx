@@ -82,7 +82,7 @@ export default function Account() {
 
               <div className="my-3 border-t border-[#333333]" />
 
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <p className="text-[#FFFEEF99] text-sm">REWARDS</p>
                 <p className="font-semibold">
                   <span className="text-[#FFFEEF99] font-light text-xs">
@@ -90,7 +90,16 @@ export default function Account() {
                   </span>
                   +{points?.point ?? 0}
                 </p>
-              </div>
+              </div> */}
+              <div className="flex items-center justify-between">
+  <p className="text-[#FFFEEF99] text-sm">WEEKLY DUST</p>
+  <p className="font-semibold">+{points?.weekly_dust ?? 0}</p>
+</div>
+
+<div className="flex items-center justify-between mt-2">
+  <p className="text-[#FFFEEF99] text-sm">MONTHLY DUST</p>
+  <p className="font-semibold">+{points?.monthly_dust ?? 0}</p>
+</div>
             </>
           )}
         </div>
