@@ -211,12 +211,12 @@ const applyForBooster = async () => {
 >
   APPLY NOW
 </button>
-      {/* <PayBoosterModal
+      <PayBoosterModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         selectedPlan={selectedPlan}
         onSuccess={() => closePopup()}
-      /> */}
+      />
         <p className={`text-center text-[#FFFEEF] font-semibold font-sans text-[16px] ${textMuted}`}>
           {/* Activation starts after approval and payment */}
           Application will be reviewed before activation.
