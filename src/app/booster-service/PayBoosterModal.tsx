@@ -15,7 +15,7 @@ export const ERC20_ABI = [
   "function balanceOf(address owner) view returns (uint256)",
   "function transfer(address to, uint256 value) returns (bool)",
 ];
-const BASE_SEPOLIA_RPC = process.env.BASE_RPC;
+const BASE_SEPOLIA_RPC = "https://base-sepolia.infura.io/v3/40196f1719404e20a83c1590f3b6186f";
 const readProvider = new JsonRpcProvider(BASE_SEPOLIA_RPC);
 
 export type BoosterPlan = { id: number; label: string; price: number };
