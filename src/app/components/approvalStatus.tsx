@@ -17,7 +17,7 @@ export default function ApprovalStatus({
         </div>
 
         <h3 className="text-xl font-semibold">
-          Application Submitted
+          {showApprove ? "Approved" : "Application Submitted"}
         </h3>
       </div>
 
