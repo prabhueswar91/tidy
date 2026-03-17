@@ -50,7 +50,7 @@ export default function PartnerForm({
   useEffect(() => {
     if (partner) {
       let NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!;
-      let logoUrl = `${NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/${partner.logo}`
+      let logoUrl = `${NEXT_PUBLIC_BASE_URL}/uploads1/partner_logos/${partner.logo}`
       setGroupName(partner.groupName);
       setProject(partner.project);
       setContact(partner.contact);
@@ -90,7 +90,7 @@ export default function PartnerForm({
     e.preventDefault();
     setLoading(true);
 
-    if (!groupName.trim()) return toast.error("Group Name is required.");
+    //if (!groupName.trim()) return toast.error("Group Name is required.");
     if (!project.trim()) return toast.error("Project is required.");
     if (!contact.trim()) return toast.error("Contact is required.");
     if (!duration.trim()) return toast.error("Duration is required.");
@@ -99,7 +99,7 @@ export default function PartnerForm({
 
     try {
       const formData = new FormData();
-      formData.append("groupName", groupName);
+      //formData.append("groupName", groupName);
       formData.append("project", project);
       formData.append("contact", contact);
       formData.append("duration", duration);
@@ -152,14 +152,14 @@ export default function PartnerForm({
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
+          {/* <input
             type="text"
             placeholder="Group Name (required)"
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
             required
-          />
+          /> */}
           <input
             type="text"
             placeholder="Project (required)"
