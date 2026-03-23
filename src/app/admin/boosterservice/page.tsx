@@ -126,9 +126,9 @@ export default function AdminBoosterService() {
             <th className="border p-2">Group Name</th>
             <th className="border p-2">Group Id</th>
             <th className="border p-2">Link</th>
-            <th className="border p-2">Wallet</th>
+            {/* <th className="border p-2">Wallet</th>
             <th className="border p-2">Tx Hash</th>
-            <th className="border p-2">Paid</th>
+            <th className="border p-2">Paid</th> */}
             <th className="border p-2">Date</th>
             <th className="border p-2">Status</th>
             <th className="border p-2">Actions</th>
@@ -158,23 +158,23 @@ export default function AdminBoosterService() {
                 )}
               </td>
 
-              <td className="border p-2">
+              {/* <td className="border p-2">
                 {b.walletAddress ? (
                   <span className="text-xs break-all">{b.walletAddress}</span>
                 ) : (
                   "-"
                 )}
-              </td>
+              </td> */}
 
-              <td className="border p-2">
+              {/* <td className="border p-2">
                 {b.txHash ? (
                   <span className="text-xs break-all">{b.txHash}</span>
                 ) : (
                   "-"
                 )}
-              </td>
+              </td> */}
 
-              <td className="border p-2">
+              {/* <td className="border p-2">
                 <span
                   className={`px-2 py-1 rounded text-xs font-semibold ${
                     b.txHash
@@ -184,7 +184,7 @@ export default function AdminBoosterService() {
                 >
                   {b.txHash ? "Paid" : "Unpaid"}
                 </span>
-              </td>
+              </td> */}
 
               <td className="border p-2">{fmtDate(b.createdAt)}</td>
 
