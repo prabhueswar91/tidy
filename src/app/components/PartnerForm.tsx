@@ -16,6 +16,7 @@ import TidyLoader from "./TidyLoader";
 import { toast } from "react-hot-toast";
 import axiosInstance from "../utils/axiosInstance";
 import ApprovalStatus from "../components/approvalStatus";
+import Close from "../assets/close.svg";
 
 export default function TokenForm() {
   const router = useRouter();
@@ -153,6 +154,12 @@ export default function TokenForm() {
       ) : (
         <Card2>
           <div className="w-full flex flex-col items-center">
+              <button
+                className="absolute top-4 right-4 z-20 bg-black border-2 border-[#8C6C00] p-2 rounded-full"
+                onClick={() => router.push("/")}
+              >
+                <Image src={Close} alt="close" width={14} height={14} />
+              </button>
             <div className="relative w-36 h-36 mb-1">
               <Image
                 src={Logo}
