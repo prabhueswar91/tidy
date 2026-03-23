@@ -41,7 +41,7 @@ export type Reward = {
   updatedAt?: string;
 };
 
-export default function PrizeReveal({ duration }: { duration: number }) {
+export default function PrizeReveal({ duration,onClose }: { duration: number,onClose: () => void; }) {
    const { getUserInfo, userInfo } = UserContext();
   const [timeLeft, setTimeLeft] = useState(duration);
   const [rangeValue, setRangeValue] = useState(0);
@@ -278,7 +278,7 @@ export default function PrizeReveal({ duration }: { duration: number }) {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] font-dm text-[#FFFEEF] md:px-4">
       <Card3>
         {reward && <button
-          onClick={() => router.push("/")}
+          onClick={onClose}
           className="absolute top-4 right-4 z-20 bg-black border-2 border-[#8C6C00] p-2 rounded-full"
         >
           <Image src={Close} alt="close" width={14} height={14} />

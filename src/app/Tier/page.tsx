@@ -84,7 +84,7 @@ export default function TierPage() {
   };
 
   if (showPrizeReveal) {
-    return <PrizeReveal duration={duration} />;
+    return <PrizeReveal duration={duration} onClose={() => setShowPrizeReveal(false)}/>;
   }
 
   return (
