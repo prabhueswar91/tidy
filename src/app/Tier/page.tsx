@@ -9,6 +9,7 @@ import Plus from "../assets/plus.svg";
 import Star from "../assets/star-arrow.svg";
 import Button from "../components/ui/Button";
 import Image from "next/image";
+import Close from "../assets/close.svg";
 import PrizeReveal from "../components/PrizeReveal";
 import { useAppStore } from "../store/useAppStore";
 import { useTelegram } from "../context/TelegramContext";
@@ -89,6 +90,12 @@ export default function TierPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] font-dm text-[#FFFEEF]">
+      <button
+                onClick={() => router.push("/")}
+                className="absolute top-4 right-4 z-20 bg-black border-2 border-[#8C6C00] p-2 rounded-full"
+              >
+                <Image src={Close} alt="close" width={14} height={14} />
+              </button>
       <Card2>
         <div className="relative w-full max-w-sm bg-[#14131899] border border-[#333333] rounded px-6 text-center shadow-[0_4px_30px_rgba(0,0,0,0.9)] mt-10">
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#AC8B8B4D] border border-[#AC8B8B] px-4 py-1 rounded text-[10px] font-dm font-[600] shadow-md uppercase text-[#AC8B8B]">
