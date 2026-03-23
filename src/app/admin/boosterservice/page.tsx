@@ -123,6 +123,8 @@ export default function AdminBoosterService() {
           <tr>
             <th className="border p-2">Booster Id</th>
             <th className="border p-2">Username</th>
+            <th className="border p-2">Contact</th>
+            <th className="border p-2">Project</th>
             <th className="border p-2">Group Name</th>
             <th className="border p-2">Group Id</th>
             <th className="border p-2">Link</th>
@@ -140,6 +142,8 @@ export default function AdminBoosterService() {
             <tr key={b.id}>
               <td className="border p-2">{b.id ?? "-"}</td>
               <td className="border p-2">{b.username ?? "-"}</td>
+              <td className="border p-2">{b.partnerContact ?? "-"}</td>
+              <td className="border p-2">{b.partnerProject ?? "-"}</td>
               <td className="border p-2">{b.groupName ?? "-"}</td>
               <td className="border p-2">{b.groupId ?? "-"}</td>
 
