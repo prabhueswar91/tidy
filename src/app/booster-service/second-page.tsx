@@ -12,6 +12,7 @@ import {encryptData} from "../rewards/auth2/encrypt"
 import Modal from "../components/ui/Modal";
 import PayBoosterModal from "./PayBoosterModal";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const textMuted = "text-[#FFFEEF]";
 
@@ -42,19 +43,12 @@ export default function SecondPage({
   selectedPlan: Plan | null;
  setshowApprove: Dispatch<SetStateAction<boolean>>;
 }) {
-
-const { provider, address, isConnected, connect, logout, formatAddress } = useWallet();
-const router = useRouter();
+  const searchParams = useSearchParams();
+  const { address } = useWallet();
+  const router = useRouter();
   const [paying, setPaying] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-const [usdcBalance, setUsdcBalance] = useState<string>("0");
-const [decimals, setDecimals] = useState<number>(6);
-const [balLoading, setBalLoading] = useState(false);
-
-
-  const USDC_ADDRESS = process.env.NEXT_PUBLIC_USDC_ADDRESS as string;
-  const ADMIN_WALLET = process.env.NEXT_PUBLIC_ADMIN_WALLET as string;
-
+  const id = searchParams.get("id");
 
   const includes = [
     "TidyZen users must join your Telegram to qualify for $TIDY claims, XP rewards and XP boosts",
@@ -68,20 +62,51 @@ const [balLoading, setBalLoading] = useState(false);
   ];
 
   function closePopup(){
-  setshowApprove(true)
-}
+    setshowApprove(true)
+  }
+
+
 
 const applyForBooster = async () => {
+  setPaying(true);
   try {
-    await axiosInstance.post("/booster/apply", {
-      plan_id: selectedPlan?.id,
-      
+    if (!selectedPlan) {
+      toast.error("Please select a plan");
+      return;
+    }
+
+    const payload = encryptData({
+      subscriptionId: selectedPlan.id,
+      price: String(selectedPlan.price),
+      token: "USDC",
+      initData: window?.Telegram?.WebApp?.initData,
+      partnerId: id,
     });
 
-    setshowApprove(true);
-  } catch (error) {
-    console.error("Application failed:", error);
-    toast.error("Failed to submit application");
+    const res = await axiosInstance.post(
+      "/points/activate-booster",
+      { data: payload }
+    );
+
+    if (res.data?.status) {
+      toast.success(
+        "Booster request sent successfully."
+      );
+      setshowApprove(true)
+      router.push(`/partner`);
+    } else {
+      toast.error(res.data?.error || "Failed to submit");
+    }
+  } catch (err: any) {
+    console.error(err);
+    toast.error(
+      err?.shortMessage ||
+        err?.reason ||
+        err?.message ||
+        "Payment failed"
+    );
+  } finally {
+    setPaying(false);
   }
 };
   return (
@@ -205,11 +230,11 @@ const applyForBooster = async () => {
       </button> */}
 <button
   className="w-full bg-[linear-gradient(90deg,#110e05_0%,#362a02_100%)] font-open text-[18px] text-[#FFFEEF] hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-[#D2A100] disabled:opacity-50"
-  disabled={!selectedPlan}
-  onClick={() => setshowApprove(true)}
-  // onClick={applyForBooster}
+  disabled={!selectedPlan || paying}
+  //onClick={() => setshowApprove(true)}
+  onClick={applyForBooster}
 >
-  APPLY NOW
+  {paying ? "Processing..." : "APPLY NOW"}
 </button>
       <PayBoosterModal
         isOpen={isModalOpen}

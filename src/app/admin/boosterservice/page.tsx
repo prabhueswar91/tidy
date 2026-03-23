@@ -228,19 +228,19 @@ export default function AdminBoosterService() {
                   </span>
                 </div>
 
-                <div className="text-xs text-gray-600 mb-1">
+                {/* <div className="text-xs text-gray-600 mb-1">
                   Wallet:{" "}
                   <span className="font-semibold text-gray-800 break-all">
                     {walletAddress || "-"}
                   </span>
-                </div>
+                </div> */}
 
-                <div className="text-xs text-gray-600 mb-1">
+                {/* <div className="text-xs text-gray-600 mb-1">
                   Tx Hash:{" "}
                   <span className="font-semibold text-gray-800 break-all">
                     {txHash || "-"}
                   </span>
-                </div>
+                </div> */}
 
                 <div className="text-xs text-gray-600 mb-1">
                   Price:{" "}
