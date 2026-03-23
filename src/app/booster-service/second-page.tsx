@@ -206,8 +206,8 @@ const applyForBooster = async () => {
 <button
   className="w-full bg-[linear-gradient(90deg,#110e05_0%,#362a02_100%)] font-open text-[18px] text-[#FFFEEF] hover:opacity-90 font-bold py-4 rounded-full transition-all duration-300 shadow-lg mb-3 border border-[#D2A100] disabled:opacity-50"
   disabled={!selectedPlan}
-  onClick={() => setIsModalOpen(true)}
-  //onClick={applyForBooster}
+  onClick={() => setshowApprove(true)}
+  // onClick={applyForBooster}
 >
   APPLY NOW
 </button>

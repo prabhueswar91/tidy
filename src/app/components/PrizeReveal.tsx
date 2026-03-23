@@ -24,6 +24,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import StakeButton from "./StakeButton";
 import { encryptData } from "../rewards/auth2/encrypt";
 import Modal from "../components/ui/Modal";
+import Close from "../assets/close.svg";
 
 export type Reward = {
   id: number;
@@ -276,6 +277,12 @@ export default function PrizeReveal({ duration }: { duration: number }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0a0a0a] to-[#1e293b] font-dm text-[#FFFEEF] md:px-4">
       <Card3>
+        {reward && <button
+          onClick={() => router.push("/")}
+          className="absolute top-4 right-4 z-20 bg-black border-2 border-[#8C6C00] p-2 rounded-full"
+        >
+          <Image src={Close} alt="close" width={14} height={14} />
+        </button>}
         <div className="w-full flex flex-col items-center px-4 gap-6 sm:gap-8">
           {/* <StakeButton /> */}
           {!isCompleted ? (
