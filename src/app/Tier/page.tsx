@@ -68,6 +68,12 @@ export default function TierPage() {
           duration: 5000,
           icon: "❌",
         });
+        if(res.data.error=="Please update your wallet address to continue."){
+          setTimeout(function(){
+              router.push("/settings")
+          },400);
+        }
+        
         return;
       } else if (res && res.data && res.data.status) {
         toast.error("You have used your daily Zen moment. Please come back tomorrow or upgrade your tier to continue", {

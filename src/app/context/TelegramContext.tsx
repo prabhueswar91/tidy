@@ -22,7 +22,7 @@ export const useTelegram = () => useContext(TelegramContext);
 export const TelegramProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [telegramId, setTelegramId] = useState<string | null>(STATIC_TELEGRAM_ID);
+  const [telegramId, setTelegramId] = useState<string | null>(null);
   const [userdata, setUserData] = useState<any | null>(null);
   const [hash, setHash] = useState<string | null>(null);
 
