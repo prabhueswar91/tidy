@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { useTelegram } from "./TelegramContext"; // 👈 IMPORTANT
+import {encryptData} from "../rewards/auth2/encrypt"
 
 /* ================= TYPES ================= */
 
@@ -72,6 +73,22 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       console.log("✅ User Info loaded:", data);
+
+      // Claim old user XP bonuses on app open
+      if (telegramId) {
+        let a = encryptData({
+          telegramId: telegramId,
+          initData:window?.Telegram?.WebApp?.initData
+        })
+        axiosInstance
+          .post("/reward/claim-old-xp", {data:a})
+          .then((claimRes) => {
+            console.log("✅ claim-old-xp result:", claimRes.data);
+          })
+          .catch((claimErr) => {
+            console.error("⚠️ claim-old-xp failed:", claimErr);
+          });
+      }
     } catch (err) {
       console.error("❌ Failed to fetch user info:", err);
     }

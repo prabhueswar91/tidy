@@ -7,15 +7,17 @@ let provider: UniversalProvider | null = null
 let modal: WalletConnectModal | null = null
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!;
-//const CHAIN_ID = process.env.CHAIN_ID!;
-const CHAIN_ID = 84532;
+const CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID || 8453);
+const CHAIN_NAME = process.env.NEXT_PUBLIC_CHAIN_NAME || "Base";
+const CHAIN_RPC = process.env.NEXT_PUBLIC_CHAIN_RPC || "https://mainnet.base.org";
+const BLOCK_EXPLORER = process.env.NEXT_PUBLIC_BLOCK_EXPLORER || "https://basescan.org";
 
-const BASE_SEPOLIA_CONFIG = {
-  chainId: `0x${CHAIN_ID.toString(16)}`, // "0x14a34"
-  chainName: "Base Sepolia",
+const CHAIN_CONFIG = {
+  chainId: `0x${CHAIN_ID.toString(16)}`,
+  chainName: CHAIN_NAME,
   nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-  rpcUrls: ["https://sepolia.base.org"],
-  blockExplorerUrls: ["https://sepolia.basescan.org"],
+  rpcUrls: [CHAIN_RPC],
+  blockExplorerUrls: [BLOCK_EXPLORER],
 };
 
 
@@ -27,7 +29,7 @@ export async function initWalletConnect(): Promise<UniversalProvider> {
     metadata: {
       name: "TIDYZEN",
       description: "TIDYZEN",
-      url: window?.location?.origin,
+      url: typeof window !== "undefined" ? window.location.origin : "",
       icons: ["https://avatars.githubusercontent.com/u/37784886"],
     },
   })
@@ -48,23 +50,20 @@ export async function initWalletConnect(): Promise<UniversalProvider> {
   return provider
 }
 
-async function switchToBaseSepolia(wcProvider: UniversalProvider): Promise<void> {
-  const hexChainId = BASE_SEPOLIA_CONFIG.chainId;
+async function switchToChain(wcProvider: UniversalProvider): Promise<void> {
+  const hexChainId = CHAIN_CONFIG.chainId;
 
   try {
-    // Try switching first — works if wallet already has Base Sepolia
     await wcProvider.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId: hexChainId }],
     });
   } catch (switchError: any) {
-    // 4902 = chain not added to wallet yet
     if (switchError?.code === 4902 || switchError?.message?.includes("wallet_addEthereumChain")) {
       await wcProvider.request({
         method: "wallet_addEthereumChain",
-        params: [BASE_SEPOLIA_CONFIG],
+        params: [CHAIN_CONFIG],
       });
-      // Switch again after adding
       await wcProvider.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: hexChainId }],
@@ -77,7 +76,6 @@ async function switchToBaseSepolia(wcProvider: UniversalProvider): Promise<void>
 
 
 export async function mobileConect(wcProvider: UniversalProvider): Promise<string> {
-  //alert(CHAIN_ID)
   const session = await wcProvider.connect({
     optionalNamespaces: {
       eip155: {
@@ -101,7 +99,7 @@ export async function mobileConect(wcProvider: UniversalProvider): Promise<strin
   if (accounts && accounts[0]) {
     address = accounts[0].split(":")[2]
   }
-  await switchToBaseSepolia(wcProvider);
+  await switchToChain(wcProvider);
 
 
   return address

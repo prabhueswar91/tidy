@@ -37,8 +37,13 @@ useEffect(() => {
   const [userPoints, setUserPoints] = useState<any>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [sValue, setsValue] = useState("");
   const [xpbalance, setxpbalance] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [userRank, setUserRank] = useState<any>(null);
 
   useEffect(() => {
     if (!telegramId) {
@@ -67,7 +72,9 @@ useEffect(() => {
     if (!userId) return;
 
     fetchUserPoints();
-    fetchLeaderboard(activeTab,"");
+    setLeaderboard([]);
+    setPage(1);
+    fetchLeaderboard(activeTab, "", 1);
     setsValue("")
   }, [userId, activeTab]);
 
@@ -84,23 +91,43 @@ useEffect(() => {
   };
 
   // Fetch leaderboard based on tab
-  const fetchLeaderboard = async (type: string,search:string) => {
-    setLoading(true);
+  const fetchLeaderboard = async (type: string, search: string, pg: number = 1) => {
+    if (pg === 1) setLoading(true);
+    else setLoadingMore(true);
     try {
       const res = await axiosInstance.get(
-        `/points/leaderboard?type=${type.toLowerCase()}&search=${search}`
+        `/points/leaderboard?type=${type.toLowerCase()}&search=${search}&page=${pg}&telegramId=${telegramId}`
       );
-      setLeaderboard(res.data);
+      const data = res.data;
+      console.log(pg,'pgpgpg',data.leaderboard)
+      if (pg === 1) {
+        setLeaderboard(data.leaderboard);
+      } else {
+        console.log(data.leaderboard,'elseeeeeeeeeeee')
+        setLeaderboard((prev) => [...prev, ...data.leaderboard]);
+      }
+      setTotal(data.total);
+      setHasMore(data.hasMore);
+      setPage(pg);
+      if (data.userRank) setUserRank(data.userRank);
     } catch (err) {
       toast.error("Failed to load leaderboard");
     }
     setLoading(false);
+    setLoadingMore(false);
+  };
+
+  const loadMore = () => {
+    if (!hasMore || loadingMore) return;
+    fetchLeaderboard(activeTab, sValue, page + 1);
   };
 
   if (loading) return <TidyLoader />;
 
   function handleSearch(){
-    fetchLeaderboard(activeTab,sValue)
+    setLeaderboard([]);
+    setPage(1);
+    fetchLeaderboard(activeTab, sValue, 1);
   }
 
   function onchangeSearch(e:any){
@@ -240,11 +267,21 @@ useEffect(() => {
           </div>
         </div>
 
+        {/* USER RANK */}
+        {userRank && (
+          <div className="bg-[#2A2414] border border-[#D2A100] rounded-lg px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-[#D2A100] font-bold text-lg">#{userRank.rank}</span>
+              <span className="text-sm font-medium">Your Position</span>
+            </div>
+            <span className="text-[#D2A100] font-bold text-sm">
+              {userRank.totalPoint ?? 0} pts
+            </span>
+          </div>
+        )}
+
         {/* TABLE */}
         <div className="bg-[#14131899] rounded-lg p-4">
-          {/* <h2 className="text-md font-bold mb-3 text-[#D2A100] text-center">
-            {activeTab} Leaderboard
-          </h2> */}
           {leaderboard.length > 0 ? (
             <div className="w-full bg-[#14131899]/60 border-[1.5px] border-[#333333] rounded-md overflow-hidden">
               <table className="w-full text-xs">
@@ -263,19 +300,6 @@ useEffect(() => {
 
                       <td className="px-3 py-3">
                         <div className="flex items-center gap-2 justify-center">
-                          {/* {user.avatar ? (
-                            <Image
-                              src={user.avatar}
-                              alt={user.username || "User"}
-                              width={28}
-                              height={28}
-                              className="rounded-full w-6 h-6 object-cover border border-[#FFFFFF33]"
-                              unoptimized
-                            />
-                          ) : (
-                            <div className="w-6 h-6 rounded-full bg-[#FFFFFF33]" />
-                          )} */}
-                          {/* <div className="w-6 h-6 rounded-full bg-[#FFFFFF33]" /> */}
                           <User size={8} strokeWidth={2.5} className="rounded-full w-4 h-4 object-cover border border-[#FFFFFF33]"/>
 
                           <span className="truncate max-w-[120px]">
@@ -291,6 +315,18 @@ useEffect(() => {
                   ))}
                 </tbody>
               </table>
+
+              {hasMore && (
+                <div className="flex justify-center py-3 border-t border-[#FFFFFF33]">
+                  <button
+                    className="text-[#D2A100] text-xs font-semibold hover:underline disabled:opacity-50"
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                  >
+                    {loadingMore ? "Loading..." : `See More (${leaderboard.length} of ${total})`}
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <p className="text-center py-4 text-sm text-[#FFFEEF99]">

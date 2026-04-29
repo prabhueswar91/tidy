@@ -46,11 +46,13 @@ export default function PartnerForm({
   const [logo, setLogo] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [channelUsername, setChannelUsername] = useState("");
+  const [fetchingId, setFetchingId] = useState(false);
 
   useEffect(() => {
     if (partner) {
       let NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!;
-      let logoUrl = `${NEXT_PUBLIC_BASE_URL}/uploads1/partner_logos/${partner.logo}`
+      let logoUrl = `${NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/${partner.logo}`
       setGroupName(partner.groupName);
       setProject(partner.project);
       setContact(partner.contact);
@@ -75,6 +77,7 @@ export default function PartnerForm({
       seturl("");
       setLogo(null);
       setPreviewUrl(null);
+      setChannelUsername("");
     }
   }, [partner]);
 
@@ -83,6 +86,35 @@ export default function PartnerForm({
     if (file) {
       setLogo(file);
       setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const fetchChannelId = async () => {
+    if (!channelUsername.trim()) {
+      toast.error("Please enter a Telegram channel/group username");
+      return;
+    }
+    try {
+      setFetchingId(true);
+      const res = await axiosInstance.post("/admin/get-channel-id", {
+        username: channelUsername.trim(),
+      });
+      if (res.data.success) {
+        setChannelId(res.data.channelId);
+        if (res.data.title && !groupName) {
+          setGroupName(res.data.title);
+        }
+        toast.success(`Channel ID: ${res.data.channelId}`);
+      } else {
+        toast.error(res.data.error || "Failed to get channel ID");
+      }
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.error ||
+          "Failed to get channel ID. Make sure the bot is added to your channel/group."
+      );
+    } finally {
+      setFetchingId(false);
     }
   };
 
@@ -207,14 +239,39 @@ export default function PartnerForm({
             />
           )}
 
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800">
+            <strong>How to get Channel/Group ID:</strong>
+            <ol className="list-decimal ml-4 mt-1 space-y-1">
+              <li>Add the TidyCoin bot as an admin to your Telegram channel/group.</li>
+              <li>Enter your channel/group username below (e.g. @yourchannel or https://t.me/yourchannel).</li>
+              <li>Click <strong>&quot;Get ID&quot;</strong> to fetch the Channel ID automatically.</li>
+            </ol>
+          </div>
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="@channel_username or t.me/channel_username"
+              value={channelUsername}
+              onChange={(e) => setChannelUsername(e.target.value)}
+              className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500 flex-1"
+            />
+            <button
+              type="button"
+              onClick={fetchChannelId}
+              disabled={fetchingId}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition whitespace-nowrap"
+            >
+              {fetchingId ? "Fetching..." : "Get ID"}
+            </button>
+          </div>
+
           <input
             type="number"
             placeholder="Channel ID (required)"
             value={channelId}
-            onChange={(e) =>
-              setChannelId(e.target.value === "" ? "" : Number(e.target.value))
-            }
-            className="border px-3 py-2 rounded-md focus:ring-2 focus:ring-green-500"
+            readOnly
+            className="border px-3 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-green-500"
             required
           />
           <input

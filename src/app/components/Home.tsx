@@ -27,6 +27,7 @@ interface Partner {
   logo: string | null;
   url: string | null;
   groupName?: string;
+  channelId?: number;
 }
 
 export default function Home({ onStart }: HomeProps) {
@@ -179,7 +180,7 @@ export default function Home({ onStart }: HomeProps) {
                 
                <div className="w-20 h-16 flex items-center justify-center bg-transparent rounded-md">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads1/partner_logos/${partner.logo}`}
+                    src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/${partner.logo}`}
                     alt={partner.groupName || "Partner Logo"}
                     width={64}
                     height={56}
@@ -189,7 +190,7 @@ export default function Home({ onStart }: HomeProps) {
                 </div>
 
 
-                {!partner.groupName && <img
+                {(partner.channelId ==-1002855939504 || partner.channelId ==-1001807939148) && <img
                   src={`${process.env.NEXT_PUBLIC_BASE_URL}/uploads/partner_logos/star.png`}
                   alt="star"
                   className="absolute bottom-0 right-0 w-5 h-5 z-50"
@@ -224,7 +225,7 @@ export default function Home({ onStart }: HomeProps) {
         >
           BECOME A PARTNER AND ACCESS OUR TELEGRAM BOOSTER SERVICE
         </button>
-        {showUpgrade &&<button
+        {/* {showUpgrade &&<button
           className="inline-block text-[#FFFEEF] font-semibold text-base px-8 py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] font-dm underline"
           style={{
             fontSize: "16px",
@@ -234,7 +235,7 @@ export default function Home({ onStart }: HomeProps) {
           onClick={()=>navService()}
         >
           BOOSTER SERVICE
-        </button>}
+        </button>} */}
         <div className="text-xs mt-4 font-open text-center">
   Powered by JunglCorp & TidyCoin
 </div>

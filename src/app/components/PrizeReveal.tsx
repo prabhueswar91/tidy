@@ -646,7 +646,7 @@ export default function PrizeReveal({ duration,onClose }: { duration: number,onC
             borderColor={"#045867"}
             onClick={() =>
             window.open(
-                "https://t.me/+CDA1mBAvkTI4MjI1",
+                "https://t.me/tidycoincommunity",
                 "_blank"
             )
             }

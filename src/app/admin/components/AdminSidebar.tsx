@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { FiHome, FiUsers, FiLayers, FiMenu,
   FiTrendingUp,
   FiCreditCard,
-  FiZap } from "react-icons/fi";
+  FiZap,
+  FiBell } from "react-icons/fi";
 import { useState, useEffect } from "react";
 
 export default function AdminSidebar() {
@@ -35,6 +36,7 @@ export default function AdminSidebar() {
     { label: "Leaderboard", href: "/admin/leaderboard", icon: <FiTrendingUp  size={20} /> },
     { label: "Subscriptions", href: "/admin/subscriptions", icon: <FiCreditCard size={20} /> },
     { label: "Booster Service", href: "/admin/boosterservice", icon: <FiZap  size={20} /> },
+    { label: "Notifications", href: "/admin/notifications", icon: <FiBell size={20} /> },
   ];
 
   return (

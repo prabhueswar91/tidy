@@ -4,11 +4,12 @@ import React, { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
-import { baseSepolia, bitcoin } from '@reown/appkit/networks'
+import { bitcoin } from '@reown/appkit/networks'
 import {
   wagmiAdapter,
   bitcoinAdapter,
   projectId,
+  appChain,
   config
 } from '../config/wagmiConfig'
 
@@ -17,12 +18,12 @@ const queryClient = new QueryClient()
 createAppKit({
   adapters: [wagmiAdapter, bitcoinAdapter],
   projectId,
-  networks: [baseSepolia, bitcoin],
-  defaultNetwork: baseSepolia,
+  networks: [appChain, bitcoin],
+  defaultNetwork: appChain,
   metadata: {
     name: 'TIDYZEN',
     description: 'TIDYZEN',
-    url: window?.location?.origin,
+    url: typeof window !== "undefined" ? window.location.origin : "",
     icons: ['https://avatars.githubusercontent.com/u/179229932']
   },
   featuredWalletIds: ['metamask'],

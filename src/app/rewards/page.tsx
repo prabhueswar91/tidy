@@ -336,6 +336,34 @@ async function getRequirementList() {
 
 </div>
 
+      {/* <div className="flex justify-center">
+        <div className="flex items-center gap-4 bg-[#1a1a1a]/80 border border-[#D2A100]/30 rounded-2xl px-5 py-4 shadow-lg backdrop-blur-md">
+          
+          <div className="flex flex-col">
+            <span className="text-xs text-gray-400 uppercase tracking-wide">
+              Available XP
+            </span>
+            <span className="text-xl font-bold text-[#FFFEEF]">
+              1000
+            </span>
+          </div>
+
+          <div className="w-[1px] h-10 bg-[#D2A100]/30"></div>
+          <button
+            onClick={getRequirementList}
+            disabled={reqLoading}
+            className={`px-5 py-2 rounded-xl text-sm font-semibold
+            bg-gradient-to-r from-[#110E05] to-[#362A02]
+            border border-[#D2A100] text-[#FFFEEF]
+            hover:scale-[1.03] hover:shadow-md transition-all duration-200
+            ${reqLoading ? "opacity-50 cursor-not-allowed hover:scale-100" : ""}`}
+          >
+            {reqLoading ? "Loading..." : "Claim XP"}
+          </button>
+
+        </div>
+      </div> */}
+
         <div className="bg-[#141318cc] backdrop-blur-sm rounded-lg pt-4">
           <h2 className="text-md font-bold mb-3 text-[#D2A100] text-center">
             Pending Rewards

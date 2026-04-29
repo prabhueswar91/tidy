@@ -18,6 +18,8 @@ export default function AdminBoosterService() {
   const [groupName, setGroupName] = useState("");
   const [groupId, setGroupId] = useState("");
   const [groupLink, setGroupLink] = useState("");
+  const [channelUsername, setChannelUsername] = useState("");
+  const [fetchingId, setFetchingId] = useState(false);
   const [subscriptionid, setSubscriptionid] = useState("");
   const [status, setStatus] = useState(true);
   const [isSubmit, setisSubmit] = useState(false);
@@ -46,6 +48,7 @@ export default function AdminBoosterService() {
     setGroupLink("");
     setSubscriptionid("");
     setGroupId("");
+    setChannelUsername("");
     setStatus(true);
 
     setTxHash("");
@@ -71,6 +74,38 @@ export default function AdminBoosterService() {
     setprice(b.price ?? "")
 
     setOpen(true);
+  };
+
+  const fetchChannelId = async () => {
+    if (!channelUsername.trim()) {
+      toast.error("Please enter a Telegram channel/group username");
+      return;
+    }
+    try {
+      setFetchingId(true);
+      const res = await axiosInstance.post("/admin/get-channel-id", {
+        username: channelUsername.trim(),
+      });
+      if (res.data.success) {
+        setGroupId(String(res.data.channelId));
+        if (res.data.title && !groupName) {
+          setGroupName(res.data.title);
+        }
+        if (res.data.username) {
+          setGroupLink(`https://t.me/${res.data.username}`);
+        }
+        toast.success(`Channel ID: ${res.data.channelId}`);
+      } else {
+        toast.error(res.data.error || "Failed to get channel ID");
+      }
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.error ||
+          "Failed to get channel ID. Make sure the bot is added to your channel/group."
+      );
+    } finally {
+      setFetchingId(false);
+    }
   };
 
   const save = async () => {
@@ -215,8 +250,9 @@ export default function AdminBoosterService() {
       </table>
 
       {open && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-3">
-          <div className="bg-white p-6 rounded w-full max-w-md">
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-3 z-50">
+          <div className="bg-white rounded w-full max-w-md max-h-[90vh] flex flex-col">
+            <div className="overflow-y-auto flex-1 p-6 scrollbar-thin">
             <h3 className="font-bold mb-4">
               {editId ? "Edit Booster" : "Add Booster"}
             </h3>
@@ -269,11 +305,37 @@ export default function AdminBoosterService() {
               onChange={(e) => setGroupName(e.target.value)}
             />
 
+            <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded text-xs text-blue-800">
+              <strong>How to get Channel/Group ID:</strong>
+              <ol className="list-decimal ml-4 mt-1 space-y-1">
+                <li>Add the TidyCoin bot as an admin to your Telegram channel/group.</li>
+                <li>Enter your channel/group username below (e.g. @yourchannel or https://t.me/yourchannel).</li>
+                <li>Click <strong>"Get ID"</strong> to fetch the Channel ID automatically.</li>
+              </ol>
+            </div>
+
+            <div className="flex gap-2 mb-3">
+              <input
+                className="border p-2 flex-1"
+                placeholder="@channel_username or t.me/channel_username"
+                value={channelUsername}
+                onChange={(e) => setChannelUsername(e.target.value)}
+              />
+              <button
+                type="button"
+                className={BTN}
+                onClick={fetchChannelId}
+                disabled={fetchingId}
+              >
+                {fetchingId ? "Fetching..." : "Get ID"}
+              </button>
+            </div>
+
             <input
-              className="border p-2 w-full mb-3"
+              className="border p-2 w-full mb-3 bg-gray-100"
               placeholder="Telegram Group Id"
               value={groupId}
-              onChange={(e) => setGroupId(e.target.value)}
+              readOnly
             />
 
             <input
@@ -320,6 +382,7 @@ export default function AdminBoosterService() {
               <button className={BTN} onClick={save} disabled={isSubmit}>
                 {isSubmit ? "Processing" : "Save"}
               </button>
+            </div>
             </div>
           </div>
         </div>

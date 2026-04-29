@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Login from "./components/Login";
 import Home from "./components/Home";
+import Maintance from "./components/maintance";
 import { useUI } from "./context/closebtnContext";
 
 export default function Page() {
@@ -18,10 +19,12 @@ export default function Page() {
             setShowClose(false);
           }}
         />
+        {/* <Maintance /> */}
 
         </div>
       ) : (
         <Login />
+        // <Maintance />
       )}
     </>
   );
